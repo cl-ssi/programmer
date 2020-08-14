@@ -1,0 +1,69 @@
+<?php
+
+namespace App\EHR\HETG;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Rrhh extends Model
+{
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'rut', 'dv', 'name', 'fathers_family', 'mothers_family', 'job_title'
+    ];
+
+    public function executedActivities() {
+        return $this->hasMany('App\EHR\HETG\ExecutedActivity', 'medico_rut');
+    }
+
+    public function contracts() {
+        return $this->hasMany('App\EHR\HETG\Contract', 'rut');
+    }
+
+    // public function programming() {
+    //     return $this->hasMany('App\EHR\HETG\OperatingRooms\MedicalProgramming', 'rut');
+    // }
+    public function medical_programmings() {
+        return $this->hasMany('App\EHR\HETG\MedicalProgramming', 'rut');
+    }
+
+    public function calendarProgrammings() {
+        return $this->hasMany('App\EHR\HETG\CalendarProgramming', 'rut');
+    }
+
+    public function theoretialProgrammings() {
+        return $this->hasMany('App\EHR\HETG\TheoreticalProgramming', 'rut');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return "{$this->name} {$this->fathers_family} {$this->mothers_family}";
+    }
+
+    public function getShortNameAttribute()
+    {
+        $arr = explode(' ',trim($this->name));
+        return $arr[0]. " {$this->fathers_family}";
+    }
+
+    protected $primaryKey = 'rut';
+
+    use SoftDeletes;
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'hm_rrhh';
+}
