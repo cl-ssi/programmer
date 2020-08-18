@@ -51,15 +51,28 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->unsignedInteger('rut')->nullable();
             $table->unsignedInteger('activity_id')->nullable();
             //$table->unsignedBigInteger('medical_programming_id')->nullable();
-            $table->integer('week_day');
-            $table->string('start_time');
-            $table->string('end_time');
+            $table->string('start_date');
+            $table->string('end_date');
             $table->integer('year')->nullable();
             $table->string('user_id');
 
             $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
             $table->foreign('activity_id')->references('id')->on('hm_activities')->onDelete('cascade');
             //$table->foreign('medical_programming_id')->references('id')->on('hm_medical_programming')->onDelete('cascade');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('hm_weekly_programming', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedInteger('activity_id')->nullable();
+            $table->string('start_date');
+            $table->string('end_date');
+            $table->integer('year')->nullable();
+            $table->string('user_id');
+
+            $table->foreign('activity_id')->references('id')->on('hm_activities')->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -73,6 +86,7 @@ class CreateHmOperatingRoomsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('hm_weekly_programming');
         Schema::dropIfExists('hm_theoretical_programming');
         Schema::dropIfExists('hm_calendar_programming');
         Schema::dropIfExists('hm_operating_rooms');

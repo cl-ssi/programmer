@@ -16,6 +16,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
+use App\EHR\HETG\OperatingRoom;
 
 class TheoreticalProgrammingController extends Controller
 {
@@ -26,65 +29,149 @@ class TheoreticalProgrammingController extends Controller
      */
     public function index(Request $request)
     {
-      if ($request->get('year')) {
+        // Storage::put('errores.txt', "asdds");
+        // for($i=$first_week;$i<=$last_week;$i++)
+        // {
+        //     $timestamp = mktime( 0, 0, 0, 1, 1,  $year ) + ( $i * 7 * 24 * 60 * 60 );
+        //     $timestamp_for_day = $timestamp - 86400 * ( date( 'N', $timestamp ) - 1 );
+        //     dd(date( 'Y-m-d', $timestamp_for_day ));
+        //     $start_date = date( 'Y-m-d', $timestamp_for_day ) . " " . $start_time;
+        //     $end_date = date( 'Y-m-d', $timestamp_for_day ) . " " . $end_time;
+        //
+        //     if (date('Y', strtotime($start_date)) == $year) {
+        //         // $theoreticalProgramming = new TheoreticalProgramming();
+        //         // $theoreticalProgramming->rut = $request->rut;
+        //         // $theoreticalProgramming->activity_id = $request->activity_id;
+        //         // $theoreticalProgramming->start_date = $start_date;
+        //         // $theoreticalProgramming->end_date = $end_date;
+        //         // $theoreticalProgramming->year = $year;
+        //         // $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+        //         // $theoreticalProgramming->save();
+        //         print_r($start_date . " ");
+        //     }
+        // }dd("");
+
+      // if ($request->get('year')) {
+      //   $year = $request->get('year');
+      //   $rut = $request->get('rut');
+      // }
+      // else{
+      //   $date = Carbon::now();
+      //   $year = $date->format('Y');
+      //   $rut = 0;
+      // }
+      //
+      // $motherActivities = MotherActivity::where('id',2)->get();
+      // $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón teórico
+      // $theoricalProgrammings = TheoreticalProgramming::where('year',$year)
+      //                                               ->where('rut',$rut)->get();
+      //
+      // //se obtiene fechas de inicio y termino de cada isEventOverDiv
+      // foreach ($theoricalProgrammings as $key => $theoricalProgramming) {
+      //   $week_day = $theoricalProgramming->week_day;
+      //   if ($theoricalProgramming->week_day == 0) {
+      //     $week_day = 7;
+      //   }
+      //   $theoricalProgramming->start_date = "1900-01-0". $week_day . " " . $theoricalProgramming->start_time;
+      //   $theoricalProgramming->end_date = "1900-01-0". $week_day . " " . $theoricalProgramming->end_time;
+      //
+      //   $start  = new Carbon($theoricalProgramming->start_date);
+      //   $end    = new Carbon($theoricalProgramming->end_date);
+      //   $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
+      // }
+      //
+      // //obtiene información de programas médicos asignados
+      // $medicalProgrammings = MedicalProgramming::where('year',$year)
+      //                                         ->where('rut',$rut)
+      //                                         ->whereIn('activity_id',$ids_actividades)
+      //                                         ->get();
+      // $array = array();
+      // foreach ($medicalProgrammings as $key => $medicalProgramming) {
+      //   $array[$medicalProgramming->contract->first()->law] = $medicalProgrammings;
+      // }
+      //
+      // // $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
+      // //                return $query->where('year',$year);
+      // //             })->orderby('name','ASC')->get();
+      //
+      // $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
+      //                return $query;//->where('year',$year);
+      //             })->orderby('name','ASC')->get();
+      //
+      //   //información para días contrato
+      //   $contracts = Contract::where('rut',$rut)->get();
+      //   // $rut = NULL;
+      //   // if ($contracts) {
+      //   //     $rut = $contracts->first()->rut;
+      //   // }
+      //   // dd($rut);
+      //
+      //   $contract_days = CalendarProgramming::where('rut',$rut)->whereNotNull('contract_day_type')->get();
+      //   // dd($contract_days);
+      //
+      // return view('ehr.hetg.management.theoretical_programmer',compact('request','rrhhs','array','theoricalProgrammings','contracts','rut','contract_days'));
+
+
+
+
+
+
+
+
+      //primer form
+      if ($request->get('date')) {
+        $date = $request->get('date');
         $year = $request->get('year');
         $rut = $request->get('rut');
       }
       else{
         $date = Carbon::now();
-        $year = $date->format('Y');
-        $rut = 0;
+        $year = $date->get('year');
+        $rut = $request->get('rut');
       }
 
-      $motherActivities = MotherActivity::where('id',2)->get();
-      $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón teórico
-      $theoricalProgrammings = TheoreticalProgramming::where('year',$year)
-                                                    ->where('rut',$rut)->get();
+    $motherActivities = MotherActivity::where('id',2)->get();
+    $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón teórico
+
+    $monday = Carbon::parse($date)->startOfWeek();
+    $sunday = Carbon::parse($date)->endOfWeek();
+    // dd($monday, $sunday);
+    $theoreticalProgrammings = TheoreticalProgramming::where('year',$year)
+                                                  ->where('rut',$rut)
+                                                  ->whereBetween('start_date',[$monday,$sunday])
+                                                  ->get();
 
       //se obtiene fechas de inicio y termino de cada isEventOverDiv
-      foreach ($theoricalProgrammings as $key => $theoricalProgramming) {
-        $week_day = $theoricalProgramming->week_day;
-        if ($theoricalProgramming->week_day == 0) {
-          $week_day = 7;
-        }
-        $theoricalProgramming->start_date = "1900-01-0". $week_day . " " . $theoricalProgramming->start_time;
-        $theoricalProgramming->end_date = "1900-01-0". $week_day . " " . $theoricalProgramming->end_time;
-
+      foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
         $start  = new Carbon($theoricalProgramming->start_date);
         $end    = new Carbon($theoricalProgramming->end_date);
         $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
       }
 
-      //obtiene información de programas médicos asignados
-      $medicalProgrammings = MedicalProgramming::where('year',$year)
-                                              ->where('rut',$rut)
-                                              ->whereIn('activity_id',$ids_actividades)
-                                              ->get();
-      $array = array();
-      foreach ($medicalProgrammings as $key => $medicalProgramming) {
-        $array[$medicalProgramming->contract->first()->law] = $medicalProgrammings;
-      }
+    //obtiene información de programas médicos asignados
+    $medicalProgrammings = MedicalProgramming::where('year',$year)
+                                            ->where('rut',$rut)
+                                            ->whereIn('activity_id',$ids_actividades)
+                                            ->get();
+    $array = array();
+    foreach ($medicalProgrammings as $key => $medicalProgramming) {
+      $array[$medicalProgramming->contract->first()->law] = $medicalProgrammings;
+    }
 
-      // $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
-      //                return $query->where('year',$year);
-      //             })->orderby('name','ASC')->get();
+    $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
+                   return $query;//->where('year',$year);
+                })->orderby('name','ASC')->get();
 
-      $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
-                     return $query;//->where('year',$year);
-                  })->orderby('name','ASC')->get();
+    //información para días contrato
+    $contracts = Contract::where('rut',$rut)->get();
+    $contract_days = CalendarProgramming::where('rut',$rut)->whereNotNull('contract_day_type')->get();
 
-        //información para días contrato
-        $contracts = Contract::where('rut',$rut)->get();
-        // $rut = NULL;
-        // if ($contracts) {
-        //     $rut = $contracts->first()->rut;
-        // }
-        // dd($rut);
 
-        $contract_days = CalendarProgramming::where('rut',$rut)->whereNotNull('contract_day_type')->get();
-        // dd($contract_days);
+    $monday = Carbon::parse($date)->startOfWeek();
+    $sunday = Carbon::parse($date)->endOfWeek();
 
-      return view('ehr.hetg.management.theoretical_programmer',compact('request','rrhhs','array','theoricalProgrammings','contracts','rut','contract_days'));
+      return view('ehr.hetg.management.theoretical_programmer', compact('request','array','contract_days','date','theoreticalProgrammings', 'rrhhs'));
+      // return view('ehr.hetg.management.theoretical_programmer',compact('request','rrhhs','array','theoricalProgrammings','contracts','rut','contract_days'));
     }
 
     /**
@@ -257,28 +344,137 @@ class TheoreticalProgrammingController extends Controller
     }
 
     public function saveMyEvent(Request $request){
-      $theoreticalProgramming = new TheoreticalProgramming($request->all());
-      $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
-      $theoreticalProgramming->save();
+        $year = $request->year;
+        $first_date = new Carbon($request->start_date);
+        $last_date = new Carbon($request->end_date);
+
+        //solo se inserta en esta semana
+        if ($request->tipo == 1) {
+            $theoreticalProgramming = new TheoreticalProgramming();
+            $theoreticalProgramming->rut = $request->rut;
+            $theoreticalProgramming->activity_id = $request->activity_id;
+            $theoreticalProgramming->start_date = $first_date;
+            $theoreticalProgramming->end_date = $last_date;
+            $theoreticalProgramming->year = $year;
+            $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+            $theoreticalProgramming->save();
+        }
+        //se inserta desde esta semana hacia adelante
+        else {
+            while (date('Y', strtotime($first_date)) == $year) {
+                $theoreticalProgramming = new TheoreticalProgramming();
+                $theoreticalProgramming->rut = $request->rut;
+                $theoreticalProgramming->activity_id = $request->activity_id;
+                $theoreticalProgramming->start_date = $first_date;
+                $theoreticalProgramming->end_date = $last_date;
+                $theoreticalProgramming->year = $year;
+                $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+                $theoreticalProgramming->save();
+
+                $first_date = $first_date->addWeek(1);
+                $last_date = $last_date->addWeek(1);
+            }
+        }
+
+    }
+
+    public function updateMyEvent(Request $request){
+        try {
+
+          // $this->buildXMLHeader();
+          $year = $request->year;
+          $start_date = new Carbon($request->start_date);
+          $end_date = new Carbon($request->end_date);
+          $start_date_start = new Carbon($request->start_date_start);
+          $end_date_start = new Carbon($request->end_date_start);
+
+          //solo se modifica el evento actual
+          if ($request->tipo == 1) {
+              $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                              ->where('activity_id',$request->activity_id)
+                                                              ->where('start_date',$start_date_start)
+                                                              ->where('end_date',$end_date_start)->first();
+              $theoreticalProgramming->start_date = $start_date;
+              $theoreticalProgramming->end_date = $end_date;
+              $theoreticalProgramming->save();
+          }
+          //se modifican todos los eventos hacia adelante
+          else{
+              while (date('Y', strtotime($start_date)) == $year) {
+                  $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                                  ->where('activity_id',$request->activity_id)
+                                                                  ->where('start_date',$start_date_start)
+                                                                  ->where('end_date',$end_date_start)->first();
+                  $theoreticalProgramming->start_date = $start_date;
+                  $theoreticalProgramming->end_date = $end_date;
+                  $theoreticalProgramming->save();
+
+                  $start_date = $start_date->addWeek(1);
+                  $end_date = $end_date->addWeek(1);
+                  $start_date_start = $start_date_start->addWeek(1);
+                  $end_date_start = $end_date_start->addWeek(1);
+              }
+          }
+
+        } catch (\Exception $e) {
+
+            // return $e->getMessage();
+            Storage::put('errores.txt', $e->getMessage());
+        }
     }
 
     //elimina el dato - queda respaldo de la eliminación
     public function deleteMyEvent(Request $request){
-      $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
-                                                      ->where('activity_id',$request->activity_id)
-                                                      ->where('week_day',$request->week_day)
-                                                      ->where('start_time',$request->start_time)
-                                                      ->where('end_time',$request->end_time);
-      $theoreticalProgramming->delete(); //forceDelete
+      $year = $request->year;
+      $first_date = new Carbon($request->start_date);
+      $last_date = new Carbon($request->end_date);
+
+      //solo se elimina el evento actual
+        if ($request->tipo == 1) {
+            $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                            ->where('activity_id',$request->activity_id)
+                                                            ->where('start_date',$first_date)
+                                                            ->where('end_date',$last_date);
+            $theoreticalProgramming->delete();
+        }
+        //se elimina desde el evento actual
+        else{
+            while (date('Y', strtotime($first_date)) == $year) {
+                $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                                ->where('activity_id',$request->activity_id)
+                                                                ->where('start_date',$first_date)
+                                                                ->where('end_date',$last_date);
+                $theoreticalProgramming->delete();
+
+                $first_date = $first_date->addWeek(1);
+                $last_date = $last_date->addWeek(1);
+            }
+        }
     }
 
     //elimina el dato (cuando son movimientos en el calendario) - no queda respaldo
     public function deleteMyEventForce(Request $request){
-      $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
-                                                      ->where('activity_id',$request->activity_id)
-                                                      ->where('week_day',$request->week_day)
-                                                      ->where('start_time',$request->start_time)
-                                                      ->where('end_time',$request->end_time);
-      $theoreticalProgramming->forceDelete();
+      $year = $request->year;
+      $first_date = new Carbon($request->start_date);
+      $last_date = new Carbon($request->end_date);
+      while (date('Y', strtotime($first_date)) == $year) {
+          $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                          ->where('activity_id',$request->activity_id)
+                                                          ->where('start_date',$first_date)
+                                                          ->where('end_date',$last_date);
+          $theoreticalProgramming->forceDelete();
+
+          $first_date = $first_date->addWeek(1);
+          $last_date = $last_date->addWeek(1);
+      }
+    }
+
+    /*función que reemplaza espacios en blanco, puntos y parentesis por _ - además quita tildes **/
+    public function formatear_cadena($cadena) {
+      $no_permitidas= array ("á","é","í","ó","ú","Á","É","Í","Ó","Ú","ñ","À","Ã","Ì","Ò","Ù","Ã™","Ã ","Ã¨","Ã¬","Ã²","Ã¹","ç","Ç","Ã¢","ê","Ã®","Ã´","Ã»","Ã‚","ÃŠ","ÃŽ","Ã”","Ã›","ü","Ã¶","Ã–","Ã¯","Ã¤","«","Ò","Ã","Ã„","Ã‹");
+      $permitidas= array ("a","e","i","o","u","A","E","I","O","U","n","N","A","E","I","O","U","a","e","i","o","u","c","C","a","e","i","o","u","A","E","I","O","U","u","o","O","i","a","e","U","I","A","E");
+      $texto = str_replace($no_permitidas, $permitidas ,$cadena);
+      $texto = str_replace('}', '', str_replace('{', '', str_replace(',', '', str_replace('.', '', str_replace(')', '', str_replace('(', '', str_replace(' ', '_', $texto)))))));
+      return $texto;
     }
 }

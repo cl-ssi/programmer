@@ -59,6 +59,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::match(['get', 'post'],'calendar_programming/calendar_programmer_report','EHR\HETG\CalendarProgrammingController@calendar_programmer_report')->name('calendar_programming.calendar_programmer_report');
         Route::resource('calendar_programming','EHR\HETG\CalendarProgrammingController');
         Route::match(['get', 'post'],'theoretical_programming/saveMyEvent','EHR\HETG\TheoreticalProgrammingController@saveMyEvent')->name('theoretical_programming.saveMyEvent');
+        Route::match(['get', 'post'],'theoretical_programming/updateMyEvent','EHR\HETG\TheoreticalProgrammingController@updateMyEvent')->name('theoretical_programming.updateMyEvent');
         Route::match(['get', 'post'],'theoretical_programming/deleteMyEvent','EHR\HETG\TheoreticalProgrammingController@deleteMyEvent')->name('theoretical_programming.deleteMyEvent');
         Route::match(['get', 'post'],'theoretical_programming/deleteMyEventForce','EHR\HETG\TheoreticalProgrammingController@deleteMyEventForce')->name('theoretical_programming.deleteMyEventForce');
         Route::resource('theoretical_programming','EHR\HETG\TheoreticalProgrammingController');
