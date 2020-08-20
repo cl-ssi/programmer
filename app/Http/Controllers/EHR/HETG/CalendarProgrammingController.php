@@ -104,20 +104,21 @@ class CalendarProgrammingController extends Controller
       // dd($calendarProgrammings);
 
       $theoreticalProgrammings = TheoreticalProgramming::all();
-      $contract_days = CalendarProgramming::whereNotNull('contract_day_type')->get();
+      // $contract_days = CalendarProgramming::whereNotNull('contract_day_type')->get();
+      $contract_days = CalendarProgramming::where('id',100000)->get();
 
       //se obtiene fechas de inicio y termino de cada isEventOverDiv
-      foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
-        $week_day = $theoricalProgramming->week_day;
-        if ($theoricalProgramming->week_day == 0) {
-          $week_day = 7;
-        }
-        $dayofweek = date('w', strtotime($monday));
-        $result    = date('Y-m-d', strtotime(($week_day - $dayofweek).' day', strtotime($monday)));
-
-        $theoricalProgramming->start_date = $result . " " . $theoricalProgramming->start_time;
-        $theoricalProgramming->end_date = $result . " " . $theoricalProgramming->end_time;
-      }
+      // foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
+      //   $week_day = $theoricalProgramming->week_day;
+      //   if ($theoricalProgramming->week_day == 0) {
+      //     $week_day = 7;
+      //   }
+      //   $dayofweek = date('w', strtotime($monday));
+      //   $result    = date('Y-m-d', strtotime(($week_day - $dayofweek).' day', strtotime($monday)));
+      //
+      //   $theoricalProgramming->start_date = $result . " " . $theoricalProgramming->start_time;
+      //   $theoricalProgramming->end_date = $result . " " . $theoricalProgramming->end_time;
+      // }
       // dd($theoreticalProgrammings);
 
       //devuelve listado de todos los profesionales

@@ -33,7 +33,7 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->datetime('start_date');
             $table->datetime('end_date');
             // $table->enum('tipo',['legal_holidays', 'compensatory_rest', 'administrative_permit', 'training_days'])->nullable();
-            $table->string('contract_day_type');
+            // $table->string('contract_day_type');
 
             $table->string('user_id');
 
@@ -53,6 +53,9 @@ class CreateHmOperatingRoomsTable extends Migration
             //$table->unsignedBigInteger('medical_programming_id')->nullable();
             $table->string('start_date');
             $table->string('end_date');
+
+            $table->string('contract_day_type')->nullable();
+
             $table->integer('year')->nullable();
             $table->string('user_id');
 

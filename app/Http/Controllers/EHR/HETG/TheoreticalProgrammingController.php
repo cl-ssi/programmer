@@ -154,6 +154,7 @@ class TheoreticalProgrammingController extends Controller
                                             ->whereIn('activity_id',$ids_actividades)
                                             ->get();
     $array = array();
+    // dd($medicalProgrammings);
     foreach ($medicalProgrammings as $key => $medicalProgramming) {
       $array[$medicalProgramming->contract->first()->law] = $medicalProgrammings;
     }
@@ -163,14 +164,37 @@ class TheoreticalProgrammingController extends Controller
                 })->orderby('name','ASC')->get();
 
     //información para días contrato
-    $contracts = Contract::where('rut',$rut)->get();
-    $contract_days = CalendarProgramming::where('rut',$rut)->whereNotNull('contract_day_type')->get();
+    $contracts = Contract::where('rut',$rut)->where('year',$year)->get();
+    $permisos_administrativos = array();
+    foreach ($contracts as $key => $contract) {
+      $permisos_administrativos['legal_holidays'] = $contract = 0;
+      $permisos_administrativos['compensatory_rest'] = $contract = 0;
+      $permisos_administrativos['administrative_permit'] = $contract = 0;
+      $permisos_administrativos['training_days'] = $contract = 0;
+      $permisos_administrativos['breastfeeding_time'] = $contract = 0;
+      $permisos_administrativos['weekly_collation'] = $contract = 0;
+    }
+    foreach ($contracts as $key => $contract) {
+      $permisos_administrativos['legal_holidays'] += $contract->$contract;
+      $permisos_administrativos['compensatory_rest'] += $contract->compensatory_rest;
+      $permisos_administrativos['administrative_permit'] += $contract->administrative_permit;
+      $permisos_administrativos['training_days'] += $contract->training_days;
+      $permisos_administrativos['breastfeeding_time'] += $contract->breastfeeding_time;
+      $permisos_administrativos['weekly_collation'] += $contract->weekly_collation;
+    }
+
+    // $contract_days = CalendarProgramming::where('rut',$rut)->whereNotNull('contract_day_type')->get();
+    $contract_days = TheoreticalProgramming::where('rut',$rut)
+                                            ->whereNotNull('contract_day_type')
+                                            ->where('year',$year)
+                                            ->get();
+                                            // dd($contract_days);
 
 
     $monday = Carbon::parse($date)->startOfWeek();
     $sunday = Carbon::parse($date)->endOfWeek();
 
-      return view('ehr.hetg.management.theoretical_programmer', compact('request','array','contract_days','date','theoreticalProgrammings', 'rrhhs'));
+      return view('ehr.hetg.management.theoretical_programmer', compact('request','array','contract_days','date','theoreticalProgrammings', 'rrhhs','permisos_administrativos'));
       // return view('ehr.hetg.management.theoretical_programmer',compact('request','rrhhs','array','theoricalProgrammings','contracts','rut','contract_days'));
     }
 
@@ -348,20 +372,21 @@ class TheoreticalProgrammingController extends Controller
         $first_date = new Carbon($request->start_date);
         $last_date = new Carbon($request->end_date);
 
-        //solo se inserta en esta semana
-        if ($request->tipo == 1) {
+        //registro permisos administrativos
+        if ($request->tipo_evento != "teorico") {
             $theoreticalProgramming = new TheoreticalProgramming();
             $theoreticalProgramming->rut = $request->rut;
-            $theoreticalProgramming->activity_id = $request->activity_id;
+            $theoreticalProgramming->contract_day_type = $request->tipo_evento;
             $theoreticalProgramming->start_date = $first_date;
             $theoreticalProgramming->end_date = $last_date;
             $theoreticalProgramming->year = $year;
             $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
             $theoreticalProgramming->save();
         }
-        //se inserta desde esta semana hacia adelante
+        //registro de teoricos
         else {
-            while (date('Y', strtotime($first_date)) == $year) {
+            //solo se inserta en esta semana
+            if ($request->tipo_ingreso == 1) {
                 $theoreticalProgramming = new TheoreticalProgramming();
                 $theoreticalProgramming->rut = $request->rut;
                 $theoreticalProgramming->activity_id = $request->activity_id;
@@ -370,12 +395,24 @@ class TheoreticalProgrammingController extends Controller
                 $theoreticalProgramming->year = $year;
                 $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
                 $theoreticalProgramming->save();
+            }
+            //se inserta desde esta semana hacia adelante
+            else {
+                while (date('Y', strtotime($first_date)) == $year) {
+                    $theoreticalProgramming = new TheoreticalProgramming();
+                    $theoreticalProgramming->rut = $request->rut;
+                    $theoreticalProgramming->activity_id = $request->activity_id;
+                    $theoreticalProgramming->start_date = $first_date;
+                    $theoreticalProgramming->end_date = $last_date;
+                    $theoreticalProgramming->year = $year;
+                    $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+                    $theoreticalProgramming->save();
 
-                $first_date = $first_date->addWeek(1);
-                $last_date = $last_date->addWeek(1);
+                    $first_date = $first_date->addWeek(1);
+                    $last_date = $last_date->addWeek(1);
+                }
             }
         }
-
     }
 
     public function updateMyEvent(Request $request){

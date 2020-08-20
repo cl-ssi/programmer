@@ -114,11 +114,19 @@ bottom: 5px;
             <small>{{str_replace('_', ' ', $key)}}</small>
             @foreach ($contract as $key2 => $medical_programming)
               <div class='fc-event' data-event='{"title":"{{$medical_programming->activity->activity_name}}",
-                                                 "id":"{{$medical_programming->activity_id}}", "description":"1"}'>
+                                                 "id":"{{$medical_programming->activity_id}}", "description":"teorico"}'>
                   <small>{{$medical_programming->activity->activity_name}}: <span id="{{$medical_programming->activity_id}}"></span></small>
               </div>
             @endforeach
           @endforeach
+          <small>DÌAS ADMINISTRATIVOS</small>
+
+          @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+              <div class='fc-event' data-event='{"title":"{{$key}}","id":"", "description":"{{$key}}", "color": "#A6C6F1"}'>
+                  <small>{{$key}}: <span id="{{$key}}"></span></small>
+              </div>
+          @endforeach
+
       </div>
     </div>
 
@@ -166,6 +174,7 @@ bottom: 5px;
 
   <script>
 
+  //inicializa teoricos
   @foreach ($array as $key => $contract)
     @foreach ($contract as $key2 => $medical_programming)
 
@@ -181,12 +190,32 @@ bottom: 5px;
     @endforeach
   @endforeach
 
+
+  //inicializa dias ADMINISTRATIVOS
+  @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+      // ciclo para obtener totales por profesional segun eventos guardados en bd
+      var cont_eventos_bd = 0;
+      @foreach ($contract_days as $key2 => $contract_day)
+          @if($contract_day->contract_day_type == $key)
+            cont_eventos_bd+= 1;
+          @endif
+      @endforeach
+
+      var bolsa_{{$key}} = {{$permiso_administrativo}} - cont_eventos_bd;
+  @endforeach
+
   $(document).ready(function(){
 
+    //asigna teoricos
     @foreach ($array as $key => $contract)
       @foreach ($contract as $key2 => $medical_programming)
         document.getElementById("{{$medical_programming->activity_id}}").innerHTML = bolsa_{{$medical_programming->activity_id}};
       @endforeach
+    @endforeach
+
+    //asigna dias administrativos
+    @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+        document.getElementById("{{$key}}").innerHTML = bolsa_{{$key}};//{{$permiso_administrativo}};
     @endforeach
 
   });
@@ -227,10 +256,21 @@ bottom: 5px;
 
       events: [
           @foreach ($theoreticalProgrammings as $key => $theoricalProgramming)
-              { id: '{{$theoricalProgramming->activity_id}}', title: '{{$theoricalProgramming->activity->activity_name}}',
+            //teóricos
+              @if($theoricalProgramming->activity)
+                  { id: '{{$theoricalProgramming->activity_id}}', title: '{{$theoricalProgramming->activity->activity_name}}',
+                    start: '{{$theoricalProgramming->start_date}}', end: '{{$theoricalProgramming->end_date}}',
+                    description: 'teoricos'
+                  },
+              @endif
+            //administrativos
+              @if($theoricalProgramming->activity_id == null)
+              { id: '{{$theoricalProgramming->activity_id}}', title: '{{$theoricalProgramming->contract_day_type}}',
                 start: '{{$theoricalProgramming->start_date}}', end: '{{$theoricalProgramming->end_date}}',
-                description: '1'
+                description: '{{$theoricalProgramming->contract_day_type}}', color: '#A6C6F1'
               },
+              @endif
+
           @endforeach
       ],
 
@@ -302,37 +342,75 @@ bottom: 5px;
       //   });
       //
       //   console.log(info.event);
-      //   saveMyData(info.event);
+      //   saveMyTeorico(info.event);
       // },
 
       // Recepción de eventos
       eventReceive: function(info) {
         var fecha_inicio = info.event.start;
-        info.event.setEnd(add_minutes(fecha_inicio,60));
+        var tipo_evento = info.event.extendedProps.description;
 
-        if (confirm('¿Desea insertar solo en esta semana?')) {
-            saveMyData(info.event, 1);
-        } else {
-            saveMyData(info.event, 2);
-        }
+        //tipo de evento teorico
+        if (tipo_evento == 'teorico') {
+            //se verifica que no exceda el máximo
+            if (window["bolsa_" + info.event.id] != '0') {
+                //se setea evento de 60 mins
+                info.event.setEnd(add_minutes(fecha_inicio,60));
+                if (confirm('¿Desea insertar solo en esta semana?')) {
+                    saveMyData(info.event, 1, tipo_evento);
+                } else {
+                    saveMyData(info.event, 2, tipo_evento);
+                }
 
-        @foreach ($array as $key => $contract)
-          cont = 0;
-          @foreach ($contract as $key2 => $medical_programming)
-            if(info.event.id == "{{$medical_programming->activity_id}}"){
-              // if((bolsa_{{$medical_programming->activity_id}} - 1) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-              document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - 1);
-              bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - 1;
+                //actualiza bolsas de teoricos
+                @foreach ($array as $key => $contract)
+                  cont = 0;
+                  @foreach ($contract as $key2 => $medical_programming)
+                    if(info.event.id == "{{$medical_programming->activity_id}}"){
+                      // if((bolsa_{{$medical_programming->activity_id}} - 1) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+                      document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - 1);
+                      bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - 1;
+                    }
+                  @endforeach
+                @endforeach
             }
-          @endforeach
-        @endforeach
+            else{
+                alert("Excedió horas semanales contratas.");
+                info.event.remove();
+                return;
+            }
+        }
+        //tipo de evento administrativo
+        else{
+            console.log(window["bolsa_" + tipo_evento]);
+            //se verifica que no exceda el máximo
+            if (window["bolsa_" + tipo_evento] != '0') {
 
+                //se setea evento de todo el dia
+                info.event.setStart(formatDate2(fecha_inicio) + ' 00:00');
+                info.event.setEnd(formatDate2(fecha_inicio) + ' 23:59:59');
+                saveMyData(info.event, 0, tipo_evento);
+
+                //actualiza bolsas de administrativos
+                @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+                    if(tipo_evento == "{{$key}}"){
+                      document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} - 1);
+                      bolsa_{{$key}} = bolsa_{{$key}} - 1;
+                    }
+                @endforeach
+            }
+            else{
+                alert("Excedió horas semanales disponibles.");
+                info.event.remove();
+                return;
+            }
+        }
       },
 
       //######### desplazamiento de eventos
 
       eventDragStart: function(info) {
-        // console.log(info.event.start);
+        console.log(info);
         // deleteMyDataForce(info.event);
         inicio_start = info.event.start;
         termino_start = info.event.end;
@@ -342,45 +420,65 @@ bottom: 5px;
       eventDrop: function(info) {
         // console.log(info.jsEvent.clientX);
         // saveMyData(info.event);
-        if (confirm('¿Desea modificar solo este evento?')) {
-            updateMyData(info.event, 1);
-        } else {
-            updateMyData(info.event, 2);
+        var tipo_evento = info.event.extendedProps.description;
+
+        //tipo de evento teorico
+        if (tipo_evento == 'teorico') {
+            if (confirm('¿Desea modificar solo este evento?')) {
+                updateMyData(info.event, 1);
+            } else {
+                updateMyData(info.event, 2);
+            }
         }
-        console.log(info.event);
+        //tipo de evento administrativo
+        else{
+            //se setea evento de todo el dia
+            var fecha_inicio = info.event.start;
+            info.event.setStart(formatDate2(fecha_inicio) + ' 00:00');
+            info.event.setEnd(formatDate2(fecha_inicio) + ' 23:59:59');
+            updateMyData(info.event, 1);
+        }
       },
 
       eventDragStop: function(info) {
           if(isEventOverDiv(info.jsEvent.clientX, info.jsEvent.clientY)) {
-            var inicio = info.event.start;
-            var termino = info.event.end;
-            var diff =(termino.getTime() - inicio.getTime()) / 1000;
-            diff /= 60;
-            diff_ = diff/60;
-            //alert(diff_);
-            //console.log(info.event);
+              var inicio = info.event.start;
+              var termino = info.event.end;
+              var diff =(termino.getTime() - inicio.getTime()) / 1000;
+              diff /= 60;
+              diff_ = diff/60;
+              //alert(diff_);
+              //console.log(info.event);
 
-            if (confirm('¿Desea eliminar solo este evento?')) {
-                info.event.remove();
-                deleteMyData(info.event, 1);
-            } else {
-                info.event.remove();
-                deleteMyData(info.event, 2);
-            }
+              var tipo_evento = info.event.extendedProps.description;
 
-            @foreach ($array as $key => $specialty)
-              cont = 0;
-              @foreach ($specialty as $key2 => $doc)
-                if(info.event.id == "{{$doc->rut}}"){
-                  document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} + diff_);
-                  bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} + diff_;
-                }
-                cont += bolsa_{{$doc->rut}};
-              @endforeach
-              document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
-            @endforeach
+              //tipo de evento teorico
+              if (tipo_evento == 'teorico') {
+                  info.event.remove();
+                  deleteMyData(info.event, 1);
 
+                  @foreach ($array as $key => $contract)
+                    @foreach ($contract as $key2 => $medical_programming)
+                      if(info.event.id == "{{$medical_programming->activity_id}}"){
+                        document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} + diff_);
+                        bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} + diff_;
+                      }
+                    @endforeach
+                  @endforeach
+              }
+              //tipo de evento administrativo
+              else{
+                  info.event.remove();
+                  deleteMyData(info.event, 1);
 
+                  //actualiza bolsas de administrativos
+                  @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+                      if(tipo_evento == "{{$key}}"){
+                        document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} + 1);
+                        bolsa_{{$key}} = bolsa_{{$key}} + 1;
+                      }
+                  @endforeach
+              }
           }
       },
 
@@ -388,7 +486,7 @@ bottom: 5px;
         info.jsEvent.preventDefault(); // don't let the browser navigate
 
         console.log(info.event);
-        if (info.event.id) {
+        // if (info.event.id) {
             var event = calendar.getEventById(info.event.id);
 
             if(confirm("¿Desea eliminar la hora?")){
@@ -400,24 +498,42 @@ bottom: 5px;
                 //alert(diff_);
                 //console.log(info.event);
 
-                if (confirm('¿Desea eliminar solo este evento?')) {
+                var tipo_evento = info.event.extendedProps.description;
+
+                //tipo de evento teorico
+                if (tipo_evento == 'teorico') {
+                    if (confirm('¿Desea eliminar solo este evento?')) {
+                        info.event.remove();
+                        deleteMyData(info.event, 1);
+                    } else {
+                        info.event.remove();
+                        deleteMyData(info.event, 2);
+                    }
+
+                    @foreach ($array as $key => $contract)
+                      @foreach ($contract as $key2 => $medical_programming)
+                        if(info.event.id == "{{$medical_programming->activity_id}}"){
+                          document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} + diff_);
+                          bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} + diff_;
+                        }
+                      @endforeach
+                    @endforeach
+                }
+                //tipo de evento administrativo
+                else{
                     info.event.remove();
                     deleteMyData(info.event, 1);
-                } else {
-                    info.event.remove();
-                    deleteMyData(info.event, 2);
-                }
 
-                @foreach ($array as $key => $contract)
-                  @foreach ($contract as $key2 => $medical_programming)
-                    if(info.event.id == "{{$medical_programming->activity_id}}"){
-                      document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} + diff_);
-                      bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} + diff_;
-                    }
-                  @endforeach
-                @endforeach
+                    //actualiza bolsas de administrativos
+                    @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+                        if(tipo_evento == "{{$key}}"){
+                          document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} + 1);
+                          bolsa_{{$key}} = bolsa_{{$key}} + 1;
+                        }
+                    @endforeach
+                }
             }
-        }
+        // }
       },
 
       //######## redimención de eventos
@@ -441,23 +557,31 @@ bottom: 5px;
         diff /= 60;
         diff = (diff/60) - diff_;
 
-        @foreach ($array as $key => $contract)
-          @foreach ($contract as $key2 => $medical_programming)
-            if(info.event.id == "{{$medical_programming->activity_id}}"){
-              if((bolsa_{{$medical_programming->activity_id}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-              document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - diff);
-              bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - diff;
-            }
-          @endforeach
-        @endforeach
+        var tipo_evento = info.event.extendedProps.description;
+        //solo se permite modificar el tamaño a los eventos teoricos
+        if (tipo_evento == 'teorico') {
+            @foreach ($array as $key => $contract)
+              @foreach ($contract as $key2 => $medical_programming)
+                if(info.event.id == "{{$medical_programming->activity_id}}"){
+                  if((bolsa_{{$medical_programming->activity_id}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+                  document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - diff);
+                  bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - diff;
+                }
+              @endforeach
+            @endforeach
 
-        console.log(info.event);
-        // saveMyData(info.event);
-        updateMyData(info.event, 2);
+            console.log(info.event);
+            // saveMyData(info.event);
+            updateMyData(info.event, 2);
+        }else{
+            alert("No se puede modificar un evento de día administrativo.");info.revert();return;
+        }
       }
     });
 
-    function saveMyData(event, tipo) {
+    //tipo de ingreso: Evento actual - Resto del año
+    //tipo de evento: 1-Teórco , 2-Administrativo
+    function saveMyData(event, tipo_ingreso, tipo_evento) {
       let start_date = formatDateWithHour(event.start);
       let end_date = formatDateWithHour(event.end);
 
@@ -468,12 +592,30 @@ bottom: 5px;
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.saveMyEvent') }}",
           type: 'post',
-          data:{rut:rut,activity_id:activity_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
+          data:{rut:rut,activity_id:activity_id,start_date:start_date, end_date:end_date, year:year, tipo_ingreso:tipo_ingreso, tipo_evento:tipo_evento},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
       });
     }
+
+    // function saveMyAdministrativo(event) {
+    //   let start_date = formatDateWithHour(event.start);
+    //   let end_date = formatDateWithHour(event.end);
+    //
+    //   // let activity_id = event.id.toString();
+    //   var rut = {{$request->rut}};
+    //   var year = {{$request->year}};
+    //
+    //   $.ajax({
+    //       url: "{{ route('ehr.hetg.theoretical_programming.saveMyEvent') }}",
+    //       type: 'post',
+    //       data:{rut:rut,start_date:start_date, end_date:end_date, year:year},
+    //       headers: {
+    //           'X-CSRF-TOKEN': "{{ csrf_token() }}"
+    //       },
+    //   });
+    // }
 
     function updateMyData(event, tipo) {
       let start_date = formatDateWithHour(event.start);
@@ -566,7 +708,7 @@ bottom: 5px;
         if (bdweek != calendarweek) {
           // alert("Se ha actualizado la información de la semana.");
           $('#page-loader').fadeIn(500);
-          $('#date').val(formatDate2(calendar.state.currentDate));
+          $('#date').val(formatDate2MasUnDia(calendar.state.currentDate));
           $( "#form" ).submit();
 
         }
@@ -583,7 +725,7 @@ bottom: 5px;
         if (bdweek != calendarweek) {
           // alert("Se ha actualizado la información de la semana.");
           $('#page-loader').fadeIn(500);
-          $('#date').val(formatDate2(calendar.state.currentDate));
+          $('#date').val(formatDate2MasUnDia(calendar.state.currentDate));
           $( "#form" ).submit();
 
         }
@@ -616,6 +758,20 @@ bottom: 5px;
 
     //formatea la fecha YYYY-mm--dd
     function formatDate2(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + (d.getDate()),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+        return [year, month, day].join('-');
+    }
+
+    //formatea la fecha YYYY-mm--dd (le suma un día)
+    function formatDate2MasUnDia(date) {
         var d = new Date(date),
             month = '' + (d.getMonth() + 1),
             day = '' + (d.getDate() + 1),

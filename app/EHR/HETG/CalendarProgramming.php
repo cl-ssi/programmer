@@ -13,7 +13,7 @@ class CalendarProgramming extends Model
    * @var array
    */
   protected $fillable = [
-      'id', 'rut', 'specialty_id', 'operating_room_id', 'start_date', 'end_date', 'contract_day_type',  'user_id'
+      'id', 'rut', 'specialty_id', 'operating_room_id', 'start_date', 'end_date', 'user_id'
   ];
 
   public function operatingRoom() {
