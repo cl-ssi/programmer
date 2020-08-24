@@ -52,16 +52,26 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
             Route::get('/','EHR\HETG\ExecutedActivityController@index')->name('index');
         });
         Route::resource('medical_programming','EHR\HETG\MedicalProgrammingController');
+
         Route::match(['get', 'post'],'calendar_programming/saveMyEvent','EHR\HETG\CalendarProgrammingController@saveMyEvent')->name('calendar_programming.saveMyEvent');
         Route::match(['get', 'post'],'calendar_programming/deleteMyEvent','EHR\HETG\CalendarProgrammingController@deleteMyEvent')->name('calendar_programming.deleteMyEvent');
         Route::match(['get', 'post'],'calendar_programming/deleteMyEventForce','EHR\HETG\CalendarProgrammingController@deleteMyEventForce')->name('calendar_programming.deleteMyEventForce');
+
         Route::get('data/from/{Date?}','EHR\HETG\CalendarProgrammingController@getDataFromDate')->name('data.from');
         Route::match(['get', 'post'],'calendar_programming/calendar_programmer_report','EHR\HETG\CalendarProgrammingController@calendar_programmer_report')->name('calendar_programming.calendar_programmer_report');
         Route::resource('calendar_programming','EHR\HETG\CalendarProgrammingController');
+
         Route::match(['get', 'post'],'theoretical_programming/saveMyEvent','EHR\HETG\TheoreticalProgrammingController@saveMyEvent')->name('theoretical_programming.saveMyEvent');
         Route::match(['get', 'post'],'theoretical_programming/updateMyEvent','EHR\HETG\TheoreticalProgrammingController@updateMyEvent')->name('theoretical_programming.updateMyEvent');
         Route::match(['get', 'post'],'theoretical_programming/deleteMyEvent','EHR\HETG\TheoreticalProgrammingController@deleteMyEvent')->name('theoretical_programming.deleteMyEvent');
         Route::match(['get', 'post'],'theoretical_programming/deleteMyEventForce','EHR\HETG\TheoreticalProgrammingController@deleteMyEventForce')->name('theoretical_programming.deleteMyEventForce');
+
+        Route::match(['get', 'post'],'operating_room_programming/saveMyEvent','EHR\HETG\OperatingRoomProgrammingController@saveMyEvent')->name('operating_room_programming.saveMyEvent');
+        Route::match(['get', 'post'],'operating_room_programming/updateMyEvent','EHR\HETG\OperatingRoomProgrammingController@updateMyEvent')->name('operating_room_programming.updateMyEvent');
+        Route::match(['get', 'post'],'operating_room_programming/deleteMyEvent','EHR\HETG\OperatingRoomProgrammingController@deleteMyEvent')->name('operating_room_programming.deleteMyEvent');
+        Route::match(['get', 'post'],'operating_room_programming/deleteMyEventForce','EHR\HETG\OperatingRoomProgrammingController@deleteMyEventForce')->name('operating_room_programming.deleteMyEventForce');
+
+        Route::resource('operating_room_programming','EHR\HETG\OperatingRoomProgrammingController');
         Route::resource('theoretical_programming','EHR\HETG\TheoreticalProgrammingController');
         Route::resource('operating_rooms','EHR\HETG\OperatingRoomController');
         Route::prefix('management')->as('management.')->group(function(){

@@ -33,7 +33,7 @@ class CalendarProgrammingController extends Controller
       }
       else{
         $date = Carbon::now();
-        $year = $date->get('year');
+        $year = $request->get('year');
         $rut = $request->get('rut');
       }
 

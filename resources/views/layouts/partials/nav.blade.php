@@ -19,6 +19,13 @@
                     </a>
                 @endif
 
+                @if(session('profile') == "Administrador" || session('profile') == "Programador-teorico")
+                    <a class="dropdown-item"
+                        href="{{ route('ehr.hetg.operating_room_programming.index') }}">
+                        <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador de Pabellónes
+                    </a>
+                @endif
+
                 @if(session('profile') == "Administrador" || session('profile') == "Programador-pabellon")
                     <a class="dropdown-item"
                         href="{{ route('ehr.hetg.calendar_programming.index') }}">
