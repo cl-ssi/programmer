@@ -65,14 +65,16 @@ bottom: 5px;
 
 <h5 class="mb-3"></h5>
 
+<form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.theoretical_programming.index') }}">
+
 <div align="right">
   <p>
+    <input name="date2" type="date" onchange="this.form.submit()">
     <button id='prev'>Anterior</button>
     <button id='next'>Próximo</button>
   </p>
 </div>
 
-<form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.theoretical_programming.index') }}">
   {{-- <input type="hidden" id="date" name="date"/>
   <input type="hidden" id="year" name="year" value="{{$request->year}}"/>
   <input type="hidden" id="rut" name="rut" value="{{$request->rut}}"/>
@@ -141,6 +143,10 @@ bottom: 5px;
       <span class="preloader-interior"></span>
     </div>
 
+    <div id="dialog" title="Basic dialog">
+      <p>Seleccione el tipo de permiso:</p>
+    </div>
+
   @endsection
 
   @section('custom_js')
@@ -160,6 +166,9 @@ bottom: 5px;
   <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 
   {{-- <script src='{{asset('js/jquery-ui.min.js')}}'></script> --}}
+
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
   <style>
   #external-events {
@@ -197,7 +206,7 @@ bottom: 5px;
       var cont_eventos_bd = 0;
       @foreach ($contract_days as $key2 => $contract_day)
           @if($contract_day->contract_day_type == $key)
-            cont_eventos_bd+= 1;
+            cont_eventos_bd+= {{$contract_day->duration}};
           @endif
       @endforeach
 
@@ -217,6 +226,30 @@ bottom: 5px;
     @foreach ($permisos_administrativos as $key => $permiso_administrativo)
         document.getElementById("{{$key}}").innerHTML = bolsa_{{$key}};//{{$permiso_administrativo}};
     @endforeach
+
+    // $('#date2').click(function(e) {
+    //     // alert("");
+    //     $('#dialog').dialog({
+    //         'title': 'Tipo de evento',
+    //         'buttons': {
+    //             'Mañana': function(event) {
+    //                 // here is the modification of the button
+    //                 // opacity set to 25%, all events unbound
+    //                 $(event.target).css({opacity: 0.25}).unbind();
+    //             },
+    //             'Tarde': function(event) {
+    //                 // here is the modification of the button
+    //                 // opacity set to 25%, all events unbound
+    //                 $(event.target).css({opacity: 0.25}).unbind();
+    //             },
+    //             'Todo el día': function(event) {
+    //                 // here is the modification of the button
+    //                 // opacity set to 25%, all events unbound
+    //                 $(event.target).css({opacity: 0.25}).unbind();
+    //             }
+    //         }
+    //     });
+    // });
 
   });
 
@@ -247,6 +280,7 @@ bottom: 5px;
       defaultDate: '{{$date}}',
       locale: 'es', // the initial locale
       navLinks: true,
+      eventTextColor: 'white',
       header: {
         left: '',//prev,next today
         center: 'title',
@@ -382,22 +416,68 @@ bottom: 5px;
         }
         //tipo de evento administrativo
         else{
+            var cont = 0;
             console.log(window["bolsa_" + tipo_evento]);
             //se verifica que no exceda el máximo
             if (window["bolsa_" + tipo_evento] != '0') {
 
-                //se setea evento de todo el dia
-                info.event.setStart(formatDate2(fecha_inicio) + ' 00:00');
-                info.event.setEnd(formatDate2(fecha_inicio) + ' 23:59:59');
-                saveMyData(info.event, 0, tipo_evento);
+                $('#dialog').dialog({
+                    'title': 'Alerta del sistema',
+                    'buttons': {
+                        'Mañana': function(event) {
+                            $(event.target).css({opacity: 0.25}).unbind();
+                            //se setea evento de todo el dia
+                            info.event.setStart(formatDate2(fecha_inicio) + ' 00:00');
+                            info.event.setEnd(formatDate2(fecha_inicio) + ' 12:59:59');
+                            cont = 0.5;
+                            saveMyData(info.event, 0, tipo_evento);
 
-                //actualiza bolsas de administrativos
-                @foreach ($permisos_administrativos as $key => $permiso_administrativo)
-                    if(tipo_evento == "{{$key}}"){
-                      document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} - 1);
-                      bolsa_{{$key}} = bolsa_{{$key}} - 1;
+                            //actualiza bolsas de administrativos
+                            @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+                                if(tipo_evento == "{{$key}}"){
+                                  document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} - cont);
+                                  bolsa_{{$key}} = bolsa_{{$key}} - cont;
+                                }
+                            @endforeach
+                            $(this).dialog("close");
+                        },
+                        'Tarde': function(event) {
+                            $(event.target).css({opacity: 0.25}).unbind();
+                            //se setea evento de todo el dia
+                            info.event.setStart(formatDate2(fecha_inicio) + ' 13:00:00');
+                            info.event.setEnd(formatDate2(fecha_inicio) + ' 23:59:59');
+                            cont = 0.5;
+                            saveMyData(info.event, 0, tipo_evento);
+
+                            //actualiza bolsas de administrativos
+                            @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+                                if(tipo_evento == "{{$key}}"){
+                                  document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} - cont);
+                                  bolsa_{{$key}} = bolsa_{{$key}} - cont;
+                                }
+                            @endforeach
+                            $(this).dialog("close");
+                        },
+                        'Todo el día': function(event) {
+                            $(event.target).css({opacity: 0.25}).unbind();
+                            //se setea evento de todo el dia
+                            info.event.setStart(formatDate2(fecha_inicio) + ' 00:00');
+                            info.event.setEnd(formatDate2(fecha_inicio) + ' 23:59:59');
+                            cont = 1;
+                            saveMyData(info.event, 0, tipo_evento);
+
+                            //actualiza bolsas de administrativos
+                            @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+                                if(tipo_evento == "{{$key}}"){
+                                  document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} - cont);
+                                  bolsa_{{$key}} = bolsa_{{$key}} - cont;
+                                }
+                            @endforeach
+                            $(this).dialog("close");
+                        }
                     }
-                @endforeach
+                });
+
             }
             else{
                 alert("Excedió horas semanales disponibles.");
@@ -434,9 +514,9 @@ bottom: 5px;
         else{
             //se setea evento de todo el dia
             var fecha_inicio = info.event.start;
-            info.event.setStart(formatDate2(fecha_inicio) + ' 00:00');
-            info.event.setEnd(formatDate2(fecha_inicio) + ' 23:59:59');
-            updateMyData(info.event, 1);
+            info.event.setStart(formatDate2(fecha_inicio) + ' ' + formatHour(inicio_start));
+            info.event.setEnd(formatDate2(fecha_inicio) + ' ' + formatHour(termino_start));
+            // updateMyData(info.event, 1);
         }
       },
 
@@ -471,11 +551,17 @@ bottom: 5px;
                   info.event.remove();
                   deleteMyData(info.event, 1);
 
+                  //se verifica si se debe restar 0.5 hrs o 1 dia entero.
+                  var cont = 1;
+                  if (formatHour(termino_start) == '12:59' || formatHour(inicio_start) == '13:00') {
+                      cont = 0.5;
+                  }
+
                   //actualiza bolsas de administrativos
                   @foreach ($permisos_administrativos as $key => $permiso_administrativo)
                       if(tipo_evento == "{{$key}}"){
-                        document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} + 1);
-                        bolsa_{{$key}} = bolsa_{{$key}} + 1;
+                        document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} + cont);
+                        bolsa_{{$key}} = bolsa_{{$key}} + cont;
                       }
                   @endforeach
               }
@@ -524,11 +610,17 @@ bottom: 5px;
                     info.event.remove();
                     deleteMyData(info.event, 1);
 
+                    //se verifica si se debe restar 0.5 hrs o 1 dia entero.
+                    var cont = 1;
+                    if (formatHour(termino) == '12:59' || formatHour(inicio) == '13:00') {
+                        cont = 0.5;
+                    }
+
                     //actualiza bolsas de administrativos
                     @foreach ($permisos_administrativos as $key => $permiso_administrativo)
                         if(tipo_evento == "{{$key}}"){
-                          document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} + 1);
-                          bolsa_{{$key}} = bolsa_{{$key}} + 1;
+                          document.getElementById("{{$key}}").innerHTML = (bolsa_{{$key}} + cont);
+                          bolsa_{{$key}} = bolsa_{{$key}} + cont;
                         }
                     @endforeach
                 }
@@ -758,6 +850,13 @@ bottom: 5px;
               ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
               ("00" + date.getDate()).slice(-2) + "/" +
               date.getFullYear() + " " +
+              ("00" + date.getHours()).slice(-2) + ":" +
+              ("00" + date.getMinutes()).slice(-2);
+        return dateStr;
+    }
+
+    function formatHour(date) {
+        var dateStr =
               ("00" + date.getHours()).slice(-2) + ":" +
               ("00" + date.getMinutes()).slice(-2);
         return dateStr;

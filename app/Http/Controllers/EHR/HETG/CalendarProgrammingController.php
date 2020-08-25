@@ -31,9 +31,16 @@ class CalendarProgrammingController extends Controller
         $year = $request->get('year');
         $rut = $request->get('rut');
       }
+      elseif ($request->get('date2')) {
+        $date = $request->get('date2');
+        $year = $request->get('year');
+        $rut= $request->get('rut');
+      }
       else{
         $date = Carbon::now();
-        $year = $request->get('year');
+        if ($request->get('year')) {
+            $year = $request->get('year');
+        }else{$year = $date->get('year');}
         $rut = $request->get('rut');
       }
 

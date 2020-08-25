@@ -38,7 +38,9 @@ class OperatingRoomProgrammingController extends Controller
         }
         else{
           $date = Carbon::now();
-          $year = $request->get('year');
+          if ($request->get('year')) {
+              $year = $request->get('year');
+          }else{$year = $date->get('year');}
           $operating_room = $request->get('operating_room');
         }
 

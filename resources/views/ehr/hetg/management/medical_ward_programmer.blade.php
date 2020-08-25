@@ -70,7 +70,7 @@ bottom: 5px;
 <div align="right">
   <p>
     {{-- <button id='next'><i class="fas fa-calendar-alt fa-fw"></i></button> --}}
-    <input name="date2" type="date" onchange="this.form.submit()">
+    <input id="date2" name="date2" type="date" onchange="this.form.submit()">
     <button id='prev'>Anterior</button>
     <button id='next'>Próximo</button>
   </p>
@@ -165,6 +165,11 @@ bottom: 5px;
 
   <script>
 
+
+  // $( function() {
+  //   $( "#dialog" ).dialog();
+  // } );
+
   $(document).ready(function(){
 
   });
@@ -196,6 +201,7 @@ bottom: 5px;
       defaultDate: '{{$date}}',
       locale: 'es', // the initial locale
       navLinks: true,
+      eventTextColor: 'white',
       header: {
         left: '',//prev,next today
         center: 'title',
