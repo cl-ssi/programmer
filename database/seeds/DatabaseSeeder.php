@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(HmOperatingRoomsTableSeeder::class);
         $this->call(HmContractsTableSeeder::class);
         $this->call(HmMedicalProgrammingTableSeeder::class);
+        $this->call(UsersTableSeeder::class);
     }
 }
