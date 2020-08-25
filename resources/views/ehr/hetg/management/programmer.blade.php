@@ -65,14 +65,16 @@ bottom: 5px;
 
 <h5 class="mb-3"></h5>
 
+<form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.calendar_programming.index') }}">
+
 <div align="right">
   <p>
+    <input name="date2" type="date" onchange="this.form.submit()">
     <button id='prev'>Anterior</button>
     <button id='next'>Próximo</button>
   </p>
 </div>
 
-<form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.calendar_programming.index') }}">
   {{-- <input type="hidden" id="date" name="date"/>
   <input type="hidden" id="year" name="year" value="{{$request->year}}"/>
   <input type="hidden" id="rut" name="rut" value="{{$request->rut}}"/>
@@ -288,6 +290,7 @@ bottom: 5px;
       defaultDate: '{{$date}}',
       locale: 'es', // the initial locale
       navLinks: true,
+      eventTextColor: 'white',
       header: {
         left: '',//prev,next today
         center: 'title',

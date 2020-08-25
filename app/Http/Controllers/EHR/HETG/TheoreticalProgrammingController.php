@@ -29,104 +29,22 @@ class TheoreticalProgrammingController extends Controller
      */
     public function index(Request $request)
     {
-        // Storage::put('errores.txt', "asdds");
-        // for($i=$first_week;$i<=$last_week;$i++)
-        // {
-        //     $timestamp = mktime( 0, 0, 0, 1, 1,  $year ) + ( $i * 7 * 24 * 60 * 60 );
-        //     $timestamp_for_day = $timestamp - 86400 * ( date( 'N', $timestamp ) - 1 );
-        //     dd(date( 'Y-m-d', $timestamp_for_day ));
-        //     $start_date = date( 'Y-m-d', $timestamp_for_day ) . " " . $start_time;
-        //     $end_date = date( 'Y-m-d', $timestamp_for_day ) . " " . $end_time;
-        //
-        //     if (date('Y', strtotime($start_date)) == $year) {
-        //         // $theoreticalProgramming = new TheoreticalProgramming();
-        //         // $theoreticalProgramming->rut = $request->rut;
-        //         // $theoreticalProgramming->activity_id = $request->activity_id;
-        //         // $theoreticalProgramming->start_date = $start_date;
-        //         // $theoreticalProgramming->end_date = $end_date;
-        //         // $theoreticalProgramming->year = $year;
-        //         // $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
-        //         // $theoreticalProgramming->save();
-        //         print_r($start_date . " ");
-        //     }
-        // }dd("");
-
-      // if ($request->get('year')) {
-      //   $year = $request->get('year');
-      //   $rut = $request->get('rut');
-      // }
-      // else{
-      //   $date = Carbon::now();
-      //   $year = $date->format('Y');
-      //   $rut = 0;
-      // }
-      //
-      // $motherActivities = MotherActivity::where('id',2)->get();
-      // $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón teórico
-      // $theoricalProgrammings = TheoreticalProgramming::where('year',$year)
-      //                                               ->where('rut',$rut)->get();
-      //
-      // //se obtiene fechas de inicio y termino de cada isEventOverDiv
-      // foreach ($theoricalProgrammings as $key => $theoricalProgramming) {
-      //   $week_day = $theoricalProgramming->week_day;
-      //   if ($theoricalProgramming->week_day == 0) {
-      //     $week_day = 7;
-      //   }
-      //   $theoricalProgramming->start_date = "1900-01-0". $week_day . " " . $theoricalProgramming->start_time;
-      //   $theoricalProgramming->end_date = "1900-01-0". $week_day . " " . $theoricalProgramming->end_time;
-      //
-      //   $start  = new Carbon($theoricalProgramming->start_date);
-      //   $end    = new Carbon($theoricalProgramming->end_date);
-      //   $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
-      // }
-      //
-      // //obtiene información de programas médicos asignados
-      // $medicalProgrammings = MedicalProgramming::where('year',$year)
-      //                                         ->where('rut',$rut)
-      //                                         ->whereIn('activity_id',$ids_actividades)
-      //                                         ->get();
-      // $array = array();
-      // foreach ($medicalProgrammings as $key => $medicalProgramming) {
-      //   $array[$medicalProgramming->contract->first()->law] = $medicalProgrammings;
-      // }
-      //
-      // // $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
-      // //                return $query->where('year',$year);
-      // //             })->orderby('name','ASC')->get();
-      //
-      // $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
-      //                return $query;//->where('year',$year);
-      //             })->orderby('name','ASC')->get();
-      //
-      //   //información para días contrato
-      //   $contracts = Contract::where('rut',$rut)->get();
-      //   // $rut = NULL;
-      //   // if ($contracts) {
-      //   //     $rut = $contracts->first()->rut;
-      //   // }
-      //   // dd($rut);
-      //
-      //   $contract_days = CalendarProgramming::where('rut',$rut)->whereNotNull('contract_day_type')->get();
-      //   // dd($contract_days);
-      //
-      // return view('ehr.hetg.management.theoretical_programmer',compact('request','rrhhs','array','theoricalProgrammings','contracts','rut','contract_days'));
-
-
-
-
-
-
-
-
-      //primer form
+        //primer form
       if ($request->get('date')) {
         $date = $request->get('date');
         $year = $request->get('year');
         $rut = $request->get('rut');
       }
+      elseif ($request->get('date2')) {
+        $date = $request->get('date2');
+        $year = $request->get('year');
+        $rut= $request->get('rut');
+      }
       else{
         $date = Carbon::now();
-        $year = $date->get('year');
+        if ($request->get('year')) {
+            $year = $request->get('year');
+        }else{$year = $date->get('year');}
         $rut = $request->get('rut');
       }
 
@@ -138,6 +56,7 @@ class TheoreticalProgrammingController extends Controller
     // dd($monday, $sunday);
     $theoreticalProgrammings = TheoreticalProgramming::where('year',$year)
                                                   ->where('rut',$rut)
+                                                  // ->whereNull('contract_day_type')
                                                   ->whereBetween('start_date',[$monday,$sunday])
                                                   ->get();
 
@@ -147,6 +66,7 @@ class TheoreticalProgrammingController extends Controller
         $end    = new Carbon($theoricalProgramming->end_date);
         $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
       }
+      // dd($theoreticalProgrammings);
 
     //obtiene información de programas médicos asignados
     $medicalProgrammings = MedicalProgramming::where('year',$year)
@@ -188,8 +108,12 @@ class TheoreticalProgrammingController extends Controller
                                             ->whereNotNull('contract_day_type')
                                             ->where('year',$year)
                                             ->get();
-                                            // dd($contract_days);
-
+    //se obtiene duración, ya sea 0.5 dias (medio dia administrativo) o 1 del dia completo
+    foreach ($contract_days as $key => $contract_day) {
+        if (date('H:i', strtotime($contract_day->end_date)) == '12:59' || date('H:i', strtotime($contract_day->start_date)) == '13:00') {
+            $contract_day->duration = 0.5;
+        }else{$contract_day->duration = 1;}
+    }
 
     $monday = Carbon::parse($date)->startOfWeek();
     $sunday = Carbon::parse($date)->endOfWeek();

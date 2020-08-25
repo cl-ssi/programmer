@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Programador de Pabellones')
+@section('title', 'Programación de Pabellones')
 
 @section('content')
 
@@ -65,20 +65,17 @@ bottom: 5px;
 
 <h5 class="mb-3"></h5>
 
+<form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.operating_room_programming.index') }}">
+
 <div align="right">
   <p>
+    {{-- <button id='next'><i class="fas fa-calendar-alt fa-fw"></i></button> --}}
+    <input id="date2" name="date2" type="date" onchange="this.form.submit()">
     <button id='prev'>Anterior</button>
     <button id='next'>Próximo</button>
   </p>
 </div>
 
-<form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.calendar_programming.index') }}">
-  {{-- <input type="hidden" id="date" name="date"/>
-  <input type="hidden" id="year" name="year" value="{{$request->year}}"/>
-  <input type="hidden" id="rut" name="rut" value="{{$request->rut}}"/>
-</form>
-
-<form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.calendar_programming.index') }}"> --}}
   <input type="hidden" id="date" name="date"/>
   <div class="row">
     <fieldset class="form-group col-3">
@@ -94,11 +91,11 @@ bottom: 5px;
     </fieldset>
 
     <fieldset class="form-group col">
-        <label for="for_rut">Pabellón</label>
-        <select name="rut" id="rut" class="form-control selectpicker" required="" onchange="this.form.submit()" data-live-search="true" data-size="5">
-          <option value="0">Todos</option>
-          @foreach($rrhhs as $rrhh)
-            <option value="{{$rrhh->rut}}" {{ $rrhh->rut == $request->rut ? 'selected' : '' }}>{{$rrhh->getFullNameAttribute()}}</option>
+        <label for="for_operating_room">Pabellón</label>
+        <select name="operating_room" id="operating_room" class="form-control selectpicker" required="" onchange="this.form.submit()" data-live-search="true" data-size="5">
+          <option value="0"></option>
+          @foreach($operatingRooms as $operatingRoom)
+            <option value="{{$operatingRoom->id}}" {{ $operatingRoom->id == $request->operating_room ? 'selected' : '' }}>{{$operatingRoom->description}}</option>
           @endforeach
         </select>
     </fieldset>
@@ -110,50 +107,18 @@ bottom: 5px;
 
     <div id='external-events'>
       <div id='external-events-list'>
-        {{--<h4>Oftalmólogos</h4>
-        <div class='fc-event' style="background-color: #6C97AB;" data-color='#6C97AB' data-event='{"title":"Sebastian Pedreros", "color": "#6C97AB", "id":"444",  "description":"4"}'>Sebastian Pedreros: <span id="444"></span></div>
-        <div class='fc-event' style="background-color: red;" data-color='red' data-event='{"title":"Camilo Hidalgo", "color": "red", "id":"555", "description":"4"}'>Camilo Hidalgo: <span id="555"></span></div>--}}
 
-        @foreach ($array as $key => $specialty)
-          <small>{{str_replace('_', ' ', $key)}}</small>
-          @foreach ($specialty as $key2 => $doc)
-            <div data-id="{{$doc->rut}}" class='fc-event' style="background-color: #{{$doc->color}};" data-color='#{{$doc->color}}' data-event='{"title":"{{$doc->getShortNameAttribute()}}",
-                                                                                                                         "color": "#{{$doc->color}}",
-                                                                                                                         "id":"{{$doc->rut}}",
-                                                                                                                         "description":"{{$doc->specialty_id}}"}'>
-                <small>{{$doc->getShortNameAttribute()}}: <span id="{{$doc->rut}}"></span> ({{$doc->duration_medical_programming}})</small>
-            </div>
+          @foreach ($specialties as $key => $specialty)
+              <div class='fc-event' style="background-color: #{{$specialty->color}};" data-color='#{{$specialty->color}}'
+                    data-event='{"title":"{{$specialty->specialty_name}}",
+                                 "id":"{{$specialty->id}}",
+                                 "description":"{{$specialty->specialty_name}}",
+                                 "color":"#{{$specialty->color}}"}'>
+                  <small>{{$specialty->specialty_name}}</span></small>
+              </div>
           @endforeach
-        @endforeach
 
-        {{-- Se agregan vacaciones, y dias del contrato --}}
-        {{-- @if($request->rut != 0)
-          @foreach ($rrhhs as $key => $rrhh)
-            @foreach ($rrhh->contracts as $key2 => $contract)
-              {{$contract}}
-            @endforeach
-          @endforeach
-        @endif --}}
       </div>
-
-      <br><hr>
-      {{-- <h4>Traumatología</h4>
-      <div>
-        <div ><small>Hrs.Contratadas: <b>14</b></small></div>
-        <div ><small>Hrs.Disponibles: <b><span id="total_traumatologia"></span></b></small></div>
-      </div>--}}
-
-      <h4>Subtotales</h4>
-      @foreach ($array as $key => $specialty)
-        <small>{{str_replace('_', ' ', $key)}}</small>
-        <div>
-          <div><small>Hrs.Contratadas: <b><span id="total_contratadas_{{$key}}"></span></b></small></div>
-          <div><small>Hrs.Disponibles: <b><span id="total_disponibles_{{$key}}"></span></b></small></div>
-        </div>
-        <br />
-      @endforeach
-      <br>
-
     </div>
 
 
@@ -200,66 +165,12 @@ bottom: 5px;
 
   <script>
 
-  // $(function() {
-  //
-  //   $('#calendar').fullCalendar({
-  //     header: false // don't display the default header
-  //   });
-  //
-  //   $('#prev').on('click', function() {
-  //     $('#calendar').fullCalendar('prev'); // call method
-  //   });
-  //
-  //   $('#next').on('click', function() {
-  //     $('#calendar').fullCalendar('next'); // call method
-  //   });
-  //
-  // });
 
-
-  //jq13 = jQuery.noConflict(true);
-  // ################# Inicalización de datos
-
-  // var bolsa_111 = 6;
-  @foreach ($array as $key => $specialty)
-    @foreach ($specialty as $key2 => $doc)
-
-      // ciclo para obtener totales por profesional segun eventos guardados en bd
-      var cont_eventos_bd = 0;
-      @foreach ($calendarProgrammings as $key => $calendarProgramming)
-        @if($doc->rut == $calendarProgramming->rut)
-          cont_eventos_bd+= {{$calendarProgramming->duration_calendar_programming}};
-        @endif
-      @endforeach
-
-      var bolsa_{{$doc->rut}} = {{$doc->assigned_hour}} - cont_eventos_bd;
-    @endforeach
-  @endforeach
-
-  // $(document).ready(function(){
-  //   document.getElementById("111").innerHTML = bolsa_111;
-  //   document.getElementById("222").innerHTML = bolsa_222;
-  //   document.getElementById("333").innerHTML = bolsa_333;
-  //   document.getElementById("total_traumatologia").innerHTML = bolsa_111 + bolsa_222 + bolsa_333;
-  // });
+  // $( function() {
+  //   $( "#dialog" ).dialog();
+  // } );
 
   $(document).ready(function(){
-
-    //obtiene información de bolsas
-    var cont = 0;
-    var cont_contratado = 0;
-    @foreach ($array as $key => $specialty)
-      cont = 0;
-      cont_contratado = 0;
-      @foreach ($specialty as $key2 => $doc)
-        document.getElementById("{{$doc->rut}}").innerHTML = bolsa_{{$doc->rut}};
-        cont += bolsa_{{$doc->rut}};
-        cont_contratado += {{$doc->assigned_hour}};
-      @endforeach
-
-      document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
-      document.getElementById("total_contratadas_{{$key}}").innerHTML = cont_contratado;
-    @endforeach
 
   });
 
@@ -275,10 +186,12 @@ bottom: 5px;
     });
 
     var diff_ = 0;
+    var inicio_start;
+    var termino_start;
     var calendar = new FullCalendar.Calendar(calendarEl, {
       schedulerLicenseKey: '0404885988-fcs-1582214203',
       plugins: [ 'interaction', 'resourceDayGrid', 'resourceTimeGrid', 'list' ],
-      defaultView: 'resourceTimeGridDay',
+      defaultView: 'timeGridWeek',
       editable: true,
       selectable: true,
       eventLimit: true, // allow "more" link when too many events
@@ -288,243 +201,79 @@ bottom: 5px;
       defaultDate: '{{$date}}',
       locale: 'es', // the initial locale
       navLinks: true,
+      eventTextColor: 'white',
       header: {
         left: '',//prev,next today
         center: 'title',
-        right: 'resourceTimeGridDay,resourceTimeGridTwoDay,timeGridWeek,dayGridMonth'
+        right: 'timeGridWeek'//'resourceTimeGridDay,resourceTimeGridTwoDay,timeGridWeek,dayGridMonth'
       },
-      // eventBackgroundColor:'#ff0000',
-
-      // views: {
-      //   resourceTimeGridTwoDay: {
-      //     type: 'resourceTimeGrid',
-      //     duration: { days: 2 },
-      //     buttonText: '2 days',
-      //   }
-      // },
-
-      resources: [
-        @foreach ($operatingRooms as $key => $operatingRoom)
-          { id: '{{$operatingRoom->id}}', title: '{{$operatingRoom->name}}' },
-        @endforeach
-        // { id: '1', title: 'Pabellón 1' },
-      ],
+      timeZone: 'local',
 
       events: [
-
-        @foreach ($calendarProgrammings as $key => $calendarProgramming)
-          { id: '{{$calendarProgramming->rut}}', title: '{{$calendarProgramming->rrhh->getShortNameAttribute()}}',
-            color:'#{{$calendarProgramming->specialty->color}}', resourceId: '{{$calendarProgramming->operating_room_id}}',
-            start: '{{$calendarProgramming->start_date}}', end: '{{$calendarProgramming->end_date}}',
-            description: '{{$calendarProgramming->specialty_id}}'},
-        @endforeach
-
-        //Solo si es que se selecciona un profesional, se cargan sus teoricos.
-        @if($request->rut != 0)
-          @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
-            @if($theoreticalProgramming->rut == $request->rut)
-                { id:99999, title: 'teorico', rendering: 'background', overlap: false,
-                  start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'},
-            @endif
+          @foreach ($operatingRoomProgrammings as $key => $operatingRoomProgramming)
+            { id: '{{$operatingRoomProgramming->specialty_id}}', title: '{{$operatingRoomProgramming->specialty->specialty_name}}',
+              start: '{{$operatingRoomProgramming->start_date}}', end: '{{$operatingRoomProgramming->end_date}}',
+              description: 'teoricos', color:'#{{$operatingRoomProgramming->specialty->color}}'
+            },
           @endforeach
-        @endif
-
-        // Solo si es que se selecciona un profesional, se cargan sus dias de contrato (feriados, etc).
-        @if($request->rut != 0)
-          @foreach ($contract_days as $key => $contract_day)
-            @if($contract_day->rut == $request->rut)
-                { id:99999, title: 'Administrativos', rendering: 'background', overlap: false,
-                  start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'},
-            @endif
-          @endforeach
-        @endif
-
       ],
-
-      // //función que evita agregar bloque a horario teórico
-      // eventOverlap: function(stillEvent, movingEvent) {
-      //     console.log(stillEvent);
-      //     return stillEvent.rendering != "background";
-      // },
 
       navLinkDayClick: function(date, jsEvent) {
         console.log('day', date.toISOString());
         console.log('coords', jsEvent.pageX, jsEvent.pageY);
       },
 
-      // select: function(arg) {
-      //   console.log(
-      //     'select',
-      //     arg.startStr,
-      //     arg.endStr,
-      //     arg.resource ? arg.resource.id : '(no resource)'
-      //   );
-      // },
-
-      // dateClick: function(arg) {
-      //   console.log(
-      //     'dateClick',
-      //     arg.date,
-      //     arg.resource ? arg.resource.id : '(no resource)'
-      //   );
-      // },
-
-      // eventRender: function (info, element) {
-      //   console.log(info.el);
-      //   //info.el.find(".fc-event").append("<span class='close' data-id='" + info.event.id +"'>x</span>");
-      // },
-
-      // eventRender: function(info) {
-      //   var e = info.el.prepend("<span class='close' data-id='" + info.event.id +"'>x</span>");
-      //   // alert(e);
-      //     // var e = element.prepend("<span class='closeon'>&#10005;</span>");
-      //
-      //     // e.children('.closeon')
-      //     //    .attr('data-event-id', event._id)
-      //     //    .click( function() {
-      //     //       var id = $(this).attr('data-event-id');
-      //     //       $('#calendar').fullCalendar('removeEvents',id);
-      //     //    });
-      // },
-
       // Recepción de eventos
       eventReceive: function(info) {
-          console.log(calendar.component);
         var fecha_inicio = info.event.start;
+
+        //se setea evento de 60 mins
         info.event.setEnd(add_minutes(fecha_inicio,60));
+        if (confirm('¿Desea insertar solo en esta semana?')) {
+            saveMyData(info.event, 1);
+        } else {
+            saveMyData(info.event, 2);
+        }
 
-        @foreach ($array as $key => $specialty)
-          cont = 0;
-          @foreach ($specialty as $key2 => $doc)
-            if(info.event.id == "{{$doc->rut}}"){
-              // if((bolsa_111 - 1) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-              document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} - 1);
-              bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} - 1;
-            }
-            cont += bolsa_{{$doc->rut}};
-          @endforeach
-          document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
-        @endforeach
-
-
-        // Elimina eventos background
-        var events = calendar.getEvents();
-        events.forEach(function(element){
-          if(element.id == 99999 || element.id == 99998){
-             element.remove();
-          }
-        });
-
-        // if(info.event.id == "222"){
-        //   document.getElementById("222").innerHTML = (bolsa_222 - 1);
-        //   bolsa_222 = bolsa_222 - 1;
-        //   document.getElementById("total_traumatologia").innerHTML = bolsa_111 + bolsa_222 + bolsa_333;
-        // }
-
-        console.log(info.event);
-        saveMyData(info.event);
       },
 
       //######### desplazamiento de eventos
 
       eventDragStart: function(info) {
-        console.log("eventDragStart:".info.event.start);
-
-        // Elimina eventos
-        var events = calendar.getEvents();
-        events.forEach(function(element){
-          if(element.id == 99999 || element.id == 99998){
-             element.remove();
-          }
-        });
-
-        //insert eventos background
-
-        //eventos teóricos
-        var rut = info.event.id;
-        @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
-          if({{$theoreticalProgramming->rut}} == rut){
-              var event={id:99999, title: 'teorico', rendering: 'background', overlap: false,
-                        start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
-              calendar.addEvent(event);
-          }
-        @endforeach
-
-        //eventos días
-        // @foreach ($contract_days as $key => $contract_day)
-        //     if({{$contract_day->rut}} == rut){
-        //         var event={id:99999, title: 'Administrativo', rendering: 'background', overlap: false,
-        //                   start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'};
-        //         calendar.addEvent(event);
-        //     }
-        // @endforeach
-
-        deleteMyDataForce(info.event);
+        console.log(info);
+        // deleteMyDataForce(info.event);
+        inicio_start = info.event.start;
+        termino_start = info.event.end;
+        console.log(info.event);
       },
 
       eventDrop: function(info) {
-        console.log(info.jsEvent.clientX);
 
-        // Elimina eventos background
-        var events = calendar.getEvents();
-        events.forEach(function(element){
-          if(element.id == 99999 || element.id == 99998){
-             element.remove();
-          }
-        });
-
-        saveMyData(info.event);
+        if (confirm('¿Desea modificar solo este evento?')) {
+            updateMyData(info.event, 1);
+        } else {
+            updateMyData(info.event, 2);
+        }
       },
-
-      // drop: function(date, jsEvent, ui) {
-      //     $(ui.helper).remove();
-      //     $(ui.draggable).remove();
-      // },
-
-      // drop: function(date, jsEvent, ui) {
-      //     $(ui.helper).remove();
-      //     $(ui.draggable).remove();
-      // },
 
       eventDragStop: function(info) {
           if(isEventOverDiv(info.jsEvent.clientX, info.jsEvent.clientY)) {
-            var inicio = info.event.start;
-            var termino = info.event.end;
-            var diff =(termino.getTime() - inicio.getTime()) / 1000;
-            diff /= 60;
-            diff_ = diff/60;
-            //alert(diff_);
-            //console.log(info.event);
+              var inicio = info.event.start;
+              var termino = info.event.end;
+              var diff =(termino.getTime() - inicio.getTime()) / 1000;
+              diff /= 60;
+              diff_ = diff/60;
 
-            @foreach ($array as $key => $specialty)
-              cont = 0;
-              @foreach ($specialty as $key2 => $doc)
-                if(info.event.id == "{{$doc->rut}}"){
-                  document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} + diff_);
-                  bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} + diff_;
-                }
-                cont += bolsa_{{$doc->rut}};
-              @endforeach
-              document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
-            @endforeach
-
-            info.event.remove();
-            deleteMyData(info.event);
+              info.event.remove();
+              deleteMyData(info.event, 1);
           }
       },
-
-      // eventRender: function(event, element) {
-      //   element.append( "<span class='removebtn'>X</span>" );
-      //   element.find(".removebtn").click(function() {
-      //     $('#calendar').fullCalendar('removeEvents',event._id);
-      //   });
-      // },
 
       eventClick: function(info) {
         info.jsEvent.preventDefault(); // don't let the browser navigate
 
         console.log(info.event);
-        if (info.event.id) {
+        // if (info.event.id) {
             var event = calendar.getEventById(info.event.id);
 
             if(confirm("¿Desea eliminar la hora?")){
@@ -533,25 +282,16 @@ bottom: 5px;
                 var diff =(termino.getTime() - inicio.getTime()) / 1000;
                 diff /= 60;
                 diff_ = diff/60;
-                //alert(diff_);
-                //console.log(info.event);
 
-                @foreach ($array as $key => $specialty)
-                  cont = 0;
-                  @foreach ($specialty as $key2 => $doc)
-                    if(info.event.id == "{{$doc->rut}}"){
-                      document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} + diff_);
-                      bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} + diff_;
-                    }
-                    cont += bolsa_{{$doc->rut}};
-                  @endforeach
-                  document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
-                @endforeach
-
-                info.event.remove();
-                deleteMyData(info.event);
+                if (confirm('¿Desea eliminar solo este evento?')) {
+                    info.event.remove();
+                    deleteMyData(info.event, 1);
+                } else {
+                    info.event.remove();
+                    deleteMyData(info.event, 2);
+                }
             }
-        }
+        // }
       },
 
       //######## redimención de eventos
@@ -561,39 +301,11 @@ bottom: 5px;
         var diff =(termino.getTime() - inicio.getTime()) / 1000;
         diff /= 60;
         diff_ = diff/60;
-
-
-        // Elimina eventos
-        var events = calendar.getEvents();
-        events.forEach(function(element){
-          if(element.id == 99999 || element.id == 99998){
-             element.remove();
-          }
-        });
-
-        //insert eventos background
-
-        //eventos teóricos
-        var rut = info.event.id;
-        @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
-          if({{$theoreticalProgramming->rut}} == rut){
-              var event={id:99999, title: 'teorico', rendering: 'background', overlap: false,
-                        start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
-              calendar.addEvent(event);
-          }
-        @endforeach
-
-        //eventos días administrativos
-        @foreach ($contract_days as $key => $contract_day)
-            if({{$contract_day->rut}} == rut){
-                var event={id:99999, title: 'Administrativo', rendering: 'background', overlap: false,
-                          start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'};
-                calendar.addEvent(event);
-            }
-        @endforeach
+        inicio_start = info.event.start;
+        termino_start = info.event.end;
 
         console.log(info.event);
-        deleteMyDataForce(info.event);
+        // deleteMyDataForce(info.event);
       },
 
       eventResize: function(info) {
@@ -603,170 +315,92 @@ bottom: 5px;
         diff /= 60;
         diff = (diff/60) - diff_;
 
-        //info.revert();
-
-        @foreach ($array as $key => $specialty)
-          cont = 0;
-          @foreach ($specialty as $key2 => $doc)
-            if(info.event.id == "{{$doc->rut}}"){
-              if((bolsa_{{$doc->rut}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-              document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} - diff);
-              bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} - diff;
-            }
-            cont += bolsa_{{$doc->rut}};
-          @endforeach
-          document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
-        @endforeach
-
-        // Elimina eventos background
-        var events = calendar.getEvents();
-        events.forEach(function(element){
-          if(element.id == 99999 || element.id == 99998){
-             element.remove();
-          }
-        });
-
-        // if(info.event.id == "111"){
-        //   if((bolsa_111 - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-        //   document.getElementById("111").innerHTML = (bolsa_111 - diff);
-        //   bolsa_111 = bolsa_111 - diff;
-        //   document.getElementById("total_traumatologia").innerHTML = bolsa_111 + bolsa_222 + bolsa_333;
-        // }
+        if (confirm('¿Desea modificar solo este evento?')) {
+            updateMyData(info.event, 1);
+        } else {
+            updateMyData(info.event, 2);
+        }
         console.log(info.event);
-        saveMyData(info.event);
       }
     });
 
-    // al iniciar presionar en eventos externos carga theoretical programmer calendar
-    $(".fc-event").mousedown(function(event) {
+    //tipo de ingreso: Evento actual - Resto del año
+    //tipo de evento: 1-Teórco , 2-Administrativo
+    function saveMyData(event, tipo_ingreso) {
+      let start_date = formatDateWithHour(event.start);
+      let end_date = formatDateWithHour(event.end);
 
-        // Elimina eventos
-        var events = calendar.getEvents();
-        events.forEach(function(element){
-          if(element.id == 99999 || element.id == 99998){
-             element.remove();
-          }
-        });
+      let operating_room_id = {{$request->operating_room}};
+      let specialty_id = event.id.toString();
+      var year = {{$request->year}};
 
-        //insert eventos background
-
-        //eventos teóricos
-        var rut = $(this).attr('data-id');
-        @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
-          if({{$theoreticalProgramming->rut}} == rut){
-              var event={id:99999, title: 'teorico', rendering: 'background', overlap: false,
-                        start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
-                console.log(event);
-              calendar.addEvent(event);
-          }
-        @endforeach
-
-        //eventos días administrativos
-        @foreach ($contract_days as $key => $contract_day)
-            if({{$contract_day->rut}} == rut){
-                var event={id:99999, title: 'Administrativo', rendering: 'background', overlap: false,
-                          start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'};
-                calendar.addEvent(event);
-            }
-        @endforeach
-
-    });
-
-    // $( ".fc-event" ).click(function() {
-    //
-    //     // Elimina eventos
-    //     var events = calendar.getEvents();
-    //     events.forEach(function(element){
-    //       if(element.id == 99999){
-    //          element.remove();
-    //       }
-    //     });
-    //
-    //     //insert eventos background
-    //     var rut = $(this).attr('data-id');
-    //     @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
-    //       if({{$theoreticalProgramming->rut}} == rut){
-    //         @foreach ($operatingRooms as $key => $operatingRoom)
-    //           var event={id:99999, title: 'Teórico', resourceId: '{{$operatingRoom->id}}', rendering: 'background',
-    //                     start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
-    //           calendar.addEvent(event);
-    //         @endforeach
-    //       }
-    //     @endforeach
-    // });
-
-    function saveMyData(event) {
-
-      let event_start = new Date(event.start)
-      let start_date = event_start.getFullYear() + "-" + (event_start.getMonth() + 1) + "-" + event_start.getDate() + " " + event_start.getHours() + ":" + event_start.getMinutes()
-      let event_end = new Date(event.end)
-      let end_date = event_end.getFullYear() + "-" + (event_end.getMonth() + 1) + "-" + event_end.getDate() + " " + event_end.getHours() + ":" + event_end.getMinutes()
-      let operating_room_id = event.getResources().map(function(resource) { return resource.id }).toString();
-      let rut = event.id.toString();
-      let specialty_id = event.extendedProps.description.toString();
+      // alert(operating_room_id + ' ' + specialty_id+ ' ' +start_date+ ' ' + end_date+ ' ' + year+ ' ' + tipo_ingreso);
 
       $.ajax({
-          url: "{{ route('ehr.hetg.calendar_programming.saveMyEvent') }}",
+          url: "{{ route('ehr.hetg.operating_room_programming.saveMyEvent') }}",
           type: 'post',
-          data:{rut:rut,specialty_id:specialty_id,operating_room_id:operating_room_id,start_date:start_date,end_date:end_date},
+          data:{operating_room_id:operating_room_id, specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo_ingreso:tipo_ingreso},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
-          // success:function(){
-          //     alert("succes drag");
-          // },error:function(){
-          //     alert("erreur drag !!!!");
-          // }
       });
     }
 
-    function deleteMyData(event) {
+    function updateMyData(event, tipo) {
+      let start_date = formatDateWithHour(event.start);
+      let start_date_start = formatDateWithHour(inicio_start);
 
-      let event_start = new Date(event.start)
-      let start_date = event_start.getFullYear() + "-" + (event_start.getMonth() + 1) + "-" + event_start.getDate() + " " + event_start.getHours() + ":" + event_start.getMinutes()
-      let event_end = new Date(event.end)
-      let end_date = event_end.getFullYear() + "-" + (event_end.getMonth() + 1) + "-" + event_end.getDate() + " " + event_end.getHours() + ":" + event_end.getMinutes()
-      let operating_room_id = event.getResources().map(function(resource) { return resource.id }).toString();
-      let rut = event.id.toString();
-      let specialty_id = event.extendedProps.description.toString();
+      let end_date = formatDateWithHour(event.end);
+      let end_date_start = formatDateWithHour(termino_start);
+
+      // console.log(start_date_start + " " + end_date_start);
+      let operating_room_id = {{$request->operating_room}};
+      let specialty_id = event.id.toString();
+      var year = {{$request->year}};
 
       $.ajax({
-          url: "{{ route('ehr.hetg.calendar_programming.deleteMyEvent') }}",
+          url: "{{ route('ehr.hetg.operating_room_programming.updateMyEvent') }}",
           type: 'post',
-          data:{rut:rut,specialty_id:specialty_id,operating_room_id:operating_room_id,start_date:start_date,end_date:end_date},
+          data:{operating_room_id:operating_room_id, specialty_id:specialty_id,start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
-          // success:function(){
-          //     alert("succes drag");
-          // },error:function(){
-          //     alert("erreur drag !!!!");
-          // }
       });
     }
 
-    function deleteMyDataForce(event) {
+    function deleteMyData(event, tipo) {
+        let start_date = formatDateWithHour(event.start);
+        let end_date = formatDateWithHour(event.end);
 
-      let event_start = new Date(event.start)
-      let start_date = event_start.getFullYear() + "-" + (event_start.getMonth() + 1) + "-" + event_start.getDate() + " " + event_start.getHours() + ":" + event_start.getMinutes()
-      let event_end = new Date(event.end)
-      let end_date = event_end.getFullYear() + "-" + (event_end.getMonth() + 1) + "-" + event_end.getDate() + " " + event_end.getHours() + ":" + event_end.getMinutes()
-      let operating_room_id = event.getResources().map(function(resource) { return resource.id }).toString();
-      let rut = event.id.toString();
-      let specialty_id = event.extendedProps.description.toString();
+        let operating_room_id = {{$request->operating_room}};
+        let specialty_id = event.id.toString();
+        var year = {{$request->year}};
 
       $.ajax({
-          url: "{{ route('ehr.hetg.calendar_programming.deleteMyEventForce') }}",
+          url: "{{ route('ehr.hetg.operating_room_programming.deleteMyEvent') }}",
           type: 'post',
-          data:{rut:rut,specialty_id:specialty_id,operating_room_id:operating_room_id,start_date:start_date,end_date:end_date},
+          data:{operating_room_id:operating_room_id, specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
-          // success:function(){
-          //     alert("succes drag");
-          // },error:function(){
-          //     alert("erreur drag !!!!");
-          // }
+      });
+    }
+
+    function deleteMyDataForce(event, tipo) {
+        let start_date = formatDateWithHour(event.start);
+        let end_date = formatDateWithHour(event.end);
+
+        let operating_room_id = {{$request->operating_room}};
+        let specialty_id = event.id.toString();
+        var year = {{$request->year}};
+
+      $.ajax({
+          url: "{{ route('ehr.hetg.operating_room_programming.deleteMyEventForce') }}",
+          type: 'post',
+          data:{operating_room_id:operating_room_id, specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
+          headers: {
+              'X-CSRF-TOKEN': "{{ csrf_token() }}"
+          },
       });
     }
 
@@ -803,7 +437,7 @@ bottom: 5px;
         if (bdweek != calendarweek) {
           // alert("Se ha actualizado la información de la semana.");
           $('#page-loader').fadeIn(500);
-          $('#date').val(formatDate2(calendar.state.currentDate));
+          $('#date').val(formatDate2MasUnDia(calendar.state.currentDate));
           $( "#form" ).submit();
 
         }
@@ -820,7 +454,7 @@ bottom: 5px;
         if (bdweek != calendarweek) {
           // alert("Se ha actualizado la información de la semana.");
           $('#page-loader').fadeIn(500);
-          $('#date').val(formatDate2(calendar.state.currentDate));
+          $('#date').val(formatDate2MasUnDia(calendar.state.currentDate));
           $( "#form" ).submit();
 
         }
@@ -841,8 +475,32 @@ bottom: 5px;
         return [day, month, year].join('-');
     }
 
+    function formatDateWithHour(date) {
+        var dateStr =
+              ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
+              ("00" + date.getDate()).slice(-2) + "/" +
+              date.getFullYear() + " " +
+              ("00" + date.getHours()).slice(-2) + ":" +
+              ("00" + date.getMinutes()).slice(-2);
+        return dateStr;
+    }
+
     //formatea la fecha YYYY-mm--dd
     function formatDate2(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + (d.getDate()),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+        return [year, month, day].join('-');
+    }
+
+    //formatea la fecha YYYY-mm--dd (le suma un día)
+    function formatDate2MasUnDia(date) {
         var d = new Date(date),
             month = '' + (d.getMonth() + 1),
             day = '' + (d.getDate() + 1),

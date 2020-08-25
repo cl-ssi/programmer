@@ -67,15 +67,19 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('hm_weekly_programming', function (Blueprint $table) {
+        Schema::create('hm_operating_room_programming', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('activity_id')->nullable();
+
+            $table->unsignedInteger('operating_room_id')->nullable();
+            $table->unsignedInteger('specialty_id')->nullable();
+
             $table->string('start_date');
             $table->string('end_date');
             $table->integer('year')->nullable();
             $table->string('user_id');
 
-            $table->foreign('activity_id')->references('id')->on('hm_activities')->onDelete('cascade');
+            $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');
+            $table->foreign('operating_room_id')->references('id')->on('hm_operating_rooms')->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -89,7 +93,7 @@ class CreateHmOperatingRoomsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hm_weekly_programming');
+        Schema::dropIfExists('hm_operating_room_programming');
         Schema::dropIfExists('hm_theoretical_programming');
         Schema::dropIfExists('hm_calendar_programming');
         Schema::dropIfExists('hm_operating_rooms');

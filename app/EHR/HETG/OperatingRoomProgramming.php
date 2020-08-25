@@ -5,7 +5,7 @@ namespace App\EHR\HETG;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class WeeklyProgramming extends Model
+class OperatingRoomProgramming extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -13,11 +13,15 @@ class WeeklyProgramming extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'activity_id','start_date', 'end_date', 'year', 'user_id'
+        'id', 'operating_room_id', 'specialty_id','start_date', 'end_date', 'year', 'user_id'
     ];
 
-    public function activity() {
-        return $this->belongsTo('App\EHR\HETG\Activity');
+    public function specialty() {
+        return $this->belongsTo('App\EHR\HETG\Specialty');
+    }
+
+    public function operatingRoom() {
+        return $this->belongsTo('App\EHR\HETG\OperatingRoom');
     }
 
     use SoftDeletes;
@@ -33,5 +37,5 @@ class WeeklyProgramming extends Model
      *
      * @var string
      */
-    protected $table = 'hm_weekly_programming';
+    protected $table = 'hm_operating_room_programming';
 }
