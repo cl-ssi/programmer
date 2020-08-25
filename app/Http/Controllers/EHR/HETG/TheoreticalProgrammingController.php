@@ -29,6 +29,7 @@ class TheoreticalProgrammingController extends Controller
      */
     public function index(Request $request)
     {
+        // dd($request->get('date'));
         //primer form
       if ($request->get('date')) {
         $date = $request->get('date');
