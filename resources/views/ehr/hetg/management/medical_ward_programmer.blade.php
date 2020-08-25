@@ -59,7 +59,7 @@ bottom: 5px;
 
 </style>
 
-<h3 class="mb-3">Programación de Pabellones Quirúrgicos.</h3>
+<h3 class="mb-3">Programación de Pabellones.</h3>
 
 <hr>
 
@@ -207,6 +207,12 @@ bottom: 5px;
         center: 'title',
         right: 'timeGridWeek'//'resourceTimeGridDay,resourceTimeGridTwoDay,timeGridWeek,dayGridMonth'
       },
+      titleFormat: { // will produce something like "Tuesday, September 18, 2018"
+            month: 'long',
+            year: 'numeric',
+            day: 'numeric',
+            weekday: 'long'
+        },
       timeZone: 'local',
 
       events: [

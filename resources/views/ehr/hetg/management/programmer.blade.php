@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formulario de requerimiento')
+@section('title', 'Programación de Profesionales')
 
 @section('content')
 
@@ -59,7 +59,7 @@ bottom: 5px;
 
 </style>
 
-<h3 class="mb-3">Programación de Pabellones Quirúrgicos.</h3>
+<h3 class="mb-3">Programación de Profesionales.</h3>
 
 <hr>
 
@@ -70,10 +70,14 @@ bottom: 5px;
 <div align="right">
   <p>
     <input name="date2" type="date" onchange="this.form.submit()">
-    <button id='prev'>Anterior</button>
-    <button id='next'>Próximo</button>
+    <button type="button" id='prev'>Anterior</button>
+    <button type="button" id='next'>Próximo</button>
   </p>
 </div>
+
+    {{-- <div align="right">
+      <p><input name="date2" type="date" onchange="this.form.submit()"></p>
+    </div> --}}
 
   {{-- <input type="hidden" id="date" name="date"/>
   <input type="hidden" id="year" name="year" value="{{$request->year}}"/>
@@ -296,6 +300,12 @@ bottom: 5px;
         center: 'title',
         right: 'resourceTimeGridDay,resourceTimeGridTwoDay,timeGridWeek,dayGridMonth'
       },
+      titleFormat: { // will produce something like "Tuesday, September 18, 2018"
+            month: 'long',
+            year: 'numeric',
+            day: 'numeric',
+            weekday: 'long'
+        },
       // eventBackgroundColor:'#ff0000',
 
       // views: {
@@ -814,7 +824,7 @@ bottom: 5px;
     });
     $('#next').click(function(e) {
         calendar.next();
-        //console.log(calendar.state.currentDate);
+        console.log(calendar.state.currentDate);
 
         var calendar_date = formatDate(calendar.state.currentDate);
         var bdweek = {{Carbon\Carbon::parse($date)->format("W")}};
