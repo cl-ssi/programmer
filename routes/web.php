@@ -101,3 +101,5 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
 });
 
 // Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/report', 'ReportController@export')->name('report');
