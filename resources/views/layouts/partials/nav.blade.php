@@ -76,6 +76,11 @@
                             <i class="far fa-calendar-alt fa-fw"></i> Reporte 1
                         </a>
 
+                        <a class="dropdown-item"
+                            href="{{ route('ehr.hetg.management.report.reportminsal') }}">
+                            <i class="far fa-calendar-alt fa-fw"></i> Reporte Minsal
+                        </a>
+
                     </div>
                 </li>
             @endif
