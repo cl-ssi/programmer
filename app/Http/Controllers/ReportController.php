@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\EHR\HETG\Rrhh;
+use App\Exports\ReportExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
     //
 
 
-    public function export()
+    public function exportcsv()
     {
         $headers = array(
             "Content-type" => "text/csv",
@@ -53,5 +55,11 @@ class ReportController extends Controller
             fclose($file);
         };
         return response()->stream($callback, 200, $headers);
+    }
+
+
+    public function export() 
+    {
+        return Excel::download(new ReportExport, 'Planilla Programación Médica y no Médica.xlsx');
     }
 }
