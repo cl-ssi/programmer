@@ -7,6 +7,7 @@ use App\EHR\HETG\Rrhh;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ContractController extends Controller
 {
@@ -45,6 +46,7 @@ class ContractController extends Controller
     public function store(Request $request)
     {
       $contract = new Contract($request->All());
+      $contract->user_id = Auth::id();
       $contract->save();
 
       session()->flash('info', 'El contrato ha sido creado.');
@@ -84,6 +86,7 @@ class ContractController extends Controller
     public function update(Request $request, Contract $contract)
     {
         $contract->fill($request->all());
+        $contract->user_id = Auth::id();
         $contract->save();
 
         session()->flash('info', 'El contrato ha sido editado.');

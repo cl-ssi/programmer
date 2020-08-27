@@ -20,6 +20,9 @@ class CreateHmOperatingRoomsTable extends Migration
             //$table->unsignedInteger('establishment_id');
             $table->string('location')->nullable();
             $table->string('color')->nullable();
+            $table->unsignedBigInteger('user_id');
+
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -35,8 +38,9 @@ class CreateHmOperatingRoomsTable extends Migration
             // $table->enum('tipo',['legal_holidays', 'compensatory_rest', 'administrative_permit', 'training_days'])->nullable();
             // $table->string('contract_day_type');
 
-            $table->string('user_id');
+            $table->unsignedBigInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
             $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');
             $table->foreign('operating_room_id')->references('id')->on('hm_operating_rooms')->onDelete('cascade');
@@ -57,8 +61,9 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->string('contract_day_type')->nullable();
 
             $table->integer('year')->nullable();
-            $table->string('user_id');
+            $table->unsignedBigInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
             $table->foreign('activity_id')->references('id')->on('hm_activities')->onDelete('cascade');
             //$table->foreign('medical_programming_id')->references('id')->on('hm_medical_programming')->onDelete('cascade');
@@ -76,10 +81,24 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->string('start_date');
             $table->string('end_date');
             $table->integer('year')->nullable();
-            $table->string('user_id');
+            $table->unsignedBigInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');
             $table->foreign('operating_room_id')->references('id')->on('hm_operating_rooms')->onDelete('cascade');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('hm_user_specialties', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedInteger('specialty_id');
+            // $table->unsignedInteger('user_id')->nullable();
+            // $table->unsignedInteger('specialty_id')->nullable();
+
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();
@@ -93,6 +112,7 @@ class CreateHmOperatingRoomsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('hm_user_specialties');
         Schema::dropIfExists('hm_operating_room_programming');
         Schema::dropIfExists('hm_theoretical_programming');
         Schema::dropIfExists('hm_calendar_programming');

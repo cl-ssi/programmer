@@ -144,7 +144,7 @@ class OperatingRoomProgrammingController extends Controller
             $operatingRoomProgramming->start_date = $first_date;
             $operatingRoomProgramming->end_date = $last_date;
             $operatingRoomProgramming->year = $year;
-            $operatingRoomProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+            $operatingRoomProgramming->user_id = Auth::id();
             $operatingRoomProgramming->save();
         }
         //se inserta desde esta semana hacia adelante
@@ -156,7 +156,7 @@ class OperatingRoomProgrammingController extends Controller
                 $operatingRoomProgramming->start_date = $first_date;
                 $operatingRoomProgramming->end_date = $last_date;
                 $operatingRoomProgramming->year = $year;
-                $operatingRoomProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+                $operatingRoomProgramming->user_id = Auth::id();
                 $operatingRoomProgramming->save();
 
                 $first_date = $first_date->addWeek(1);

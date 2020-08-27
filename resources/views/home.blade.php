@@ -13,7 +13,8 @@
                             {{ session('status') }}
                         </div>
                     @endif
-                    Bienvenido <b>{{session('name')}}</b> - Estás identificado como <b>{{session('profile')}}</b>
+                    {{-- Bienvenido <b>{{session('name')}}</b> - Estás identificado como <b>{{session('profile')}}</b> --}}
+                    Bienvenido <b>{{Auth::user()->name}}</b>
                 </div>
             </div>
         </div>

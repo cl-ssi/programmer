@@ -33,6 +33,10 @@ class TheoreticalProgramming extends Model
       return $this->belongsTo('App\EHR\HETG\Activity');
   }
 
+  public function user() {
+      return $this->belongsTo('App\User');
+  }
+
   use SoftDeletes;
   /**
    * The attributes that should be mutated to dates.

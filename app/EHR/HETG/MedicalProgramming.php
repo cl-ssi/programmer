@@ -32,6 +32,10 @@ class MedicalProgramming extends Model
         return $this->belongsTo('App\EHR\HETG\Specialty');
     }
 
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
+
     // public function calendarProgrammings() {
     //     return $this->hasMany('App\EHR\HETG\CalendarProgramming');
     // }

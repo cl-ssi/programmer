@@ -13,7 +13,7 @@ class Specialty extends Model
    * @var array
    */
   protected $fillable = [
-      'id', 'id_n820', 'id_sigte', 'specialty_name', 'color'
+      'id', 'id_n820', 'id_sigte', 'specialty_name', 'color', 'user_id'
   ];
 
   public function medical_programmings() {
@@ -22,6 +22,14 @@ class Specialty extends Model
 
   public function calendarProgrammings() {
       return $this->hasMany('App\EHR\HETG\CalendarProgramming');
+  }
+
+  public function userSpecialties() {
+      return $this->hasMany('App\EHR\HETG\UserSpecialty');
+  }
+
+  public function user() {
+      return $this->belongsTo('App\User');
   }
 
   use SoftDeletes;

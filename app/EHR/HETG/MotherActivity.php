@@ -13,11 +13,15 @@ class MotherActivity extends Model
    * @var array
    */
   protected $fillable = [
-      'id', 'description'
+      'id', 'description', 'user_id'
   ];
 
   public function activities() {
       return $this->hasMany('App\EHR\HETG\Activity');
+  }
+
+  public function user() {
+      return $this->belongsTo('App\User');
   }
 
   use SoftDeletes;

@@ -20,7 +20,9 @@ class CreateHmRrhhTable extends Migration
             $table->string('fathers_family');
             $table->string('mothers_family')->nullable();
             $table->string('job_title');
+            $table->unsignedBigInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -44,7 +46,9 @@ class CreateHmRrhhTable extends Migration
             $table->string('unit')->nullable();
             $table->string('unit_code')->nullable();
             $table->integer('year')->nullable();
+            $table->unsignedBigInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
 
             $table->timestamps();
@@ -57,7 +61,9 @@ class CreateHmRrhhTable extends Migration
             $table->bigInteger('id_sigte')->nullable();
             $table->string('specialty_name');
             $table->string('color')->nullable();
+            $table->unsignedBigInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -65,7 +71,9 @@ class CreateHmRrhhTable extends Migration
         Schema::create('hm_mother_activities', function (Blueprint $table) {
             $table->increments('id');
             $table->string('description');
+            $table->unsignedBigInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -74,7 +82,9 @@ class CreateHmRrhhTable extends Migration
             $table->integer('id')->unsigned()->unique();
             $table->unsignedInteger('mother_activity_id')->nullable();
             $table->string('activity_name');
+            $table->unsignedBigInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('mother_activity_id')->references('id')->on('hm_mother_activities')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
@@ -90,8 +100,9 @@ class CreateHmRrhhTable extends Migration
             $table->decimal('assigned_hour', 8, 2)->nullable();
             $table->decimal('hour_performance', 8, 2)->nullable();
             $table->string('year')->nullable();
-            $table->string('user_id');
+            $table->unsignedBigInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('contract_id')->references('id')->on('hm_contracts')->onDelete('cascade');
             $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
             $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');

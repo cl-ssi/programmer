@@ -16,7 +16,7 @@ class Contract extends Model
         'id', 'rut', 'year', 'law', 'contract_id',  'weekly_hours', 'shift_system',
         'obs', 'legal_holidays', 'compensatory_rest', 'administrative_permit',
         'training_days', 'breastfeeding_time', 'weekly_collation',
-        'contract_start_date', 'contract_end_date', 'unit', 'unit_code'
+        'contract_start_date', 'contract_end_date', 'unit', 'unit_code', 'user_id'
     ];
 
     public function rrhh() {
@@ -25,6 +25,10 @@ class Contract extends Model
 
     public function medical_programmings() {
         return $this->hasMany('App\EHR\HETG\MedicalProgramming');
+    }
+
+    public function user() {
+        return $this->belongsTo('App\User');
     }
 
     use SoftDeletes;

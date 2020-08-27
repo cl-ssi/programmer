@@ -13,7 +13,7 @@ class Activity extends Model
    * @var array
    */
   protected $fillable = [
-      'id', 'mother_activity_id', 'activity_name'
+      'id', 'mother_activity_id', 'activity_name', 'user_id'
   ];
 
   public function medical_programmings() {
@@ -27,6 +27,10 @@ class Activity extends Model
   public function motherActivity() {
       return $this->belongsTo('App\EHR\HETG\MotherActivity');
   }
+
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
 
   use SoftDeletes;
   /**

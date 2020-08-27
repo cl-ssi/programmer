@@ -74,7 +74,7 @@ class CreateHmExecutedActivitiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hm_executed_activities');
+        // Schema::dropIfExists('hm_executed_activities');
         // Schema::dropIfExists('hm_specialties');
     }
 }

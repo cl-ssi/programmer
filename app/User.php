@@ -5,9 +5,11 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
+    use HasRoles;
     use Notifiable;
 
     /**
@@ -18,6 +20,54 @@ class User extends Authenticatable
     protected $fillable = [
         'id', 'name', 'email', 'password'
     ];
+
+    //relaciones
+    public function userSpecialties() {
+        return $this->hasMany('App\EHR\HETG\UserSpecialty');
+    }
+
+    public function medicalProgrammings() {
+        return $this->hasMany('App\EHR\HETG\MedicalProgramming');
+    }
+
+    public function calendarProgrammings() {
+        return $this->hasMany('App\EHR\HETG\CalendarProgramming');
+    }
+
+    public function operatingRoomProgrammings() {
+        return $this->hasMany('App\EHR\HETG\OperatingRoomProgramming');
+    }
+
+    public function theoreticalProgrammings() {
+        return $this->hasMany('App\EHR\HETG\TheoreticalProgramming');
+    }
+
+
+
+    //ingreso en mantenedores
+    public function contracts() {
+        return $this->hasMany('App\EHR\HETG\Contract');
+    }
+
+    public function activities() {
+        return $this->hasMany('App\EHR\HETG\Activity');
+    }
+
+    public function motherActivities() {
+        return $this->hasMany('App\EHR\HETG\MotherActivity');
+    }
+
+    public function rrhhs() {
+        return $this->hasMany('App\EHR\HETG\Rrhh');
+    }
+
+    public function specialties() {
+        return $this->hasMany('App\EHR\HETG\Specialty');
+    }
+
+    public function operatingRooms() {
+        return $this->hasMany('App\EHR\HETG\OperatingRoom');
+    }
 
     /**
      * The attributes that should be hidden for arrays.

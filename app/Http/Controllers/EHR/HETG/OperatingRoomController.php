@@ -15,6 +15,7 @@ use App\EHR\HETG\MedicalProgramming;
 // use App\EHR\HETG\TheoreticalProgramming;
 use App\EHR\HETG\CalendarProgramming;
 use App\EHR\HETG\Specialty;
+use Illuminate\Support\Facades\Auth;
 
 class OperatingRoomController extends Controller
 {
@@ -608,6 +609,7 @@ class OperatingRoomController extends Controller
     {
         $operatingRoom = new OperatingRoom($request->All());
         //$operatingRoom->establishment_id = 1;
+        $operatingRoom->user_id = Auth::id();
         $operatingRoom->save();
 
         return redirect()->route('ehr.hetg.operating_rooms.index');
@@ -645,6 +647,7 @@ class OperatingRoomController extends Controller
     public function update(Request $request, OperatingRoom $operatingRoom)
     {
         $operatingRoom->fill($request->all());
+        $operatingRoom->user_id = Auth::id();
         $operatingRoom->save();
 
         session()->flash('info', 'El pabellón ha sido editado.');

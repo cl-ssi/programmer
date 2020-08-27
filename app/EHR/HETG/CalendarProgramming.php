@@ -32,6 +32,10 @@ class CalendarProgramming extends Model
       return $this->belongsTo('App\EHR\HETG\Specialty');
   }
 
+  public function user() {
+      return $this->belongsTo('App\User');
+  }
+
   use SoftDeletes;
   /**
    * The attributes that should be mutated to dates.

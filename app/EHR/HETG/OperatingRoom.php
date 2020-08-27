@@ -13,11 +13,15 @@ class OperatingRoom extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'description', 'location', 'color'
+        'id', 'name', 'description', 'location', 'color', 'user_id'
     ];
 
     public function calendarProgrammings() {
         return $this->hasMany('App\EHR\HETG\CalendarProgramming');
+    }
+
+    public function user() {
+        return $this->belongsTo('App\User');
     }
 
     use SoftDeletes;

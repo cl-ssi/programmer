@@ -240,7 +240,7 @@ class TheoreticalProgrammingController extends Controller
         //### Se ingresa información del evento
         $calendarProgramming = new CalendarProgramming($request->all());
         $calendarProgramming->end_date = $request->end_date . " 23:59:59";
-        $calendarProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+        $calendarProgramming->user_id = Auth::id();
         $calendarProgramming->save();
 
         session()->flash('info', 'El evento ha sido creado.');
@@ -305,7 +305,7 @@ class TheoreticalProgrammingController extends Controller
             $theoreticalProgramming->start_date = $first_date;
             $theoreticalProgramming->end_date = $last_date;
             $theoreticalProgramming->year = $year;
-            $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+            $theoreticalProgramming->user_id = Auth::id();
             $theoreticalProgramming->save();
         }
         //registro de teoricos
@@ -318,7 +318,7 @@ class TheoreticalProgrammingController extends Controller
                 $theoreticalProgramming->start_date = $first_date;
                 $theoreticalProgramming->end_date = $last_date;
                 $theoreticalProgramming->year = $year;
-                $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+                $theoreticalProgramming->user_id = Auth::id();
                 $theoreticalProgramming->save();
             }
             //se inserta desde esta semana hacia adelante
@@ -330,7 +330,7 @@ class TheoreticalProgrammingController extends Controller
                     $theoreticalProgramming->start_date = $first_date;
                     $theoreticalProgramming->end_date = $last_date;
                     $theoreticalProgramming->year = $year;
-                    $theoreticalProgramming->user_id = session('yani_id');//Auth::user()->yani_id;//id;
+                    $theoreticalProgramming->user_id = Auth::id();
                     $theoreticalProgramming->save();
 
                     $first_date = $first_date->addWeek(1);

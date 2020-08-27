@@ -6,6 +6,7 @@ use App\EHR\HETG\MotherActivity;
 use App\EHR\HETG\Activity;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityController extends Controller
 {
@@ -40,6 +41,7 @@ class ActivityController extends Controller
     public function store(Request $request)
     {
       $activity = new Activity($request->All());
+      $activity->user_id = Auth::id();
       $activity->save();
 
       session()->flash('info', 'La actividad ha sido creada.');
@@ -79,6 +81,7 @@ class ActivityController extends Controller
     public function update(Request $request, Activity $activity)
     {
       $activity->fill($request->all());
+      $activity->user_id = Auth::id();
       $activity->save();
 
       session()->flash('info', 'La actividad ha sido editada.');

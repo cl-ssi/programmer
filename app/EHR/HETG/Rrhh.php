@@ -13,7 +13,7 @@ class Rrhh extends Model
      * @var array
      */
     protected $fillable = [
-        'rut', 'dv', 'name', 'fathers_family', 'mothers_family', 'job_title'
+        'rut', 'dv', 'name', 'fathers_family', 'mothers_family', 'job_title', 'user_id'
     ];
 
     public function executedActivities() {
@@ -37,6 +37,10 @@ class Rrhh extends Model
 
     public function theoretialProgrammings() {
         return $this->hasMany('App\EHR\HETG\TheoreticalProgramming', 'rut');
+    }
+
+    public function user() {
+        return $this->belongsTo('App\User');
     }
 
     public function getFullNameAttribute()

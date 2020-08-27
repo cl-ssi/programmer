@@ -5,6 +5,7 @@ namespace App\Http\Controllers\EHR\HETG;
 use App\EHR\HETG\Specialty;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class SpecialtyController extends Controller
 {
@@ -38,6 +39,7 @@ class SpecialtyController extends Controller
     public function store(Request $request)
     {
       $specialty = new Specialty($request->All());
+      $specialty->user_id = Auth::id();
       $specialty->save();
 
       session()->flash('info', 'La especialidad ha sido creada.');
@@ -76,6 +78,7 @@ class SpecialtyController extends Controller
     public function update(Request $request, Specialty $specialty)
     {
       $specialty->fill($request->all());
+      $specialty->user_id = Auth::id();
       $specialty->save();
 
       session()->flash('info', 'La especialidad ha sido editada.');

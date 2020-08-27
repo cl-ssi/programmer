@@ -12,29 +12,29 @@
             <!-- Left Side Of Navbar -->
 
             <ul class="navbar-nav">
-                @if(session('profile') == "Administrador" || session('profile') == "Programador-teorico")
+                @canany(['programador teorico'])
                     <a class="dropdown-item"
                         href="{{ route('ehr.hetg.theoretical_programming.index') }}">
                         <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programador Teórico
                     </a>
-                @endif
+                @endcanany
 
-                @if(session('profile') == "Administrador" || session('profile') == "Programador-teorico")
+                @canany(['programador pabellon'])
                     <a class="dropdown-item"
                         href="{{ route('ehr.hetg.operating_room_programming.index') }}">
                         <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador de Pabellónes
                     </a>
-                @endif
+                @endcanany
 
-                @if(session('profile') == "Administrador" || session('profile') == "Programador-pabellon")
+                @canany(['programador calendario'])
                     <a class="dropdown-item"
                         href="{{ route('ehr.hetg.calendar_programming.index') }}">
                         <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador Pabellón
                     </a>
-                @endif
+                @endcanany
             </ul>
 
-            @if(session('profile') == "Administrador" || session('profile') == "Reportes")
+            @canany(['reportes'])
                 <li class="navbar-nav dropdown">
 
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -83,9 +83,9 @@
 
                     </div>
                 </li>
-            @endif
+            @endcanany
 
-            @if(session('profile') == "Administrador" || session('profile') == "Mantenedores")
+            @canany(['mantenedores'])
                 <li class="navbar-nav dropdown">
 
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -132,9 +132,9 @@
 
                     </div>
                 </li>
-            @endif
+            @endcanany
 
-            {{-- <!-- Right Side Of Navbar -->
+            <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
                 <!-- Authentication Links -->
                 @guest
@@ -154,10 +154,16 @@
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            @can('administrador')
+                                <a class="nav-link" href="{{ route('parameters.index') }}">
+                                    <i class="fas fa-cog fa-fw"></i> Configuracion
+                                </a>
+                            @endcan
+
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
+                                Cerrar Sesión
                             </a>
 
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -166,7 +172,7 @@
                         </div>
                     </li>
                 @endguest
-            </ul> --}}
+            </ul>
         </div>
     </div>
 </nav>
