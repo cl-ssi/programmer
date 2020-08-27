@@ -88,6 +88,7 @@
       </div>
   </div>
 
+    <h4>Permisos</h4>
     @foreach($permissions as $permission)
     <div class="form-check">
         <input class="form-check-input" type="checkbox" name="permissions[]"
@@ -97,6 +98,20 @@
         </label>
     </div>
     @endforeach
+
+    <br />
+    <h4>Especialidades</h4>
+    @foreach($specialties as $specialty)
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="specialties[]"
+            value="{{ $specialty->id }}">
+        <label class="form-check-label">
+            {{ $specialty->specialty_name }}
+        </label>
+    </div>
+    @endforeach
+
+
 
     <button type="submit" class="btn btn-primary mt-3">Guardar</button>
 

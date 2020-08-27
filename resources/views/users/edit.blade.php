@@ -92,14 +92,26 @@
         <div class="col">
 
 
-
-            <h5>Roles:</h5>
+            <h4>Permisos</h4>
             @foreach($permissions as $permission)
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="permissions[]"
                     value="{{ $permission->name }}" {{ ($user->hasPermissionTo($permission->name))?'checked':'' }}>
                 <label class="form-check-label">
                     {{ $permission->name }}
+                </label>
+            </div>
+            @endforeach
+
+            <br />
+            <h4>Especialidades</h4>
+    
+            @foreach($specialties as $specialty)
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="specialties[]"
+                    value="{{ $specialty->id }}" {{ ($user->userSpecialties->contains('specialty_id', $specialty->id))?'checked':'' }}>
+                <label class="form-check-label">
+                    {{ $specialty->specialty_name }}
                 </label>
             </div>
             @endforeach
