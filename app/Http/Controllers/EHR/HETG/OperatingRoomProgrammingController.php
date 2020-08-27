@@ -50,7 +50,7 @@ class OperatingRoomProgrammingController extends Controller
       $monday = Carbon::parse($date)->startOfWeek();
       $sunday = Carbon::parse($date)->endOfWeek();
       // dd($monday, $sunday);
-      // dd($request->get('specialty'));
+
       $operatingRoomProgrammings = OperatingRoomProgramming::where('year',$year)
                                                     ->where('operating_room_id', $request->get('operating_room'))
                                                     ->whereBetween('start_date',[$monday,$sunday])
@@ -58,7 +58,11 @@ class OperatingRoomProgrammingController extends Controller
 
       $operatingRooms = OperatingRoom::orderBy('name','ASC')->get();
 
-      $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+      //obtengo usuario propio
+      $users = User::find(Auth::id());
+
+      //se obtienen especialidades registradas en mantenedor
+      $specialties = Specialty::whereIn('id',$users->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
 
       $monday = Carbon::parse($date)->startOfWeek();
       $sunday = Carbon::parse($date)->endOfWeek();

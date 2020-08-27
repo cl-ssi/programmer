@@ -29,7 +29,6 @@ class TheoreticalProgrammingController extends Controller
      */
     public function index(Request $request)
     {
-        // dd($request->get('date'));
         //primer form
       if ($request->get('date')) {
         $date = $request->get('date');
@@ -51,6 +50,20 @@ class TheoreticalProgrammingController extends Controller
 
     $motherActivities = MotherActivity::where('id',2)->get();
     $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón teórico
+
+    //obtengo usuario propio
+    $users = User::find(Auth::id());
+
+    //obtengo rrhh segun especalidades asociadas al usuario logeado
+    $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
+                    return $query->where('year',$year);
+                })
+                ->whereHas('medical_programmings', function ($query) use ($users) {
+                    return $query->whereHas('specialty', function ($query) use ($users) {
+                        return $query->whereIn('specialty_id',$users->getSpecialtiesArray());
+                    });
+                })
+                ->orderby('name','ASC')->get();
 
     $monday = Carbon::parse($date)->startOfWeek();
     $sunday = Carbon::parse($date)->endOfWeek();
@@ -80,9 +93,6 @@ class TheoreticalProgrammingController extends Controller
       $array[$medicalProgramming->contract->first()->law] = $medicalProgrammings;
     }
 
-    $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
-                   return $query;//->where('year',$year);
-                })->orderby('name','ASC')->get();
 
     //información para días contrato
     $contracts = Contract::where('rut',$rut)->where('year',$year)->get();

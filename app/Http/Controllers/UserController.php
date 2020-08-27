@@ -71,7 +71,7 @@ class UserController extends Controller
         //asigna especialidades
         foreach ($request->input('specialties') as $key => $value) {
             $userSpecialty = UserSpecialty::where('specialty_id',$value)
-                                          ->where('user_id', Auth::id())
+                                          ->where('user_id', $user->id)
                                           ->get();
             if ($userSpecialty->count() == 0) {
                 $userSpecialty = new UserSpecialty();
@@ -133,7 +133,7 @@ class UserController extends Controller
         //asigna especialidades
         foreach ($request->input('specialties') as $key => $value) {
             $userSpecialty = UserSpecialty::where('specialty_id',$value)
-                                          ->where('user_id', Auth::id())
+                                          ->where('user_id', $user->id)
                                           ->get();
             if ($userSpecialty->count() == 0) {
                 $userSpecialty = new UserSpecialty();

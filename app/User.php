@@ -69,6 +69,16 @@ class User extends Authenticatable
         return $this->hasMany('App\EHR\HETG\OperatingRoom');
     }
 
+
+    //funciones
+    public function getSpecialtiesArray(){
+        $array = array();
+        foreach ($this->userSpecialties as $key => $userSpecialty) {
+            $array[$key] = $userSpecialty->specialty_id;
+        }
+        return $array;
+    }
+
     /**
      * The attributes that should be hidden for arrays.
      *

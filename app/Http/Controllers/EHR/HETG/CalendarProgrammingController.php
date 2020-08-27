@@ -45,26 +45,26 @@ class CalendarProgrammingController extends Controller
         $rut = $request->get('rut');
       }
 
-      // $year = Carbon::parse($date)->format('Y');
-
-      // $ids_especialidades = array(72002,72001,74009,77002,77001);
-      // 19 CIRUGÍA GENERAL ADULTO
-      // 09	CIRUGÍA PEDIÁTRICA
-      // 15 OFTALMOLOGÍA
-      // 13 TRAUMATOLOGÍA Y ORTOPEDIA ADULTO
-      // 33 TRAUMATOLOGÍA Y ORTOPEDIA PEDIÁTRICA
-
-      /* Los ids que representan las horas de pabellón */
-      // $ids_specialities = array('9','13','15','19','33'); //variable
-      // $ids_actividades = array('6','7','8');
       $motherActivities = MotherActivity::where('id',1)->get();
       $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón
 
-      // dd($year);
+      // $rrhh = Rrhh::whereHas('contracts', function ($query) use ($year) {
+      //                return $query->where('year',$year);
+      //            })->get();
+
+      //obtengo usuario propio
+      $users = User::find(Auth::id());
+
+      //obtengo rrhh segun especalidades asociadas al usuario logeado
       $rrhh = Rrhh::whereHas('contracts', function ($query) use ($year) {
-                     return $query->where('year',$year);
-                 })->get();
-    // dd($rrhh);
+                      return $query->where('year',$year);
+                  })
+                  ->whereHas('medical_programmings', function ($query) use ($users) {
+                      return $query->whereHas('specialty', function ($query) use ($users) {
+                          return $query->whereIn('specialty_id',$users->getSpecialtiesArray());
+                      });
+                  })
+                  ->orderby('name','ASC')->get();
 
       $array = array();
       foreach ($rrhh as $key => $data) {
