@@ -15,6 +15,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Storage;
 
 class CalendarProgrammingController extends Controller
 {
@@ -96,6 +97,8 @@ class CalendarProgrammingController extends Controller
                                                   ->when($rut != 0, function ($query) use ($rut) {
                                                      return $query->where('rut',$rut);
                                                  })->get();
+
+                                                 // dd($calendarProgrammings);
 
         //días feriados, etc.
        // $contract_days = CalendarProgramming::whereBetween('start_date',[$monday,$sunday])->whereNotNull('contract_day_type')
@@ -257,6 +260,30 @@ class CalendarProgrammingController extends Controller
       $calendarProgramming = new CalendarProgramming($request->all());
       $calendarProgramming->user_id = Auth::id();
       $calendarProgramming->save();
+    }
+
+    public function updateMyEvent(Request $request){
+        try {
+          $start_date = new Carbon($request->start_date);
+          $end_date = new Carbon($request->end_date);
+          $start_date_start = new Carbon($request->start_date_start);
+          $end_date_start = new Carbon($request->end_date_start);
+
+          //modifica evento
+          $theoreticalProgramming = CalendarProgramming::where('rut',$request->rut)
+                                                       ->where('specialty_id',$request->specialty_id)
+                                                       ->where('operating_room_id',$request->operation_room_id_start)
+                                                       ->where('start_date',$start_date_start)
+                                                       ->where('end_date',$end_date_start)->first();
+                                                       // Storage::put('errores.txt', $theoreticalProgramming->count());
+          $theoreticalProgramming->start_date = $start_date;
+          $theoreticalProgramming->end_date = $end_date;
+          $theoreticalProgramming->operating_room_id = $request->operating_room_id;
+          $theoreticalProgramming->save();
+
+        } catch (\Exception $e) {
+            Storage::put('errores.txt', $e->getMessage());
+        }
     }
 
     //elimina, deja registro

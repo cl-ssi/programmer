@@ -60,6 +60,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::resource('medical_programming','EHR\HETG\MedicalProgrammingController');
 
         Route::match(['get', 'post'],'calendar_programming/saveMyEvent','EHR\HETG\CalendarProgrammingController@saveMyEvent')->name('calendar_programming.saveMyEvent');
+        Route::match(['get', 'post'],'calendar_programming/updateMyEvent','EHR\HETG\CalendarProgrammingController@updateMyEvent')->name('calendar_programming.updateMyEvent');
         Route::match(['get', 'post'],'calendar_programming/deleteMyEvent','EHR\HETG\CalendarProgrammingController@deleteMyEvent')->name('calendar_programming.deleteMyEvent');
         Route::match(['get', 'post'],'calendar_programming/deleteMyEventForce','EHR\HETG\CalendarProgrammingController@deleteMyEventForce')->name('calendar_programming.deleteMyEventForce');
 

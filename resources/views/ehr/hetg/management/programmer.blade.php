@@ -281,6 +281,9 @@ bottom: 5px;
     });
 
     var diff_ = 0;
+    var inicio_start;
+    var termino_start;
+    var operation_room_id_start;
     var calendar = new FullCalendar.Calendar(calendarEl, {
       schedulerLicenseKey: '0404885988-fcs-1582214203',
       plugins: [ 'interaction', 'resourceDayGrid', 'resourceTimeGrid', 'list' ],
@@ -410,7 +413,7 @@ bottom: 5px;
           cont = 0;
           @foreach ($specialty as $key2 => $doc)
             if(info.event.id == "{{$doc->rut}}"){
-              // if((bolsa_111 - 1) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+              if((bolsa_{{$doc->rut}} - 1) < 0){alert("Excedió horas semanales contratas.");info.event.remove();return;} //revierte si se llega a cero
               document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} - 1);
               bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} - 1;
             }
@@ -441,7 +444,6 @@ bottom: 5px;
       //######### desplazamiento de eventos
 
       eventDragStart: function(info) {
-        console.log("eventDragStart:".info.event.start);
 
         // Elimina eventos
         var events = calendar.getEvents();
@@ -450,8 +452,6 @@ bottom: 5px;
              element.remove();
           }
         });
-
-        //insert eventos background
 
         //eventos teóricos
         var rut = info.event.id;
@@ -463,21 +463,23 @@ bottom: 5px;
           }
         @endforeach
 
-        //eventos días
-        // @foreach ($contract_days as $key => $contract_day)
-        //     if({{$contract_day->rut}} == rut){
-        //         var event={id:99999, title: 'Administrativo', rendering: 'background', overlap: false,
-        //                   start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'};
-        //         calendar.addEvent(event);
-        //     }
-        // @endforeach
+        //eventos días administrativos
+        @foreach ($contract_days as $key => $contract_day)
+            if({{$contract_day->rut}} == rut){
+                var event={id:99999, title: 'Administrativo', rendering: 'background', overlap: false,
+                          start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'};
+                calendar.addEvent(event);
+            }
+        @endforeach
 
-        deleteMyDataForce(info.event);
+        console.log(info);
+        inicio_start = info.event.start;
+        termino_start = info.event.end;
+        operation_room_id_start = info.event.getResources().map(function(resource) { return resource.id }).toString();
+        // deleteMyDataForce(info.event);
       },
 
       eventDrop: function(info) {
-        console.log(info.jsEvent.clientX);
-
         // Elimina eventos background
         var events = calendar.getEvents();
         events.forEach(function(element){
@@ -486,7 +488,8 @@ bottom: 5px;
           }
         });
 
-        saveMyData(info.event);
+        // saveMyData(info.event);
+        updateMyData(info.event);
       },
 
       // drop: function(date, jsEvent, ui) {
@@ -513,6 +516,7 @@ bottom: 5px;
               cont = 0;
               @foreach ($specialty as $key2 => $doc)
                 if(info.event.id == "{{$doc->rut}}"){
+                  if((bolsa_{{$doc->rut}} - + diff_) < 0){alert("Excedió horas semanales contratas.");info.event.revert();return;}
                   document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} + diff_);
                   bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} + diff_;
                 }
@@ -575,7 +579,6 @@ bottom: 5px;
         diff /= 60;
         diff_ = diff/60;
 
-
         // Elimina eventos
         var events = calendar.getEvents();
         events.forEach(function(element){
@@ -583,8 +586,6 @@ bottom: 5px;
              element.remove();
           }
         });
-
-        //insert eventos background
 
         //eventos teóricos
         var rut = info.event.id;
@@ -605,8 +606,11 @@ bottom: 5px;
             }
         @endforeach
 
-        console.log(info.event);
-        deleteMyDataForce(info.event);
+        // console.log(info.event);
+        // deleteMyDataForce(info.event);
+        inicio_start = info.event.start;
+        termino_start = info.event.end;
+        operation_room_id_start = info.event.getResources().map(function(resource) { return resource.id }).toString();
       },
 
       eventResize: function(info) {
@@ -646,7 +650,8 @@ bottom: 5px;
         //   document.getElementById("total_traumatologia").innerHTML = bolsa_111 + bolsa_222 + bolsa_333;
         // }
         console.log(info.event);
-        saveMyData(info.event);
+        // saveMyData(info.event);
+        updateMyData(info.event);
       }
     });
 
@@ -733,6 +738,29 @@ bottom: 5px;
       });
     }
 
+    function updateMyData(event) {
+      let start_date = formatDateWithHour(event.start);
+      let start_date_start = formatDateWithHour(inicio_start);
+
+      let end_date = formatDateWithHour(event.end);
+      let end_date_start = formatDateWithHour(termino_start);
+
+      let operating_room_id = event.getResources().map(function(resource) { return resource.id }).toString();
+      let rut = event.id.toString();
+      let specialty_id = event.extendedProps.description.toString();
+
+      console.log(rut + " " + operation_room_id_start + " " + operating_room_id + " F1" + start_date_start + " F1'" + start_date + " F2" + end_date_start + " F2'"  + end_date + " " + specialty_id);
+
+      $.ajax({
+          url: "{{ route('ehr.hetg.calendar_programming.updateMyEvent') }}",
+          type: 'post',
+          data:{rut:rut,operation_room_id_start:operation_room_id_start, operating_room_id:operating_room_id,specialty_id:specialty_id,start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date},
+          headers: {
+              'X-CSRF-TOKEN': "{{ csrf_token() }}"
+          },
+      });
+    }
+
     function deleteMyData(event) {
 
       let event_start = new Date(event.start)
@@ -781,6 +809,16 @@ bottom: 5px;
           //     alert("erreur drag !!!!");
           // }
       });
+    }
+
+    function formatDateWithHour(date) {
+        var dateStr =
+              ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
+              ("00" + date.getDate()).slice(-2) + "/" +
+              date.getFullYear() + " " +
+              ("00" + date.getHours()).slice(-2) + ":" +
+              ("00" + date.getMinutes()).slice(-2);
+        return dateStr;
     }
 
     var isEventOverDiv = function(x, y) {

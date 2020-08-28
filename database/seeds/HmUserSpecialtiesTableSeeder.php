@@ -52,5 +52,13 @@ class HmUserSpecialtiesTableSeeder extends Seeder
         UserSpecialty::Create(['user_id' => 1,'specialty_id'=>38]);
         UserSpecialty::Create(['user_id' => 1,'specialty_id'=>39]);
         UserSpecialty::Create(['user_id' => 1,'specialty_id'=>40]);
+
+        UserSpecialty::Create(['user_id' => 2,'specialty_id'=>13]);
+
+        UserSpecialty::Create(['user_id' => 3,'specialty_id'=>15]);
+
+        UserSpecialty::Create(['user_id' => 4,'specialty_id'=>13]);
+        UserSpecialty::Create(['user_id' => 4,'specialty_id'=>33]);
+
     }
 }
