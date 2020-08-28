@@ -408,7 +408,23 @@ bottom: 5px;
           console.log(calendar.component);
         var fecha_inicio = info.event.start;
         info.event.setEnd(add_minutes(fecha_inicio,60));
+        var fecha_termino = info.event.end;
 
+        //verifica que no exista un evento en la misma hora en otro pabellón
+        @foreach ($calendarProgrammings as $key => $calendarProgramming)
+            if ('{{$calendarProgramming->rut}}' == info.event.id.toString()) {
+                if ((formatDateWithHour2(fecha_inicio) >= "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_inicio) < "{{$calendarProgramming->end_date}}") ||
+                    (formatDateWithHour2(fecha_termino) > "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_termino) <= "{{$calendarProgramming->end_date}}") ||
+                    (formatDateWithHour2(fecha_inicio) < "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_termino) > "{{$calendarProgramming->end_date}}")) {
+                    alert("Ya existe un evento en esa hora para el profesional.");
+                    info.event.remove();
+                    return;
+                }
+            }
+        @endforeach
+
+        //verifica cantidad  bolsa semanal
+        //realiza el descuento
         @foreach ($array as $key => $specialty)
           cont = 0;
           @foreach ($specialty as $key2 => $doc)
@@ -422,6 +438,9 @@ bottom: 5px;
           document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
         @endforeach
 
+        //guarda evento
+        console.log(info.event);
+        saveMyData(info.event);
 
         // Elimina eventos background
         var events = calendar.getEvents();
@@ -431,14 +450,6 @@ bottom: 5px;
           }
         });
 
-        // if(info.event.id == "222"){
-        //   document.getElementById("222").innerHTML = (bolsa_222 - 1);
-        //   bolsa_222 = bolsa_222 - 1;
-        //   document.getElementById("total_traumatologia").innerHTML = bolsa_111 + bolsa_222 + bolsa_333;
-        // }
-
-        console.log(info.event);
-        saveMyData(info.event);
       },
 
       //######### desplazamiento de eventos
@@ -487,6 +498,28 @@ bottom: 5px;
              element.remove();
           }
         });
+
+
+        //verifica que no exista un evento en la misma hora en otro pabellón
+        var fecha_inicio = info.event.start;
+        var fecha_termino = info.event.end;
+
+        @foreach ($calendarProgrammings as $key => $calendarProgramming)
+            if ('{{$calendarProgramming->rut}}' == info.event.id.toString()) {
+
+                if ((formatDateWithHour2(fecha_inicio) >= "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_inicio) < "{{$calendarProgramming->end_date}}") ||
+                    (formatDateWithHour2(fecha_termino) > "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_termino) <= "{{$calendarProgramming->end_date}}") ||
+                    (formatDateWithHour2(fecha_inicio) < "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_termino) > "{{$calendarProgramming->end_date}}")) {
+                    // alert(formatDateWithHour2(fecha_inicio) + " " + "{{$calendarProgramming->start_date}}" + " " + formatDateWithHour2(fecha_termino) + " " + "{{$calendarProgramming->end_date}}");
+                    alert("Ya existe un evento en esa hora para el profesional.");
+                    // info.event.revert();
+                    info.event.setStart(inicio_start);
+                    info.event.setEnd(termino_start);
+                    info.event.setResources(operation_room_id_start);
+                    return;
+                }
+            }
+        @endforeach
 
         // saveMyData(info.event);
         updateMyData(info.event);
@@ -622,6 +655,23 @@ bottom: 5px;
 
         //info.revert();
 
+        //verifica que no exista un evento en la misma hora en otro pabellón
+        @foreach ($calendarProgrammings as $key => $calendarProgramming)
+            if ('{{$calendarProgramming->rut}}' == info.event.id.toString()) {
+                if ((formatDateWithHour2(inicio) >= "{{$calendarProgramming->start_date}}" && formatDateWithHour2(inicio) < "{{$calendarProgramming->end_date}}") ||
+                    (formatDateWithHour2(termino) > "{{$calendarProgramming->start_date}}" && formatDateWithHour2(termino) <= "{{$calendarProgramming->end_date}}") ||
+                    (formatDateWithHour2(inicio) < "{{$calendarProgramming->start_date}}" && formatDateWithHour2(termino) > "{{$calendarProgramming->end_date}}")) {
+                    alert("Existe un evento en para el profesional en la hora que intenta modificar.");
+                    // info.event.revert();
+                    info.event.setStart(inicio_start);
+                    info.event.setEnd(termino_start);
+                    info.event.setResources(operation_room_id_start);
+                    return;
+                }
+            }
+        @endforeach
+
+        //verifica y obtiene bolsas
         @foreach ($array as $key => $specialty)
           cont = 0;
           @foreach ($specialty as $key2 => $doc)
@@ -811,16 +861,6 @@ bottom: 5px;
       });
     }
 
-    function formatDateWithHour(date) {
-        var dateStr =
-              ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
-              ("00" + date.getDate()).slice(-2) + "/" +
-              date.getFullYear() + " " +
-              ("00" + date.getHours()).slice(-2) + ":" +
-              ("00" + date.getMinutes()).slice(-2);
-        return dateStr;
-    }
-
     var isEventOverDiv = function(x, y) {
         var external_events = $( '#external-events' );
         var offset = external_events.offset();
@@ -904,6 +944,26 @@ bottom: 5px;
         if (day.length < 2)
             day = '0' + day;
         return [year, month, day].join('-');
+    }
+
+    function formatDateWithHour(date) {
+        var dateStr =
+              ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
+              ("00" + date.getDate()).slice(-2) + "/" +
+              date.getFullYear() + " " +
+              ("00" + date.getHours()).slice(-2) + ":" +
+              ("00" + date.getMinutes()).slice(-2);
+        return dateStr;
+    }
+
+    function formatDateWithHour2(date) {
+        var dateStr =
+              date.getFullYear() + "-" +
+              ("00" + (date.getMonth() + 1)).slice(-2) + "-" +
+               ("00" + date.getDate()).slice(-2) + " " +
+              ("00" + date.getHours()).slice(-2) + ":" +
+              ("00" + date.getMinutes()).slice(-2) + ":00";
+        return dateStr;
     }
 
     //obtiene numero de la semana del año

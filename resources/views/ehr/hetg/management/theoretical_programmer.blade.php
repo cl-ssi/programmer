@@ -660,13 +660,6 @@ bottom: 5px;
         //solo se permite modificar el tamaño a los eventos teoricos
         if (tipo_evento == 'teorico') {
 
-            console.log(info.event);
-            if (confirm('¿Desea modificar solo este evento?')) {
-                updateMyData(info.event, 1);
-            }else{
-                updateMyData(info.event, 1);
-            }
-
             @foreach ($array as $key => $contract)
               @foreach ($contract as $key2 => $medical_programming)
                 if(info.event.id == "{{$medical_programming->activity_id}}"){
@@ -677,6 +670,12 @@ bottom: 5px;
               @endforeach
             @endforeach
 
+            console.log(info.event);
+            if (confirm('¿Desea modificar solo este evento?')) {
+                updateMyData(info.event, 1);
+            }else{
+                updateMyData(info.event, 1);
+            }
 
         }else{
             alert("No se puede modificar un evento de día administrativo.");info.revert();return;
