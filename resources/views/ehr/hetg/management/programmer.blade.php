@@ -405,23 +405,31 @@ bottom: 5px;
 
       // Recepción de eventos
       eventReceive: function(info) {
-          console.log(calendar.component);
+          // console.log(calendar.component);
         var fecha_inicio = info.event.start;
         info.event.setEnd(add_minutes(fecha_inicio,60));
         var fecha_termino = info.event.end;
 
         //verifica que no exista un evento en la misma hora en otro pabellón
-        @foreach ($calendarProgrammings as $key => $calendarProgramming)
-            if ('{{$calendarProgramming->rut}}' == info.event.id.toString()) {
-                if ((formatDateWithHour2(fecha_inicio) >= "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_inicio) < "{{$calendarProgramming->end_date}}") ||
-                    (formatDateWithHour2(fecha_termino) > "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_termino) <= "{{$calendarProgramming->end_date}}") ||
-                    (formatDateWithHour2(fecha_inicio) < "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_termino) > "{{$calendarProgramming->end_date}}")) {
-                    alert("Ya existe un evento en esa hora para el profesional.");
-                    info.event.remove();
-                    return;
+        var events = calendar.getEvents();
+        events.forEach(function(element){
+            //se verifica que no sea teorico ni administrativo
+            if(!(element.id == 99999 || element.id == 99998)){
+                //se verifica que sea la misma persona
+                if (element.id == info.event.id.toString()) {
+                    //se excluye el último evento (se consiera en todos los eventos del calendario)
+                    if (formatDateWithHour2(element.start) != formatDateWithHour2(fecha_inicio) && formatDateWithHour2(element.end) != formatDateWithHour2(fecha_termino)) {
+                        if ((formatDateWithHour2(fecha_inicio) >= formatDateWithHour2(element.start) && formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.end)) ||
+                            (formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) <= formatDateWithHour2(element.end)) ||
+                            (formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.end))) {
+                            alert("Ya existe un evento en esa hora para el profesional.");
+                            info.event.remove();
+                            return;
+                        }
+                    }
                 }
             }
-        @endforeach
+        });
 
         //verifica cantidad  bolsa semanal
         //realiza el descuento
@@ -499,27 +507,31 @@ bottom: 5px;
           }
         });
 
-
         //verifica que no exista un evento en la misma hora en otro pabellón
         var fecha_inicio = info.event.start;
         var fecha_termino = info.event.end;
-
-        @foreach ($calendarProgrammings as $key => $calendarProgramming)
-            if ('{{$calendarProgramming->rut}}' == info.event.id.toString()) {
-
-                if ((formatDateWithHour2(fecha_inicio) >= "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_inicio) < "{{$calendarProgramming->end_date}}") ||
-                    (formatDateWithHour2(fecha_termino) > "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_termino) <= "{{$calendarProgramming->end_date}}") ||
-                    (formatDateWithHour2(fecha_inicio) < "{{$calendarProgramming->start_date}}" && formatDateWithHour2(fecha_termino) > "{{$calendarProgramming->end_date}}")) {
-                    // alert(formatDateWithHour2(fecha_inicio) + " " + "{{$calendarProgramming->start_date}}" + " " + formatDateWithHour2(fecha_termino) + " " + "{{$calendarProgramming->end_date}}");
-                    alert("Ya existe un evento en esa hora para el profesional.");
-                    // info.event.revert();
-                    info.event.setStart(inicio_start);
-                    info.event.setEnd(termino_start);
-                    info.event.setResources(operation_room_id_start);
-                    return;
+        var events = calendar.getEvents();
+        events.forEach(function(element){
+            //se verifica que no sea teorico ni administrativo
+            if(!(element.id == 99999 || element.id == 99998)){
+                //se verifica que sea la misma persona
+                if (element.id == info.event.id.toString()) {
+                    //se excluye el último evento (se consiera en todos los eventos del calendario)
+                    if (formatDateWithHour2(element.start) != formatDateWithHour2(fecha_inicio) && formatDateWithHour2(element.end) != formatDateWithHour2(fecha_termino)) {
+                        if ((formatDateWithHour2(fecha_inicio) >= formatDateWithHour2(element.start) && formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.end)) ||
+                            (formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) <= formatDateWithHour2(element.end)) ||
+                            (formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.end))) {
+                                alert("Ya existe un evento en esa hora para el profesional.");
+                                info.event.setStart(inicio_start);
+                                info.event.setEnd(termino_start);
+                                info.event.setResources(operation_room_id_start);
+                                alert("sale");
+                                return;
+                        }
+                    }
                 }
             }
-        @endforeach
+        });
 
         // saveMyData(info.event);
         updateMyData(info.event);
@@ -647,29 +659,35 @@ bottom: 5px;
       },
 
       eventResize: function(info) {
-        var inicio = info.event.start;
-        var termino = info.event.end;
-        var diff =(termino.getTime() - inicio.getTime()) / 1000;
+        var fecha_inicio = info.event.start;
+        var fecha_termino = info.event.end;
+        var diff =(fecha_termino.getTime() - fecha_inicio.getTime()) / 1000;
         diff /= 60;
         diff = (diff/60) - diff_;
 
-        //info.revert();
-
         //verifica que no exista un evento en la misma hora en otro pabellón
-        @foreach ($calendarProgrammings as $key => $calendarProgramming)
-            if ('{{$calendarProgramming->rut}}' == info.event.id.toString()) {
-                if ((formatDateWithHour2(inicio) >= "{{$calendarProgramming->start_date}}" && formatDateWithHour2(inicio) < "{{$calendarProgramming->end_date}}") ||
-                    (formatDateWithHour2(termino) > "{{$calendarProgramming->start_date}}" && formatDateWithHour2(termino) <= "{{$calendarProgramming->end_date}}") ||
-                    (formatDateWithHour2(inicio) < "{{$calendarProgramming->start_date}}" && formatDateWithHour2(termino) > "{{$calendarProgramming->end_date}}")) {
-                    alert("Existe un evento en para el profesional en la hora que intenta modificar.");
-                    // info.event.revert();
-                    info.event.setStart(inicio_start);
-                    info.event.setEnd(termino_start);
-                    info.event.setResources(operation_room_id_start);
-                    return;
+        var events = calendar.getEvents();
+        events.forEach(function(element){
+            //se verifica que no sea teorico ni administrativo
+            if(!(element.id == 99999 || element.id == 99998)){
+                //se verifica que sea la misma persona
+                if (element.id == info.event.id.toString()) {
+                    //se excluye el último evento (se consiera en todos los eventos del calendario)
+                    if (formatDateWithHour2(element.start) != formatDateWithHour2(fecha_inicio) && formatDateWithHour2(element.end) != formatDateWithHour2(fecha_termino)) {
+                        //validacion
+                        if ((formatDateWithHour2(fecha_inicio) >= formatDateWithHour2(element.start) && formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.end)) ||
+                            (formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) <= formatDateWithHour2(element.end)) ||
+                            (formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.end))) {
+                                alert("Existe un evento en para el profesional en la hora que intenta modificar.");
+                                info.event.setStart(inicio_start);
+                                info.event.setEnd(termino_start);
+                                info.event.setResources(operation_room_id_start);
+                                return;
+                        }
+                    }
                 }
             }
-        @endforeach
+        });
 
         //verifica y obtiene bolsas
         @foreach ($array as $key => $specialty)
