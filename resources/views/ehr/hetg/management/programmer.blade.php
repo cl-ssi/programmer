@@ -427,7 +427,6 @@ bottom: 5px;
                     // alert(formatDateWithHour2(element.start) +"<br />"+ formatDateWithHour2(fecha_inicio) +"<br />"+ formatDateWithHour2(element.end) +"<br />"+ formatDateWithHour2(fecha_termino));
                     //se excluye el último evento (se consiera en todos los eventos del calendario)
                     // if (formatDateWithHour2(element.start) != formatDateWithHour2(fecha_inicio) && formatDateWithHour2(element.end) != formatDateWithHour2(fecha_termino)) {
-                    // alert(info.event.start);
                     if(info.event.start != "1900-01-01 00:00"){
                         if ((formatDateWithHour2(fecha_inicio) >= formatDateWithHour2(element.start) && formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.end)) ||
                             (formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) <= formatDateWithHour2(element.end)) ||
