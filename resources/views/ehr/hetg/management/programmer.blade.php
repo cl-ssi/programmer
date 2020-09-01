@@ -410,15 +410,25 @@ bottom: 5px;
         info.event.setEnd(add_minutes(fecha_inicio,60));
         var fecha_termino = info.event.end;
 
+        //obtiene id para generar validación.
+        var aux = info.event.start;
+        info.event.setStart('1900-01-01 00:00');
+        // alert(info.event.start);
+        // return;
+
         //verifica que no exista un evento en la misma hora en otro pabellón
         var events = calendar.getEvents();
+        console.log(events);
         events.forEach(function(element){
             //se verifica que no sea teorico ni administrativo
             if(!(element.id == 99999 || element.id == 99998)){
                 //se verifica que sea la misma persona
                 if (element.id == info.event.id.toString()) {
+                    // alert(formatDateWithHour2(element.start) +"<br />"+ formatDateWithHour2(fecha_inicio) +"<br />"+ formatDateWithHour2(element.end) +"<br />"+ formatDateWithHour2(fecha_termino));
                     //se excluye el último evento (se consiera en todos los eventos del calendario)
-                    if (formatDateWithHour2(element.start) != formatDateWithHour2(fecha_inicio) && formatDateWithHour2(element.end) != formatDateWithHour2(fecha_termino)) {
+                    // if (formatDateWithHour2(element.start) != formatDateWithHour2(fecha_inicio) && formatDateWithHour2(element.end) != formatDateWithHour2(fecha_termino)) {
+                    // alert(info.event.start);
+                    if(info.event.start != "1900-01-01 00:00"){
                         if ((formatDateWithHour2(fecha_inicio) >= formatDateWithHour2(element.start) && formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.end)) ||
                             (formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) <= formatDateWithHour2(element.end)) ||
                             (formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.end))) {
@@ -430,6 +440,9 @@ bottom: 5px;
                 }
             }
         });
+
+        //vuelve a dejar fecha inicial
+        // info.event.setStart(aux);
 
         //verifica cantidad  bolsa semanal
         //realiza el descuento
