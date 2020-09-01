@@ -411,12 +411,11 @@ bottom: 5px;
         var fecha_termino = info.event.end;
 
         //obtiene id para generar validación.
-        var aux = info.event.start;
-        info.event.setStart('1900-01-01 00:00');
-        // alert(info.event.start);
-        // return;
+        // var aux = info.event.start;
+        // info.event.setStart('1900-01-01 00:00');
 
         //verifica que no exista un evento en la misma hora en otro pabellón
+        var flag = 0;
         var events = calendar.getEvents();
         console.log(events);
         events.forEach(function(element){
@@ -426,13 +425,14 @@ bottom: 5px;
                 if (element.id == info.event.id.toString()) {
                     // alert(formatDateWithHour2(element.start) +"<br />"+ formatDateWithHour2(fecha_inicio) +"<br />"+ formatDateWithHour2(element.end) +"<br />"+ formatDateWithHour2(fecha_termino));
                     //se excluye el último evento (se consiera en todos los eventos del calendario)
-                    // if (formatDateWithHour2(element.start) != formatDateWithHour2(fecha_inicio) && formatDateWithHour2(element.end) != formatDateWithHour2(fecha_termino)) {
-                    if(info.event.start != "1900-01-01 00:00"){
+                    if (formatDateWithHour2(element.start) != formatDateWithHour2(fecha_inicio) && formatDateWithHour2(element.end) != formatDateWithHour2(fecha_termino)) {
+                    // if(info.event.start != "1900-01-01 00:00"){
                         if ((formatDateWithHour2(fecha_inicio) >= formatDateWithHour2(element.start) && formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.end)) ||
                             (formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) <= formatDateWithHour2(element.end)) ||
                             (formatDateWithHour2(fecha_inicio) < formatDateWithHour2(element.start) && formatDateWithHour2(fecha_termino) > formatDateWithHour2(element.end))) {
                             alert("Ya existe un evento en esa hora para el profesional.");
                             info.event.remove();
+                            flag = 1;
                             return;
                         }
                     }
@@ -440,8 +440,8 @@ bottom: 5px;
             }
         });
 
-        //vuelve a dejar fecha inicial
-        // info.event.setStart(aux);
+        //validacion: no sigue y no guarda evento
+        if (flag == 1) {return;}
 
         //verifica cantidad  bolsa semanal
         //realiza el descuento
@@ -520,6 +520,7 @@ bottom: 5px;
         });
 
         //verifica que no exista un evento en la misma hora en otro pabellón
+        var flag = 0;
         var fecha_inicio = info.event.start;
         var fecha_termino = info.event.end;
         var events = calendar.getEvents();
@@ -537,13 +538,16 @@ bottom: 5px;
                                 info.event.setStart(inicio_start);
                                 info.event.setEnd(termino_start);
                                 info.event.setResources(operation_room_id_start);
-                                alert("sale");
+                                flag = 1;
                                 return;
                         }
                     }
                 }
             }
         });
+
+        //validacion
+        if (flag == 1) {return;}
 
         // saveMyData(info.event);
         updateMyData(info.event);
@@ -678,6 +682,7 @@ bottom: 5px;
         diff = (diff/60) - diff_;
 
         //verifica que no exista un evento en la misma hora en otro pabellón
+        var flag = 0;
         var events = calendar.getEvents();
         events.forEach(function(element){
             //se verifica que no sea teorico ni administrativo
@@ -694,12 +699,16 @@ bottom: 5px;
                                 info.event.setStart(inicio_start);
                                 info.event.setEnd(termino_start);
                                 info.event.setResources(operation_room_id_start);
+                                flag = 1;
                                 return;
                         }
                     }
                 }
             }
         });
+
+        //validacion
+        if (flag == 1) {return;}
 
         //verifica y obtiene bolsas
         @foreach ($array as $key => $specialty)
