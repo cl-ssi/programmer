@@ -90,9 +90,8 @@ class TheoreticalProgrammingController extends Controller
     $array = array();
     // dd($medicalProgrammings);
     foreach ($medicalProgrammings as $key => $medicalProgramming) {
-      $array[$medicalProgramming->contract->first()->law] = $medicalProgrammings;
+      $array[$medicalProgramming->contract->law] = $medicalProgrammings->where('contract_id',$medicalProgramming->contract_id);
     }
-
 
     //información para días contrato
     $contracts = Contract::where('rut',$rut)->where('year',$year)->get();
