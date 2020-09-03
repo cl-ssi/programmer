@@ -14,8 +14,13 @@ class CreateHmRrhhTable extends Migration
     public function up()
     {
         Schema::create('hm_rrhh', function (Blueprint $table) {
+            $table->integer('id_deis')->nullable();
+            $table->integer('cod_estab_sirh')->nullable();
             $table->integer('rut')->unsigned()->unique();
             $table->char('dv',1);
+            $table->boolean('risk_group')->default(0);
+            $table->boolean('missing_condition')->default(0);
+            $table->string('missing_reason')->nullable();
             $table->string('name');
             $table->string('fathers_family');
             $table->string('mothers_family')->nullable();
