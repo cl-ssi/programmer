@@ -6,16 +6,16 @@
 
 <script src="{{ asset('js/colorpicker/jscolor.js') }}"></script>
 
-<h3 class="mb-3">Nueva Especialidad</h3>
+<h3 class="mb-3">Nueva Profesión</h3>
 
-<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.specialties.store') }}">
+<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.professions.store') }}">
     @csrf
     @method('POST')
 
     <div class="row">
         <fieldset class="form-group col">
-            <label for="for_id_specialty">id_specialty</label>
-            <input type="text" class="form-control" id="for_id_specialty" name="id_specialty" required>
+            <label for="for_id_profession">id_Profession</label>
+            <input type="text" class="form-control" id="for_id_profession" name="id_profession" required>
         </fieldset>
 
         {{-- <fieldset class="form-group col">
@@ -26,8 +26,8 @@
 
     <div class="row">
         <fieldset class="form-group col">
-            <label for="for_specialty_name">Especialidad</label>
-            <input type="text" class="form-control" id="for_specialty_name" placeholder="" name="specialty_name" required>
+            <label for="for_profession_name">Profesión</label>
+            <input type="text" class="form-control" id="for_profession_name" placeholder="" name="profession_name" required>
         </fieldset>
 
         <fieldset class="form-group col-4">

@@ -13,7 +13,7 @@ class Specialty extends Model
    * @var array
    */
   protected $fillable = [
-      'id', 'id_n820', 'id_sigte', 'specialty_name', 'color', 'user_id'
+      'id', 'id_specialty', 'specialty_name', 'color', 'user_id'
   ];
 
   public function medical_programmings() {

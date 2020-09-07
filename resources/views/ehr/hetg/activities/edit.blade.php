@@ -12,8 +12,8 @@
 
     <div class="row">
         <fieldset class="form-group col-2">
-            <label for="for_id">Id</label>
-            <input type="text" class="form-control" id="for_id" placeholder="" name="id" required value="{{$activity->id}}">
+            <label for="for_id_actividad">id_actividad</label>
+            <input type="text" class="form-control" id="for_id_actividad" placeholder="" name="id_activity" required value="{{$activity->id_activity}}">
         </fieldset>
 
         <fieldset class="form-group col">
@@ -22,6 +22,16 @@
               <option value="">--</option>
               @foreach ($motherActivities as $key => $motherActivity)
                 <option value="{{$motherActivity->id}}" {{ $activity->mother_activity_id == $motherActivity->id ? 'selected' : '' }}>{{$motherActivity->description}}</option>
+              @endforeach
+            </select>
+        </fieldset>
+
+        <fieldset class="form-group col">
+            <label for="for_activity_type_id">Tipo de actividad</label>
+            <select name="activity_type_id" id="for_activity_type_id" class="form-control">
+              <option value="">--</option>
+              @foreach ($activityTypes as $key => $activityType)
+                <option value="{{$activityType->id}}" {{ $activity->activity_type_id == $activityType->id ? 'selected' : '' }}>{{$activityType->name}}</option>
               @endforeach
             </select>
         </fieldset>

@@ -60,12 +60,14 @@ class CalendarProgrammingController extends Controller
       $rrhh = Rrhh::whereHas('contracts', function ($query) use ($year) {
                       return $query->where('year',$year);
                   })
-                  ->whereHas('medical_programmings', function ($query) use ($users) {
-                      return $query->whereHas('specialty', function ($query) use ($users) {
-                          return $query->whereIn('specialty_id',$users->getSpecialtiesArray());
-                      });
-                  })
+                  // ->whereHas('medical_programmings', function ($query) use ($users) {
+                  //     return $query->whereHas('specialty', function ($query) use ($users) {
+                  //         return $query->whereIn('specialty_id',$users->getSpecialtiesArray());
+                  //     });
+                  // })
                   ->orderby('name','ASC')->get();
+                  // dd($rrhh);
+
 
       $array = array();
       foreach ($rrhh as $key => $data) {

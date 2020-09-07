@@ -6,16 +6,16 @@
 
 <script src="{{ asset('js/colorpicker/jscolor.js') }}"></script>
 
-<h3 class="mb-3">Editar Especialidad</h3>
+<h3 class="mb-3">Editar Profesión</h3>
 
-<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.specialties.update', $specialty) }}">
+<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.professions.update', $profession) }}">
     @csrf
     @method('PUT')
 
     <div class="row">
         <fieldset class="form-group col">
-            <label for="for_id_specialty">id_specialty</label>
-            <input type="text" class="form-control" id="for_id_specialty" name="id_id_specialty" required value="{{$specialty->id_specialty}}">
+            <label for="for_id_profession">id_profession</label>
+            <input type="text" class="form-control" id="for_id_profession" name="id_profession" required value="{{$profession->id_profession}}">
         </fieldset>
 
         {{-- <fieldset class="form-group col">
@@ -26,13 +26,13 @@
 
     <div class="row">
         <fieldset class="form-group col">
-            <label for="for_specialty_name">Especialidad</label>
-            <input type="text" class="form-control" id="for_specialty_name" placeholder="" name="specialty_name" required value="{{$specialty->specialty_name}}">
+            <label for="for_profession_name">Profesión</label>
+            <input type="text" class="form-control" id="for_profession_name" placeholder="" name="profession_name" required value="{{$profession->profession_name}}">
         </fieldset>
 
         <fieldset class="form-group col">
             <label for="for_name">Color</label>
-            <input class="form-control jscolor" id="color" name="color" required="" value="{{$specialty->color}}" onchange="update(this.jscolor)">
+            <input class="form-control jscolor" id="color" name="color" required="" value="{{$profession->color}}" onchange="update(this.jscolor)">
         </fieldset>
     </div>
 

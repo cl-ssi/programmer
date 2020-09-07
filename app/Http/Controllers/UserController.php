@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\EHR\HETG\Specialty;
+use App\EHR\HETG\Profession;
 use App\EHR\HETG\UserSpecialty;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -45,8 +46,9 @@ class UserController extends Controller
     {
         $permissions = Permission::OrderBy('name')->get();
         $specialties = Specialty::OrderBy('specialty_name')->get();
+        $professions = Profession::OrderBy('profession_name')->get();
 
-        return view('users.create', compact('permissions','specialties'));
+        return view('users.create', compact('permissions','specialties','professions'));
     }
 
     /**

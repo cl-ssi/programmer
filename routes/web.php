@@ -52,6 +52,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::resource('rrhh','EHR\HETG\RrhhController');
         Route::resource('contracts','EHR\HETG\ContractController');
         Route::resource('specialties','EHR\HETG\SpecialtyController');
+        Route::resource('professions','EHR\HETG\ProfessionController');
         Route::resource('activities','EHR\HETG\ActivityController');
         Route::resource('mother_activities','EHR\HETG\MotherActivityController');
         Route::prefix('executed_activities')->as('executed_activities.')->group(function(){

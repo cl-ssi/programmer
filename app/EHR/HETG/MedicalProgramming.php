@@ -13,7 +13,7 @@ class MedicalProgramming extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'contract_id', 'rut', 'specialty_id', 'activity_id', 'assigned_hour', 'hour_performance', 'year', 'user_id'
+        'id', 'contract_id', 'rut', 'specialty_id', 'profession_id',  'activity_id', 'assigned_hour', 'hour_performance', 'year', 'user_id'
     ];
 
     public function rrhh() {

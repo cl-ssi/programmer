@@ -61,19 +61,7 @@ bottom: 5px;
 
 <h3 class="mb-3">Programación de Horario Teórico.</h3>
 
-<hr>
-
-<h5 class="mb-3"></h5>
-
 <form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.theoretical_programming.index') }}">
-
-<div align="right">
-  <p>
-    <input name="date2" type="date" onchange="this.form.submit()">
-    <button id='prev'>Anterior</button>
-    <button id='next'>Próximo</button>
-  </p>
-</div>
 
   {{-- <input type="hidden" id="date" name="date"/>
   <input type="hidden" id="year" name="year" value="{{$request->year}}"/>
@@ -98,53 +86,191 @@ bottom: 5px;
     <fieldset class="form-group col">
         <label for="for_rut">Especialista</label>
         <select name="rut" id="rut" class="form-control selectpicker" required="" onchange="this.form.submit()" data-live-search="true" data-size="5">
-          <option value="0"></option>
+          <option>--</option>
           @foreach($rrhhs as $rrhh)
             <option value="{{$rrhh->rut}}" {{ $rrhh->rut == $request->rut ? 'selected' : '' }}>{{$rrhh->getFullNameAttribute()}}</option>
           @endforeach
         </select>
     </fieldset>
 
-  </div>
-</form>
-
-  <div id='wrap'>
-
-    <div id='external-events'>
-      <div id='external-events-list'>
-          @foreach ($array as $key => $contract)
-            <small>{{str_replace('_', ' ', $key)}}</small>
-            @foreach ($contract as $key2 => $medical_programming)
-              <div class='fc-event' data-event='{"title":"{{$medical_programming->activity->activity_name}}",
-                                                 "id":"{{$medical_programming->activity_id}}", "description":"teorico"}'>
-                  <small>{{$medical_programming->activity->activity_name}}: <span id="{{$medical_programming->activity_id}}"></span></small>
-              </div>
+    <fieldset class="form-group col">
+        <label for="for_contract_id">Contrato</label>
+        <select name="contract_id" id="for_contract_id" class="form-control" required="" onchange="this.form.submit()">
+            @foreach($contracts as $contract)
+              <option value="{{$contract->id}}" {{ $contract->id == $request->contract_id ? 'selected' : '' }}>{{$contract->law}}</option>
             @endforeach
+        </select>
+    </fieldset>
+
+    <fieldset class="form-group col">
+        <label for="for_specialty_id">Especialidad</label>
+        <select name="specialty_id" id="for_specialty_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
+          @foreach($specialties as $specialty)
+            <option value="{{$specialty->id}}" {{ $specialty->id == $request->specialty_id ? 'selected' : '' }}>{{$specialty->specialty_name}}</option>
           @endforeach
-          <small>DÌAS ADMINISTRATIVOS</small>
+        </select>
+    </fieldset>
 
-          @foreach ($permisos_administrativos as $key => $permiso_administrativo)
-              <div class='fc-event' data-event='{"title":"{{$key}}","id":"", "description":"{{$key}}", "color": "#A6C6F1"}'>
-                  <small>{{$key}}: <span id="{{$key}}"></span></small>
-              </div>
-          @endforeach
+    <fieldset class="form-group col">
+        <label for="for_contract_id">Hrs</label><br />
+        @if($contracts->count() > 0)
 
-      </div>
-    </div>
-
-
-    <div id='calendar'></div>
-
-    <div style='clear:both'></div>
+            <span id="disponible_contrato"></span> /
+            <b><span id="total_contrato">{{$contracts->first()->weekly_hours}}</span></b>
+        @endif
+    </fieldset>
 
   </div>
+
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Programable</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">No programable</a>
+  </li>
+</ul>
+
+
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+      <br />
+
+      <div align="right">
+        <p>
+          <input name="date2" type="date" onchange="this.form.submit()">
+          <button id='prev'>Anterior</button>
+          <button id='next'>Próximo</button>
+        </p>
+      </div>
+
+      </form>
+
+        <div id='wrap'>
+
+        <div id='external-events'>
+            <div id='external-events-list'>
+
+                <small>ACTIVIDADES</small>
+
+                @foreach ($activities as $key => $activity)
+                    <div class='fc-event' data-event='{"title":"{{$activity->activity_name}}",
+                                                       "id":"{{$activity->id}}", "description":"teorico"}'>
+                        <small>{{$activity->activity_name}}: <span id="{{$activity->id}}"></span></small>
+                    </div>
+                @endforeach
+
+                <small>DÌAS ADMINISTRATIVOS</small>
+
+                @foreach ($permisos_administrativos as $key => $permiso_administrativo)
+                    <div class='fc-event' data-event='{"title":"{{$key}}","id":"", "description":"{{$key}}", "color": "#A6C6F1"}'>
+                        <small>{{$key}}: <span id="{{$key}}"></span></small>
+                    </div>
+                @endforeach
+
+            </div>
+        </div>
+
+
+        <div id='calendar'></div>
+        <div style='clear:both'></div>
+        <div id="dialog" title="Basic dialog">
+          <p>Seleccione el tipo de permiso:</p>
+        </div>
+
+        </div>
+
+  </div>
+
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+      <br />
+      <table class="table table-sm table-borderer">
+          <thead>
+              <tr>
+                  <th>Id contrato</th>
+                  <th>Especialista</th>
+                  <th>Especialidad</th>
+                  <th>Actividad</th>
+                  <th>Horas Asignadas</th>
+                  <th>Horas Performance</th>
+                  <th></th>
+              </tr>
+          </thead>
+          <tbody>
+              @foreach( $programming as $row )
+              <tr>
+                  <td>{{ $row->contract->contract_id }}</td>
+                  <td>{{ $row->rrhh->getFullNameAttribute() }}</td>
+                  <td>{{ $row->specialty->specialty_name }}</td>
+                  <td>{{ $row->activity->activity_name }}</td>
+                  <td>{{ $row->assigned_hour }}</td>
+                  <td>{{ $row->hour_performance }}</td>
+                  <td nowrap>
+            				<a href="{{ route('ehr.hetg.medical_programming.edit', $row) }}"
+            					class="btn btn-sm btn-outline-secondary">
+            					<span class="fas fa-edit" aria-hidden="true"></span>
+            				</a>
+            				<form method="POST" action="{{ route('ehr.hetg.medical_programming.destroy', $row) }}" class="d-inline">
+            					@csrf
+            					@method('DELETE')
+            					<button type="submit" class="btn btn-outline-secondary btn-sm" onclick="return confirm('¿Está seguro de eliminar la información?');">
+            						<span class="fas fa-trash-alt" aria-hidden="true"></span>
+            					</button>
+            				</form>
+            			</td>
+              </tr>
+              @endforeach
+          </tbody>
+      </table>
+
+      {{-- formulario ingreso no programable --}}
+
+      <form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.medical_programming.store') }}">
+          @csrf
+          @method('POST')
+
+          <input type="hidden" id="year" name="year" value="{{$request->year}}"/>
+          <input type="hidden" id="rut" name="rut" value="{{$request->rut}}"/>
+          <input type="hidden" id="contract_id" name="contract_id" value="{{$request->contract_id}}"/>
+          <input type="hidden" id="specialty_id" name="specialty_id" value="{{$request->specialty_id}}"/>
+
+          <div class="row">
+
+            <fieldset class="form-group col">
+                <label for="for_activity_id">Actividad</label>
+                <select name="activity_id" id="for_activity_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5">
+                  @foreach($activities as $activity)
+                    <option value="{{$activity->id}}">{{$activity->id}} - {{$activity->activity_name}}</option>
+                  @endforeach
+                </select>
+            </fieldset>
+
+            <fieldset class="form-group col">
+                <label for="for_assigned_hour">Horas Asignadas</label>
+                <input type="text" class="form-control" id="for_assigned_hour" placeholder="" name="assigned_hour" required>
+            </fieldset>
+
+            <fieldset class="form-group col">
+                <label for="for_hour_performance">Rdto. por Hora</label>
+                <input type="text" class="form-control" id="for_hour_performance" placeholder="" name="hour_performance">
+            </fieldset>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Guardar</button>
+
+      </form>
+
+  </div>
+</div>
+
+
+
 
     <div id="page-loader" style="display: none">
       <span class="preloader-interior"></span>
-    </div>
-
-    <div id="dialog" title="Basic dialog">
-      <p>Seleccione el tipo de permiso:</p>
     </div>
 
   @endsection
@@ -183,20 +309,32 @@ bottom: 5px;
 
   <script>
 
-  //inicializa teoricos
-  @foreach ($array as $key => $contract)
-    @foreach ($contract as $key2 => $medical_programming)
+  // //inicializa teoricos
+  // @foreach ($array as $key => $contract)
+  //   @foreach ($contract as $key2 => $medical_programming)
+  //
+  //     // ciclo para obtener totales por profesional segun eventos guardados en bd
+  //     var cont_eventos_bd = 0;
+  //     @foreach ($theoreticalProgrammings as $key => $theoricalProgramming)
+  //       @if($medical_programming->activity_id == $theoricalProgramming->activity_id)
+  //         cont_eventos_bd+= {{$theoricalProgramming->duration_theorical_programming}};
+  //       @endif
+  //     @endforeach
+  //
+  //     var bolsa_{{$medical_programming->activity_id}} = {{$medical_programming->assigned_hour}} - cont_eventos_bd;
+  //   @endforeach
+  // @endforeach
 
+  var disponible_contrato = 0;
+  @foreach ($activities as $key => $activity)
       // ciclo para obtener totales por profesional segun eventos guardados en bd
       var cont_eventos_bd = 0;
       @foreach ($theoreticalProgrammings as $key => $theoricalProgramming)
-        @if($medical_programming->activity_id == $theoricalProgramming->activity_id)
+        @if($activity->id == $theoricalProgramming->activity_id)
           cont_eventos_bd+= {{$theoricalProgramming->duration_theorical_programming}};
         @endif
       @endforeach
-
-      var bolsa_{{$medical_programming->activity_id}} = {{$medical_programming->assigned_hour}} - cont_eventos_bd;
-    @endforeach
+      var bolsa_{{$activity->id}} = cont_eventos_bd;
   @endforeach
 
 
@@ -215,41 +353,23 @@ bottom: 5px;
 
   $(document).ready(function(){
 
-    //asigna teoricos
-    @foreach ($array as $key => $contract)
-      @foreach ($contract as $key2 => $medical_programming)
-        document.getElementById("{{$medical_programming->activity_id}}").innerHTML = bolsa_{{$medical_programming->activity_id}};
-      @endforeach
+    // //asigna teoricos
+    // @foreach ($array as $key => $contract)
+    //   @foreach ($contract as $key2 => $medical_programming)
+    //     document.getElementById("{{$medical_programming->activity_id}}").innerHTML = bolsa_{{$medical_programming->activity_id}};
+    //   @endforeach
+    // @endforeach
+
+    @foreach ($activities as $key => $activity)
+        document.getElementById("{{$activity->id}}").innerHTML = bolsa_{{$activity->id}};
+        disponible_contrato += bolsa_{{$activity->id}};
     @endforeach
+    document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
 
     //asigna dias administrativos
     @foreach ($permisos_administrativos as $key => $permiso_administrativo)
         document.getElementById("{{$key}}").innerHTML = bolsa_{{$key}};//{{$permiso_administrativo}};
     @endforeach
-
-    // $('#date2').click(function(e) {
-    //     // alert("");
-    //     $('#dialog').dialog({
-    //         'title': 'Tipo de evento',
-    //         'buttons': {
-    //             'Mañana': function(event) {
-    //                 // here is the modification of the button
-    //                 // opacity set to 25%, all events unbound
-    //                 $(event.target).css({opacity: 0.25}).unbind();
-    //             },
-    //             'Tarde': function(event) {
-    //                 // here is the modification of the button
-    //                 // opacity set to 25%, all events unbound
-    //                 $(event.target).css({opacity: 0.25}).unbind();
-    //             },
-    //             'Todo el día': function(event) {
-    //                 // here is the modification of the button
-    //                 // opacity set to 25%, all events unbound
-    //                 $(event.target).css({opacity: 0.25}).unbind();
-    //             }
-    //         }
-    //     });
-    // });
 
   });
 
@@ -393,7 +513,7 @@ bottom: 5px;
         //tipo de evento teorico
         if (tipo_evento == 'teorico') {
             //se verifica que no exceda el máximo
-            if (window["bolsa_" + info.event.id] != '0') {
+            // if (window["bolsa_" + info.event.id] != '0') {
                 //se setea evento de 60 mins
                 info.event.setEnd(add_minutes(fecha_inicio,60));
                 if (confirm('¿Desea insertar solo en esta semana?')) {
@@ -402,23 +522,33 @@ bottom: 5px;
                     saveMyData(info.event, 2, tipo_evento);
                 }
 
-                //actualiza bolsas de teoricos
-                @foreach ($array as $key => $contract)
-                  cont = 0;
-                  @foreach ($contract as $key2 => $medical_programming)
-                    if(info.event.id == "{{$medical_programming->activity_id}}"){
-                      // if((bolsa_{{$medical_programming->activity_id}} - 1) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-                      document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - 1);
-                      bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - 1;
+                // //actualiza bolsas de teoricos
+                // @foreach ($array as $key => $contract)
+                //   cont = 0;
+                //   @foreach ($contract as $key2 => $medical_programming)
+                //     if(info.event.id == "{{$medical_programming->activity_id}}"){
+                //       // if((bolsa_{{$medical_programming->activity_id}} - 1) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+                //       document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - 1);
+                //       bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - 1;
+                //     }
+                //   @endforeach
+                // @endforeach
+
+                @foreach ($activities as $key => $activity)
+                    if(info.event.id == "{{$activity->id}}"){
+                      document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + 1);
+                      bolsa_{{$activity->id}} = bolsa_{{$activity->id}} + 1;
+
+                      disponible_contrato = disponible_contrato + 1;
+                      document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
                     }
-                  @endforeach
                 @endforeach
-            }
-            else{
-                alert("Excedió horas semanales contratas.");
-                info.event.remove();
-                return;
-            }
+            // }
+            // else{
+            //     alert("Excedió horas semanales contratas.");
+            //     info.event.remove();
+            //     return;
+            // }
         }
         //tipo de evento administrativo
         else{
@@ -486,7 +616,7 @@ bottom: 5px;
 
             }
             else{
-                alert("Excedió horas semanales disponibles.");
+                alert("No dispone de días administrativos.");
                 info.event.remove();
                 return;
             }
@@ -543,13 +673,23 @@ bottom: 5px;
                   info.event.remove();
                   deleteMyData(info.event, 1);
 
-                  @foreach ($array as $key => $contract)
-                    @foreach ($contract as $key2 => $medical_programming)
-                      if(info.event.id == "{{$medical_programming->activity_id}}"){
-                        document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} + diff_);
-                        bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} + diff_;
+                  // @foreach ($array as $key => $contract)
+                  //   @foreach ($contract as $key2 => $medical_programming)
+                  //     if(info.event.id == "{{$medical_programming->activity_id}}"){
+                  //       document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} + diff_);
+                  //       bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} + diff_;
+                  //     }
+                  //   @endforeach
+                  // @endforeach
+
+                  @foreach ($activities as $key => $activity)
+                      if(info.event.id == "{{$activity->id}}"){
+                        document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} - diff_);
+                        bolsa_{{$activity->id}} = bolsa_{{$activity->id}} - diff_;
+
+                        disponible_contrato = disponible_contrato - diff_;
+                        document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
                       }
-                    @endforeach
                   @endforeach
               }
               //tipo de evento administrativo
@@ -602,13 +742,23 @@ bottom: 5px;
                         deleteMyData(info.event, 2);
                     }
 
-                    @foreach ($array as $key => $contract)
-                      @foreach ($contract as $key2 => $medical_programming)
-                        if(info.event.id == "{{$medical_programming->activity_id}}"){
-                          document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} + diff_);
-                          bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} + diff_;
+                    // @foreach ($array as $key => $contract)
+                    //   @foreach ($contract as $key2 => $medical_programming)
+                    //     if(info.event.id == "{{$medical_programming->activity_id}}"){
+                    //       document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} + diff_);
+                    //       bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} + diff_;
+                    //     }
+                    //   @endforeach
+                    // @endforeach
+
+                    @foreach ($activities as $key => $activity)
+                        if(info.event.id == "{{$activity->id}}"){
+                            document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} - diff_);
+                            bolsa_{{$activity->id}} = bolsa_{{$activity->id}} - diff_;
+
+                            disponible_contrato = disponible_contrato - diff_;
+                            document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
                         }
-                      @endforeach
                     @endforeach
                 }
                 //tipo de evento administrativo
@@ -660,14 +810,25 @@ bottom: 5px;
         //solo se permite modificar el tamaño a los eventos teoricos
         if (tipo_evento == 'teorico') {
 
-            @foreach ($array as $key => $contract)
-              @foreach ($contract as $key2 => $medical_programming)
-                if(info.event.id == "{{$medical_programming->activity_id}}"){
-                  if((bolsa_{{$medical_programming->activity_id}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-                  document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - diff);
-                  bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - diff;
+            // @foreach ($array as $key => $contract)
+            //   @foreach ($contract as $key2 => $medical_programming)
+            //     if(info.event.id == "{{$medical_programming->activity_id}}"){
+            //       if((bolsa_{{$medical_programming->activity_id}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+            //       document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - diff);
+            //       bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - diff;
+            //     }
+            //   @endforeach
+            // @endforeach
+
+            @foreach ($activities as $key => $activity)
+                if(info.event.id == "{{$activity->id}}"){
+                    // if((bolsa_{{$activity->id}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+                    document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + diff);
+                    bolsa_{{$activity->id}} = bolsa_{{$activity->id}} + diff;
+
+                    disponible_contrato = disponible_contrato + diff;
+                    document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
                 }
-              @endforeach
             @endforeach
 
             console.log(info.event);
@@ -692,11 +853,13 @@ bottom: 5px;
       let activity_id = event.id.toString();
       var rut = {{$request->rut}};
       var year = {{$request->year}};
+      var contract_id = $("#for_contract_id"). val();
+      var specialty_id = $("#for_specialty_id"). val();
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.saveMyEvent') }}",
           type: 'post',
-          data:{rut:rut,activity_id:activity_id,start_date:start_date, end_date:end_date, year:year, tipo_ingreso:tipo_ingreso, tipo_evento:tipo_evento},
+          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id, start_date:start_date, end_date:end_date, year:year, tipo_ingreso:tipo_ingreso, tipo_evento:tipo_evento},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -732,11 +895,13 @@ bottom: 5px;
       let activity_id = event.id.toString();
       var rut = {{$request->rut}};
       var year = {{$request->year}};
+      var contract_id = $("#for_contract_id"). val();
+      var specialty_id = $("#for_specialty_id"). val();
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.updateMyEvent') }}",
           type: 'post',
-          data:{rut:rut,activity_id:activity_id,start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date, year:year, tipo:tipo},
+          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -750,11 +915,13 @@ bottom: 5px;
         let activity_id = event.id.toString();
         var rut = {{$request->rut}};
         var year = {{$request->year}};
+        var contract_id = $("#for_contract_id"). val();
+        var specialty_id = $("#for_specialty_id"). val();
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.deleteMyEvent') }}",
           type: 'post',
-          data:{rut:rut,activity_id:activity_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
+          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -768,11 +935,13 @@ bottom: 5px;
         let activity_id = event.id.toString();
         var rut = {{$request->rut}};
         var year = {{$request->year}};
+        var contract_id = $("#for_contract_id"). val();
+        var specialty_id = $("#for_specialty_id"). val();
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.deleteMyEventForce') }}",
           type: 'post',
-          data:{rut:rut,activity_id:activity_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
+          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -947,6 +1116,15 @@ bottom: 5px;
        return $semana; //+"-"+$ano; //La función retorna una cadena de texto indicando la semana y el año correspondiente a la fecha ingresada
     };
 
+  });
+
+  //obtiene cantidad de horas del contrato seleccionado
+  $( "#for_contract_id" ).change(function() {
+    @foreach($contracts as $contract)
+      if($("#for_contract_id").val() == {{$contract->id}}){
+        $("#total_contrato").text({{$contract->weekly_hours}});
+      }
+    @endforeach
   });
 
   </script>

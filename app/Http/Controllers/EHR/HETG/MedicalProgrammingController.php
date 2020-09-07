@@ -47,12 +47,14 @@ class MedicalProgrammingController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request);
       $medica_programming = new MedicalProgramming($request->All());
       $medica_programming->user_id = Auth::id();
       $medica_programming->save();
 
       session()->flash('info', 'La programación ha sido creada.');
-      return redirect()->route('ehr.hetg.medical_programming.index');
+      // return redirect()->route('ehr.hetg.medical_programming.index');
+      return redirect()->back();
     }
 
     /**

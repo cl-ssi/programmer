@@ -5,7 +5,7 @@ namespace App\EHR\HETG;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class OperatingRoomProgramming extends Model
+class Profession extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -13,15 +13,19 @@ class OperatingRoomProgramming extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'operating_room_id', 'specialty_id', 'profession_id', 'start_date', 'end_date', 'year', 'user_id'
+        'id', 'id_profession', 'profession_name', 'color', 'user_id'
     ];
 
-    public function specialty() {
-        return $this->belongsTo('App\EHR\HETG\Specialty');
+    public function medical_programmings() {
+        return $this->hasMany('App\EHR\HETG\MedicalProgramming');
     }
 
-    public function operatingRoom() {
-        return $this->belongsTo('App\EHR\HETG\OperatingRoom');
+    public function calendarProgrammings() {
+        return $this->hasMany('App\EHR\HETG\CalendarProgramming');
+    }
+
+    public function userProfessions() {
+        return $this->hasMany('App\EHR\HETG\UserProfession');
     }
 
     public function user() {
@@ -41,5 +45,5 @@ class OperatingRoomProgramming extends Model
      *
      * @var string
      */
-    protected $table = 'hm_operating_room_programming';
+    protected $table = 'hm_professions';
 }

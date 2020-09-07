@@ -15,12 +15,14 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersTableSeeder::class);
         $this->call(HmRrhhTableSeeder::class);
         $this->call(HmMotherActivityTableSeeder::class);
+        $this->call(HmActivityTypesTableSeeder::class);
         $this->call(HmActivitiesTableSeeder::class);
         $this->call(HmSpecialtiesTableSeeder::class);
+        $this->call(HmProfessionsTableSeeder::class);
         $this->call(HmOperatingRoomsTableSeeder::class);
         $this->call(HmContractsTableSeeder::class);
-        $this->call(HmMedicalProgrammingTableSeeder::class);
-        $this->call(HmUserSpecialtiesTableSeeder::class);
+        // $this->call(HmMedicalProgrammingTableSeeder::class);
+        // $this->call(HmUserSpecialtiesTableSeeder::class);
         // $this->call(HmOperatingRoomProgrammingTableSeeder::class);
     }
 }

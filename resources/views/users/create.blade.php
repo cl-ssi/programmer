@@ -111,6 +111,20 @@
     </div>
     @endforeach
 
+    <br />
+    <h4>Profesiones</h4>
+    @foreach($professions as $profession)
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="professions[]"
+            value="{{ $profession->id }}">
+        <label class="form-check-label">
+            {{ $profession->profession_name }}
+        </label>
+    </div>
+    @endforeach
+
+
+
 
 
     <button type="submit" class="btn btn-primary mt-3">Guardar</button>

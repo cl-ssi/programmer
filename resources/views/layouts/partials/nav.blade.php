@@ -111,6 +111,11 @@
                         </a>
 
                         <a class="dropdown-item"
+                            href="{{ route('ehr.hetg.professions.index') }}">
+                            <i class="fas fa-file-contract fa-fw"></i> Profesiones
+                        </a>
+
+                        <a class="dropdown-item"
                             href="{{ route('ehr.hetg.mother_activities.index') }}">
                             <i class="fas fa-file-contract fa-fw"></i> Actividades Madre
                         </a>
@@ -125,10 +130,10 @@
                             <i class="fas fa-file-contract fa-fw"></i> Contratos
                         </a>
 
-                        <a class="dropdown-item"
+                        {{-- <a class="dropdown-item"
                             href="{{ route('ehr.hetg.medical_programming.index') }}">
                             <i class="fas fa-notes-medical fa-fw"></i> Programación
-                        </a>
+                        </a> --}}
 
                     </div>
                 </li>

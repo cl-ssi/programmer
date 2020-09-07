@@ -13,7 +13,7 @@ class TheoreticalProgramming extends Model
    * @var array
    */
   protected $fillable = [
-      'id', 'rut', 'activity_id', 'week_day', 'start_time', 'end_time', 'year', 'contract_day_type', 'user_id'
+      'id', 'contract_id', 'rut', 'specialty_id', 'activity_id', 'profession_id', 'week_day', 'start_time', 'end_time', 'year', 'contract_day_type', 'user_id'
   ];
 
   // protected $casts = [

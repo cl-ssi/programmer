@@ -63,6 +63,7 @@ class OperatingRoomProgrammingController extends Controller
 
       //se obtienen especialidades registradas en mantenedor
       $specialties = Specialty::whereIn('id',$users->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+      // dd($specialties);
 
       $monday = Carbon::parse($date)->startOfWeek();
       $sunday = Carbon::parse($date)->endOfWeek();

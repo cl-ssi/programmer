@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\EHR\HETG;
 
 use App\EHR\HETG\MotherActivity;
+use App\EHR\HETG\ActivityType;
 use App\EHR\HETG\Activity;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -29,7 +30,8 @@ class ActivityController extends Controller
     public function create()
     {
       $motherActivities = MotherActivity::orderBy('description','ASC')->get();
-      return view('ehr.hetg.activities.create',compact('motherActivities'));
+      $activityTypes = ActivityType::orderBy('name','ASC')->get();
+      return view('ehr.hetg.activities.create',compact('motherActivities','activityTypes'));
     }
 
     /**
@@ -68,7 +70,8 @@ class ActivityController extends Controller
     public function edit(Activity $activity)
     {
       $motherActivities = MotherActivity::orderBy('description','ASC')->get();
-      return view('ehr.hetg.activities.edit', compact('activity','motherActivities'));
+      $activityTypes = ActivityType::orderBy('name','ASC')->get();
+      return view('ehr.hetg.activities.edit', compact('activity','motherActivities','activityTypes'));
     }
 
     /**

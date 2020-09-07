@@ -13,8 +13,9 @@
 <table class="table table-sm table-borderer">
     <thead>
         <tr>
-            <th>Id</th>
+            <th>id_actividad</th>
             <th>Actvidad Madre</th>
+            <th>Tipo de actividad</th>
             <th>Especialidad</th>
             <th></th>
         </tr>
@@ -22,8 +23,9 @@
     <tbody>
         @foreach( $activities as $activity )
         <tr>
-            <td>{{ $activity->id }}</td>
+            <td>{{ $activity->id_activity }}</td>
             <td>@if($activity->motherActivity){{ $activity->motherActivity->description }}@endif</td>
+            <td>@if($activity->activityType){{ $activity->activityType->name }}@endif</td>
             <td>{{ $activity->activity_name }}</td>
             <td>
       				<a href="{{ route('ehr.hetg.activities.edit', $activity) }}"

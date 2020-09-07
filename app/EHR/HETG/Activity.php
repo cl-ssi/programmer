@@ -13,7 +13,7 @@ class Activity extends Model
    * @var array
    */
   protected $fillable = [
-      'id', 'mother_activity_id', 'activity_name', 'user_id'
+      'id', 'id_activity', 'mother_activity_id', 'activity_type_id', 'activity_name', 'user_id'
   ];
 
   public function medical_programmings() {
@@ -26,6 +26,10 @@ class Activity extends Model
 
   public function motherActivity() {
       return $this->belongsTo('App\EHR\HETG\MotherActivity');
+  }
+
+  public function activityType() {
+      return $this->belongsTo('App\EHR\HETG\ActivityType');
   }
 
     public function user() {
