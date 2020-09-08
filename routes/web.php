@@ -55,6 +55,9 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::resource('professions','EHR\HETG\ProfessionController');
         Route::resource('activities','EHR\HETG\ActivityController');
         Route::resource('mother_activities','EHR\HETG\MotherActivityController');
+
+        // Route::match(['get', 'post'],'cutoffdates/consolidated_programming/{id}','EHR\HETG\CutOffDateController@consolidated_programming')->name('cutoffdates.consolidated_programming');
+        Route::get('cutoffdates/consolidated_programming/{cutoffdate}','EHR\HETG\CutOffDateController@consolidated_programming')->name('cutoffdates.consolidated_programming');
         Route::resource('cutoffdates','EHR\HETG\CutOffDateController');
 
         Route::prefix('executed_activities')->as('executed_activities.')->group(function(){

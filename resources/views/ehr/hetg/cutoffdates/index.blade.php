@@ -37,11 +37,59 @@
       						<span class="fas fa-trash-alt" aria-hidden="true"></span>
       					</button>
       				</form>
+
+                    <a href="{{ route('ehr.hetg.cutoffdates.consolidated_programming', $cutoffdate) }}"
+                       class="btn btn-sm btn-outline-info">
+                        Consolidado Programación
+                    </a>
       			</td>
         </tr>
         @endforeach
     </tbody>
 </table>
+
+
+@if($array != null)
+<div class="row">
+  <div class="col">
+
+    <h5 class="mb-3">Toma de muestras diarias</h5>
+
+    <div class="table-responsive-sm">
+      <table class="table table-sm table-bordered text-center table-striped small">
+        <thead>
+          <tr class="text-center">
+            <th>Rut</th>
+            <th>Contrato</th>
+            <th>Especialidad</th>
+            <th>Actividad</th>
+            <th>Hrs. Asignadas</th>
+          </tr>
+        </thead>
+        <tbody>
+            @foreach ($array as $key1 => $value1)
+                @foreach ($value1 as $key2 => $value2)
+                    @foreach ($value2 as $key3 => $value3)
+                        @foreach ($value3 as $key4 => $value4)
+                            <tr>
+                                <td>{{$key1}}</td>
+                                <td>{{$key2}}</td>
+                                <td>{{$key3}}</td>
+                                <td>{{$key4}}</td>
+                                <td>{{$value4}}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                @endforeach
+            @endforeach
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+@endif
+
 
 @endsection
 
