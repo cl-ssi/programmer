@@ -55,6 +55,8 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::resource('professions','EHR\HETG\ProfessionController');
         Route::resource('activities','EHR\HETG\ActivityController');
         Route::resource('mother_activities','EHR\HETG\MotherActivityController');
+        Route::resource('cutoffdates','EHR\HETG\CutOffDateController');
+
         Route::prefix('executed_activities')->as('executed_activities.')->group(function(){
             Route::get('/','EHR\HETG\ExecutedActivityController@index')->name('index');
         });
@@ -79,8 +81,12 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::match(['get', 'post'],'operating_room_programming/deleteMyEvent','EHR\HETG\OperatingRoomProgrammingController@deleteMyEvent')->name('operating_room_programming.deleteMyEvent');
         Route::match(['get', 'post'],'operating_room_programming/deleteMyEventForce','EHR\HETG\OperatingRoomProgrammingController@deleteMyEventForce')->name('operating_room_programming.deleteMyEventForce');
 
+        // Route::match(['get', 'post'],'theoretical_programming/change_active_week','EHR\HETG\TheoreticalProgrammingController@change_active_week')->name('theoretical_programming.change_active_week');
+        Route::post('theoretical_programming/change_active_week', 'EHR\HETG\TheoreticalProgrammingController@change_active_week')->name('theoretical_programming.change_active_week');
+
         Route::resource('operating_room_programming','EHR\HETG\OperatingRoomProgrammingController');
         Route::resource('theoretical_programming','EHR\HETG\TheoreticalProgrammingController');
+
         Route::resource('operating_rooms','EHR\HETG\OperatingRoomController');
         Route::prefix('management')->as('management.')->group(function(){
             Route::get('/programmer','EHR\HETG\OperatingRoomController@programmer')->name('programmer');

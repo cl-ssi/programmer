@@ -93,7 +93,7 @@
     // deja options que coincidan
     @foreach($contracts as $contract)
       if($("#rut").val() == {{$contract->rut}}){
-        $('#for_contract_id').append(`<option value="{{$contract->id}}">{{$contract->law}} - {{$contract->contract_id}} - {{$contract->weekly_hours}} hrs.</option>`);
+        $('#for_contract_id').append(`<option value="{{$contract->id}}" {{ $contract->id == $medicalProgramming->contract_id ? 'selected' : '' }}>{{$contract->law}} - {{$contract->contract_id}} - {{$contract->weekly_hours}} hrs.</option>`);
       }
     @endforeach
   });

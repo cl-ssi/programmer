@@ -94,6 +94,17 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->softDeletes();
         });
 
+        Schema::create('hm_cutoff_dates', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->datetime('date');
+            $table->string('observation');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
     }
 
     /**
@@ -103,6 +114,7 @@ class CreateHmOperatingRoomsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('hm_cutoff_dates');
         Schema::dropIfExists('hm_operating_room_programming');
         Schema::dropIfExists('hm_theoretical_programming');
         Schema::dropIfExists('hm_calendar_programming');

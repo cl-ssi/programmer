@@ -130,6 +130,11 @@
                             <i class="fas fa-file-contract fa-fw"></i> Contratos
                         </a>
 
+                        <a class="dropdown-item"
+                            href="{{ route('ehr.hetg.cutoffdates.index') }}">
+                            <i class="fas fa-file-contract fa-fw"></i> Fechas de corte
+                        </a>
+
                         {{-- <a class="dropdown-item"
                             href="{{ route('ehr.hetg.medical_programming.index') }}">
                             <i class="fas fa-notes-medical fa-fw"></i> Programación
