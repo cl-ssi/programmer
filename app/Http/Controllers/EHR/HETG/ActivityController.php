@@ -5,6 +5,10 @@ namespace App\Http\Controllers\EHR\HETG;
 use App\EHR\HETG\MotherActivity;
 use App\EHR\HETG\ActivityType;
 use App\EHR\HETG\Activity;
+use App\EHR\HETG\Profession;
+use App\EHR\HETG\ProfessionActivity;
+use App\EHR\HETG\Specialty;
+use App\EHR\HETG\SpecialityActivity;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +35,10 @@ class ActivityController extends Controller
     {
       $motherActivities = MotherActivity::orderBy('description','ASC')->get();
       $activityTypes = ActivityType::orderBy('name','ASC')->get();
-      return view('ehr.hetg.activities.create',compact('motherActivities','activityTypes'));
+      $professions = Profession::orderBy('profession_name','ASC')->get();
+      $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+      //dd($specialties);
+      return view('ehr.hetg.activities.create',compact('motherActivities','activityTypes','professions','specialties'));
     }
 
     /**
@@ -45,6 +52,33 @@ class ActivityController extends Controller
       $activity = new Activity($request->All());
       $activity->user_id = Auth::id();
       $activity->save();
+
+
+
+      //$activity_profession = new Activity($request->All());
+
+      //dd($request->establishment_id);
+
+      if($request->input('profession_id')) {
+      foreach ($request->profession_id as $key => $id) {        
+        $profession_activity = new ProfessionActivity();
+        $profession_activity->profession_id = $id;
+        $profession_activity->activity_id = $activity->id;
+        $profession_activity->performance = $request->input('performance_profession_'.$id);
+        $profession_activity->save();
+    }
+  }
+
+
+    foreach ($request->specialty_id as $key => $id) {      
+      $speciality_activity = new SpecialityActivity();
+      $speciality_activity->speciality_id = $id;
+      $speciality_activity->activity_id = $activity->id;
+      $speciality_activity->performance = $request->input('performance_specialty_'.$id);
+      $speciality_activity->save();
+  }
+
+
 
       session()->flash('info', 'La actividad ha sido creada.');
       return redirect()->route('ehr.hetg.activities.index');
