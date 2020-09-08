@@ -84,6 +84,8 @@ class TheoreticalProgrammingController extends Controller
         }
     }
 
+
+
     //obtiene horas teóricas
     $theoreticalProgrammings = TheoreticalProgramming::where('year',$year)
                                                   ->where('rut',$rut)

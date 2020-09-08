@@ -1,14 +1,3 @@
-@extends('layouts.app')
-
-@section('title', 'Listado de programación')
-
-@section('content')
-<h3 class="mb-3">Listado de programación</h3>
-
-<a class="btn btn-primary mb-3" href="{{ route('ehr.hetg.medical_programming.create') }}">
-    <i class="fas fa-plus"></i> Agregar nueva
-</a>
-
 <table class="table table-sm table-borderer">
     <thead>
         <tr>
@@ -48,8 +37,37 @@
     </tbody>
 </table>
 
-@endsection
+<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.medical_programming.store') }}">
+    @csrf
+    @method('POST')
 
-@section('custom_js')
+    <input type="hidden" id="year" name="year" value="{{$request->year}}"/>
+    <input type="hidden" id="rut" name="rut" value="{{$request->rut}}"/>
+    <input type="hidden" id="contract_id" name="contract_id" value="{{$request->contract_id}}"/>
+    <input type="hidden" id="specialty_id" name="specialty_id" value="{{$request->specialty_id}}"/>
 
-@endsection
+    <div class="row">
+
+      <fieldset class="form-group col">
+          <label for="for_activity_id">Actividad</label>
+          <select name="activity_id" id="for_activity_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5">
+            @foreach($activities as $activity)
+              <option value="{{$activity->id}}">{{$activity->id}} - {{$activity->activity_name}}</option>
+            @endforeach
+          </select>
+      </fieldset>
+
+      <fieldset class="form-group col">
+          <label for="for_assigned_hour">Horas Asignadas</label>
+          <input type="text" class="form-control" id="for_assigned_hour" placeholder="" name="assigned_hour" required>
+      </fieldset>
+
+      <fieldset class="form-group col">
+          <label for="for_hour_performance">Rdto. por Hora</label>
+          <input type="text" class="form-control" id="for_hour_performance" placeholder="" name="hour_performance">
+      </fieldset>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+
+</form>

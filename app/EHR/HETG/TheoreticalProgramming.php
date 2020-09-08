@@ -25,6 +25,10 @@ class TheoreticalProgramming extends Model
       return $this->belongsTo('App\EHR\HETG\Rrhh','rut');
   }
 
+  public function contract() {
+      return $this->belongsTo('App\EHR\HETG\Contract');
+  }
+
   public function specialty() {
       return $this->belongsTo('App\EHR\HETG\Specialty');
   }

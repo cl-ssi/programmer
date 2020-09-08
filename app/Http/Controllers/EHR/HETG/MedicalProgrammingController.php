@@ -97,7 +97,8 @@ class MedicalProgrammingController extends Controller
       $medicalProgramming->save();
 
       session()->flash('info', 'La programación ha sido editada.');
-      return redirect()->route('ehr.hetg.medical_programming.index');
+      // return redirect()->route('ehr.hetg.medical_programming.index');
+      return redirect()->back();
     }
 
     /**
@@ -110,6 +111,7 @@ class MedicalProgrammingController extends Controller
     {
       $medicalProgramming->delete();
       session()->flash('success', 'La programación ha sido eliminada');
-      return redirect()->route('ehr.hetg.medical_programming.index');
+      // return redirect()->route('ehr.hetg.medical_programming.index');
+      return redirect()->back();
     }
 }
