@@ -5,6 +5,7 @@ namespace App\Http\Controllers\EHR\HETG;
 use App\EHR\HETG\MotherActivity;
 use App\EHR\HETG\Activity;
 use App\EHR\HETG\Specialty;
+use App\EHR\HETG\Profession;
 use App\EHR\HETG\CalendarProgramming;
 use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\Contract;
@@ -49,6 +50,7 @@ class TheoreticalProgrammingController extends Controller
         $rut = $request->get('rut');
       }
 
+
     $motherActivities = MotherActivity::where('id',2)->get();
     $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón teórico
 
@@ -66,7 +68,23 @@ class TheoreticalProgrammingController extends Controller
                 // })
                 ->orderby('name','ASC')->get();
 
-    $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+    $specialties = null;
+    $professions = null;
+    $activities = null;
+    //si es programación médica
+    if ($request->get('tipo') == 1) {
+        $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+        $activities = Activity::orderBy('activity_name','ASC')
+                                ->where('activity_type_id',1) //ejemplo: actividades medicas
+                                ->get();
+    }
+    //si es programación médica
+    else{
+        $professions = Profession::orderBy('profession_name','ASC')->get();
+        $activities = Activity::orderBy('activity_name','ASC')
+                                ->where('activity_type_id',2) //ejemplo: actividades medicas
+                                ->get();
+    }
 
     $monday = Carbon::parse($date)->startOfWeek();
     $sunday = Carbon::parse($date)->endOfWeek();
@@ -83,8 +101,6 @@ class TheoreticalProgrammingController extends Controller
             $contract_id = $contracts->first()->id;
         }
     }
-
-
 
     //obtiene horas teóricas
     $theoreticalProgrammings = TheoreticalProgramming::where('year',$year)
@@ -112,11 +128,6 @@ class TheoreticalProgrammingController extends Controller
     foreach ($medicalProgrammings as $key => $medicalProgramming) {
       $array[$medicalProgramming->contract->law] = $medicalProgrammings->where('contract_id',$medicalProgramming->contract_id);
     }
-
-    //se obtiene listado de actividades
-    $activities = Activity::orderBy('activity_name','ASC')
-                            ->where('activity_type_id',1) //ejemplo: actividades medicas
-                            ->get();
 
     //obtiene administrativos
     $permisos_administrativos = array();
@@ -157,7 +168,8 @@ class TheoreticalProgrammingController extends Controller
     $programming = MedicalProgramming::where('rut',$rut)->get();
 
       return view('ehr.hetg.management.theoretical_programmer', compact('request','array','activities','contract_days','date','theoreticalProgrammings',
-                                                                        'rrhhs','permisos_administrativos', 'specialties','contracts','programming'));
+                                                                        'rrhhs','permisos_administrativos', 'specialties','professions','contracts',
+                                                                        'programming'));
       // return view('ehr.hetg.management.theoretical_programmer',compact('request','rrhhs','array','theoricalProgrammings','contracts','rut','contract_days'));
     }
 
@@ -354,6 +366,7 @@ class TheoreticalProgrammingController extends Controller
                 $theoreticalProgramming->rut = $request->rut;
                 $theoreticalProgramming->contract_id = $request->contract_id;
                 $theoreticalProgramming->specialty_id = $request->specialty_id;
+                $theoreticalProgramming->profession_id = $request->profession_id;
                 $theoreticalProgramming->activity_id = $request->activity_id;
                 $theoreticalProgramming->start_date = $first_date;
                 $theoreticalProgramming->end_date = $last_date;
@@ -368,6 +381,7 @@ class TheoreticalProgrammingController extends Controller
                     $theoreticalProgramming->rut = $request->rut;
                     $theoreticalProgramming->contract_id = $request->contract_id;
                     $theoreticalProgramming->specialty_id = $request->specialty_id;
+                    $theoreticalProgramming->profession_id = $request->profession_id;
                     $theoreticalProgramming->activity_id = $request->activity_id;
                     $theoreticalProgramming->start_date = $first_date;
                     $theoreticalProgramming->end_date = $last_date;
@@ -398,6 +412,7 @@ class TheoreticalProgrammingController extends Controller
                                                               ->where('activity_id',$request->activity_id)
                                                               ->where('contract_id',$request->contract_id)
                                                               ->where('specialty_id',$request->specialty_id)
+                                                              ->where('profession_id',$request->profession_id)
                                                               ->where('start_date',$start_date_start)
                                                               ->where('end_date',$end_date_start)->first();
               $theoreticalProgramming->start_date = $start_date;
@@ -411,6 +426,7 @@ class TheoreticalProgrammingController extends Controller
                                                                   ->where('activity_id',$request->activity_id)
                                                                   ->where('contract_id',$request->contract_id)
                                                                   ->where('specialty_id',$request->specialty_id)
+                                                                  ->where('profession_id',$request->profession_id)
                                                                   ->where('start_date',$start_date_start)
                                                                   ->where('end_date',$end_date_start)->first();
                   $theoreticalProgramming->start_date = $start_date;
@@ -443,6 +459,7 @@ class TheoreticalProgrammingController extends Controller
                                                             ->where('activity_id',$request->activity_id)
                                                             ->where('contract_id',$request->contract_id)
                                                             ->where('specialty_id',$request->specialty_id)
+                                                            ->where('profession_id',$request->profession_id)
                                                             ->where('start_date',$first_date)
                                                             ->where('end_date',$last_date);
             $theoreticalProgramming->delete();
@@ -454,6 +471,7 @@ class TheoreticalProgrammingController extends Controller
                                                                 ->where('activity_id',$request->activity_id)
                                                                 ->where('contract_id',$request->contract_id)
                                                                 ->where('specialty_id',$request->specialty_id)
+                                                                ->where('profession_id',$request->profession_id)
                                                                 ->where('start_date',$first_date)
                                                                 ->where('end_date',$last_date);
                 $theoreticalProgramming->delete();
@@ -474,6 +492,7 @@ class TheoreticalProgrammingController extends Controller
                                                           ->where('activity_id',$request->activity_id)
                                                           ->where('contract_id',$request->contract_id)
                                                           ->where('specialty_id',$request->specialty_id)
+                                                          ->where('profession_id',$request->profession_id)
                                                           ->where('start_date',$first_date)
                                                           ->where('end_date',$last_date);
           $theoreticalProgramming->forceDelete();

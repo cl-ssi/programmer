@@ -161,24 +161,24 @@ class CutOffDateController extends Controller
         $array_programacion_no_medica = array();
         foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
           $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
-                                    [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
-                                    [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name] = 0;
+                                    [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
+                                    [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name] = 0;
         }
         foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
           $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
-                                    [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
-                                    [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name] += $theoricalProgramming->duration_theorical_programming;
+                                    [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
+                                    [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name] += $theoricalProgramming->duration_theorical_programming;
         }
         //NO programables - PROGRAMACION NO MÉDICA
         foreach ($medicalProgrammings->whereNotNull('profession_id') as $key => $medicalProgramming) {
           $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
-                                    [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
-                                    [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name] = 0;
+                                    [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
+                                    [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name] = 0;
         }
         foreach ($medicalProgrammings->whereNotNull('profession_id') as $key => $medicalProgramming) {
           $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
-                                    [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
-                                    [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name] += $medicalProgramming->assigned_hour;
+                                    [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
+                                    [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name] += $medicalProgramming->assigned_hour;
         }
 
         $cutoffdates = CutOffDate::all();

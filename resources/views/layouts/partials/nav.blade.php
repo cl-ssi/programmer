@@ -18,21 +18,21 @@
 
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-hospital"></i> Programación Teórica
+                            <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programación Teórica
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 
                             @canany(['programacion medica'])
                                 <a class="dropdown-item"
-                                    href="{{ route('ehr.hetg.theoretical_programming.index') }}">
+                                    href="{{ route('ehr.hetg.theoretical_programming.index','tipo=1') }}">
                                     <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programación Médica
                                 </a>
                             @endcanany
 
                             @canany(['programacion no medica'])
                                 <a class="dropdown-item"
-                                    href="{{ route('ehr.hetg.theoretical_programming.index') }}">
+                                    href="{{ route('ehr.hetg.theoretical_programming.index','tipo=2') }}">
                                     <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programacion No Médica
                                 </a>
                             @endcanany

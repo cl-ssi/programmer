@@ -69,6 +69,8 @@ bottom: 5px;
 </form>
 
 <form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.calendar_programming.index') }}"> --}}
+
+  <input type="hidden" id="tipo" name="tipo" value="{{$request->tipo}}"/>
   <input type="hidden" id="date" name="date"/>
   <div class="row">
     <fieldset class="form-group col">
@@ -103,14 +105,29 @@ bottom: 5px;
         </select>
     </fieldset>
 
-    <fieldset class="form-group col">
-        <label for="for_specialty_id">Especialidad</label>
-        <select name="specialty_id" id="for_specialty_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
-          @foreach($specialties as $specialty)
-            <option value="{{$specialty->id}}" {{ $specialty->id == $request->specialty_id ? 'selected' : '' }}>{{$specialty->specialty_name}}</option>
-          @endforeach
-        </select>
-    </fieldset>
+    {{-- si es progamación médica --}}
+    @if($request->tipo == 1)
+        <fieldset class="form-group col">
+            <label for="for_specialty_id">Especialidad</label>
+            <select name="specialty_id" id="for_specialty_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
+              @foreach($specialties as $specialty)
+                <option value="{{$specialty->id}}" {{ $specialty->id == $request->specialty_id ? 'selected' : '' }}>{{$specialty->specialty_name}}</option>
+              @endforeach
+            </select>
+        </fieldset>
+    @endif
+
+    {{-- si es programación no médica --}}
+    @if($request->tipo == 2)
+        <fieldset class="form-group col">
+            <label for="for_profession_id">Profesión</label>
+            <select name="profession_id" id="for_profession_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
+              @foreach($professions as $profession)
+                <option value="{{$profession->id}}" {{ $profession->id == $request->profession_id ? 'selected' : '' }}>{{$profession->profession_name}}</option>
+              @endforeach
+            </select>
+        </fieldset>
+    @endif
 
     <fieldset class="form-group col-1">
         <label for="for_contract_id">Hrs</label><br />
@@ -782,11 +799,12 @@ bottom: 5px;
       var year = {{$request->year}};
       var contract_id = $("#for_contract_id"). val();
       var specialty_id = $("#for_specialty_id"). val();
+      var profession_id = $("#for_profession_id"). val();
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.saveMyEvent') }}",
           type: 'post',
-          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id, start_date:start_date, end_date:end_date, year:year, tipo_ingreso:tipo_ingreso, tipo_evento:tipo_evento},
+          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,profession_id:profession_id, start_date:start_date, end_date:end_date, year:year, tipo_ingreso:tipo_ingreso, tipo_evento:tipo_evento},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -824,11 +842,12 @@ bottom: 5px;
       var year = {{$request->year}};
       var contract_id = $("#for_contract_id"). val();
       var specialty_id = $("#for_specialty_id"). val();
+      var profession_id = $("#for_profession_id"). val();
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.updateMyEvent') }}",
           type: 'post',
-          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date, year:year, tipo:tipo},
+          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,profession_id:profession_id,start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -844,11 +863,12 @@ bottom: 5px;
         var year = {{$request->year}};
         var contract_id = $("#for_contract_id"). val();
         var specialty_id = $("#for_specialty_id"). val();
+        var profession_id = $("#for_profession_id"). val();
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.deleteMyEvent') }}",
           type: 'post',
-          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
+          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,profession_id:profession_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -864,11 +884,12 @@ bottom: 5px;
         var year = {{$request->year}};
         var contract_id = $("#for_contract_id"). val();
         var specialty_id = $("#for_specialty_id"). val();
+        var profession_id = $("#for_profession_id"). val();
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.deleteMyEventForce') }}",
           type: 'post',
-          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
+          data:{rut:rut,activity_id:activity_id,contract_id:contract_id,specialty_id:specialty_id,profession_id:profession_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
