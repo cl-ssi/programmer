@@ -43,7 +43,11 @@
 
     <input type="hidden" id="year" name="year" value="{{$request->year}}"/>
     <input type="hidden" id="rut" name="rut" value="{{$request->rut}}"/>
-    <input type="hidden" id="contract_id" name="contract_id" value="{{$request->contract_id}}"/>
+    @if($contracts->count() > 0)
+        <input type="hidden" id="contract_id" name="contract_id" value="{{$contracts->first()->id}}"/>
+    @else
+        <input type="hidden" id="contract_id" name="contract_id" value="{{$request->contract_id}}"/>
+    @endif
     <input type="hidden" id="specialty_id" name="specialty_id" value="{{$request->specialty_id}}"/>
 
     <div class="row">

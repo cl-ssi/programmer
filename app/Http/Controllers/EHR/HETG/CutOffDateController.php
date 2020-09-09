@@ -19,9 +19,10 @@ class CutOffDateController extends Controller
      */
     public function index()
     {
-        $array = null;
+        $array_programacion_medica = null;
+        $array_programacion_no_medica = null;
         $cutoffdates = CutOffDate::all();
-        return view('ehr.hetg.cutoffdates.index', compact('cutoffdates','array'));
+        return view('ehr.hetg.cutoffdates.index', compact('cutoffdates','array_programacion_medica', 'array_programacion_no_medica'));
     }
 
     /**
@@ -108,33 +109,80 @@ class CutOffDateController extends Controller
         //obtiene comienzo y termino del periodo
         $monday = Carbon::parse($cutoffdate->date)->startOfWeek();
         $sunday = Carbon::parse($cutoffdate->date)->endOfWeek();
-        //obtiene datos del periodo
+        //obtiene datos programables del período
         $theoreticalProgrammings = TheoreticalProgramming::whereBetween('start_date',[$monday,$sunday])
                                                         ->whereNull('contract_day_type')
                                                         ->get();
+
+        $date = new Carbon($cutoffdate->date);
+        //obtiene datos NO programables del año
+        $medicalProgrammings = MedicalProgramming::where('year',$date->get('year'))->get();
+
         //se obtiene fechas de inicio y termino de cada isEventOverDiv
         foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
           $start  = new Carbon($theoricalProgramming->start_date);
           $end    = new Carbon($theoricalProgramming->end_date);
           $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
         }
-        //agrupación
-        $array = array();
-        foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
-          $array[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
-                [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
-                [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name] = 0;
+
+
+
+        //programables - PROGRAMACION MÉDICA
+        $array_programacion_medica = array();
+        foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
+
+          $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+                                    [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
+                                    [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name] = 0;
         }
-        //obtiene info.
-        foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
-          $array[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
-                [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
-                [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name] += $theoricalProgramming->duration_theorical_programming;
+        foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
+          $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+                                    [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
+                                    [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name] += $theoricalProgramming->duration_theorical_programming;
+        }
+        //NO programables - PROGRAMACION MÉDICA
+        foreach ($medicalProgrammings->whereNotNull('specialty_id') as $key => $medicalProgramming) {
+
+          $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
+                                    [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
+                                    [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name] = 0;
+        }
+        foreach ($medicalProgrammings->whereNotNull('specialty_id') as $key => $medicalProgramming) {
+          $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
+                                    [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
+                                    [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name] += $medicalProgramming->assigned_hour;
         }
 
-        // dd($array);
+
+
+
+
+        //programables - PROGRAMACION NO MÉDICA
+        $array_programacion_no_medica = array();
+        foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
+          $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+                                    [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
+                                    [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name] = 0;
+        }
+        foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
+          $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+                                    [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
+                                    [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name] += $theoricalProgramming->duration_theorical_programming;
+        }
+        //NO programables - PROGRAMACION NO MÉDICA
+        foreach ($medicalProgrammings->whereNotNull('profession_id') as $key => $medicalProgramming) {
+          $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
+                                    [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
+                                    [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name] = 0;
+        }
+        foreach ($medicalProgrammings->whereNotNull('profession_id') as $key => $medicalProgramming) {
+          $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
+                                    [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
+                                    [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name] += $medicalProgramming->assigned_hour;
+        }
+
         $cutoffdates = CutOffDate::all();
-        return view('ehr.hetg.cutoffdates.index', compact('cutoffdates','array'));
+        return view('ehr.hetg.cutoffdates.index', compact('cutoffdates','array_programacion_medica', 'array_programacion_no_medica'));
         // return redirect()->route('ehr.hetg.cutoffdates.index')->compact('array');
     }
 }

@@ -71,7 +71,7 @@ bottom: 5px;
 <form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.calendar_programming.index') }}"> --}}
   <input type="hidden" id="date" name="date"/>
   <div class="row">
-    <fieldset class="form-group col-3">
+    <fieldset class="form-group col">
         <label for="for_unit_code">Año</label>
         <select name="year" id="for_year" class="form-control" required="" onchange="this.form.submit()">
           <option value="2020" {{ 2020 == $request->year ? 'selected' : '' }}>2020</option>
@@ -95,7 +95,8 @@ bottom: 5px;
 
     <fieldset class="form-group col">
         <label for="for_contract_id">Contrato</label>
-        <select name="contract_id" id="for_contract_id" class="form-control" required="" onchange="this.form.submit()">
+        {{-- <select name="contract_id" id="for_contract_id" class="form-control" required="" onchange="this.form.submit()"> --}}
+        <select name="contract_id" id="for_contract_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
             @foreach($contracts as $contract)
               <option value="{{$contract->id}}" {{ $contract->id == $request->contract_id ? 'selected' : '' }}>{{$contract->law}}</option>
             @endforeach
@@ -111,10 +112,9 @@ bottom: 5px;
         </select>
     </fieldset>
 
-    <fieldset class="form-group col">
+    <fieldset class="form-group col-1">
         <label for="for_contract_id">Hrs</label><br />
         @if($contracts->count() > 0)
-
             <span id="disponible_contrato"></span> /
             <b><span id="total_contrato">{{$contracts->first()->weekly_hours}}</span></b>
         @endif
