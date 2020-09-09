@@ -142,6 +142,28 @@ class CreateHmRrhhTable extends Migration
             $table->softDeletes();
         });
 
+        Schema::create('hm_profession_activity', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedInteger('profession_id');
+            $table->unsignedInteger('activity_id');
+            $table->decimal('performance', 8, 2)->nullable();
+            $table->timestamps();
+
+            $table->foreign('profession_id')->references('id')->on('hm_professions');
+            $table->foreign('activity_id')->references('id')->on('hm_activities');
+        });
+
+        Schema::create('hm_speciality_activities', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedInteger('speciality_id');
+            $table->unsignedInteger('activity_id');
+            $table->decimal('performance', 8, 2)->nullable();
+            $table->timestamps();
+
+            $table->foreign('speciality_id')->references('id')->on('hm_specialties');
+            $table->foreign('activity_id')->references('id')->on('hm_activities');
+        });
+
         Schema::create('hm_medical_programming', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('contract_id')->nullable();
@@ -177,6 +199,8 @@ class CreateHmRrhhTable extends Migration
         Schema::dropIfExists('hm_user_professions');
         Schema::dropIfExists('hm_user_specialties');
         Schema::dropIfExists('hm_medical_programming');
+        Schema::dropIfExists('hm_profession_activity');
+        Schema::dropIfExists('hm_speciality_activities');
         Schema::dropIfExists('hm_activities');
         Schema::dropIfExists('hm_activity_types');
         Schema::dropIfExists('hm_mother_activities');

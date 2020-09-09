@@ -13,9 +13,11 @@ class PermissionSeeder extends Seeder
     public function run()
     {
         Permission::create(['name' => 'administrador']);
-        Permission::create(['name' => 'programador teorico']);
+        Permission::create(['name' => 'programacion teorica']);
+        Permission::create(['name' => 'programacion medica']);
+        Permission::create(['name' => 'programacion no medica']);
         Permission::create(['name' => 'programador pabellon']);
-        Permission::create(['name' => 'programador calendario']);
+        Permission::create(['name' => 'programador']);
         Permission::create(['name' => 'reportes']);
         Permission::create(['name' => 'mantenedores']);
     }

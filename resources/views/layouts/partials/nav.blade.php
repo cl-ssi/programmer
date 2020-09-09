@@ -12,11 +12,33 @@
             <!-- Left Side Of Navbar -->
 
             <ul class="navbar-nav">
-                @canany(['programador teorico'])
-                    <a class="dropdown-item"
-                        href="{{ route('ehr.hetg.theoretical_programming.index') }}">
-                        <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programador Teórico
-                    </a>
+
+                @canany(['programacion teorica'])
+                    <li class="navbar-nav dropdown">
+
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-hospital"></i> Programación Teórica
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                            @canany(['programacion medica'])
+                                <a class="dropdown-item"
+                                    href="{{ route('ehr.hetg.theoretical_programming.index') }}">
+                                    <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programación Médica
+                                </a>
+                            @endcanany
+
+                            @canany(['programacion no medica'])
+                                <a class="dropdown-item"
+                                    href="{{ route('ehr.hetg.theoretical_programming.index') }}">
+                                    <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programacion No Médica
+                                </a>
+                            @endcanany
+
+                        </div>
+                    </li>
                 @endcanany
 
                 @canany(['programador pabellon'])
@@ -26,10 +48,10 @@
                     </a>
                 @endcanany
 
-                @canany(['programador calendario'])
+                @canany(['programador'])
                     <a class="dropdown-item"
                         href="{{ route('ehr.hetg.calendar_programming.index') }}">
-                        <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador Pabellón
+                        <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador
                     </a>
                 @endcanany
             </ul>
