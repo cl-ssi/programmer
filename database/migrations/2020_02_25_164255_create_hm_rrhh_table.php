@@ -77,7 +77,7 @@ class CreateHmRrhhTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedInteger('specialty_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');
+            $table->foreign('specialty_id')->references('id')->on('hm_specialties');
 
             $table->timestamps();
             $table->softDeletes();
@@ -142,26 +142,28 @@ class CreateHmRrhhTable extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('hm_profession_activity', function (Blueprint $table) {
+        Schema::create('hm_profession_activities', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('profession_id');
             $table->unsignedInteger('activity_id');
             $table->decimal('performance', 8, 2)->nullable();
-            $table->timestamps();
 
             $table->foreign('profession_id')->references('id')->on('hm_professions');
             $table->foreign('activity_id')->references('id')->on('hm_activities');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
-        Schema::create('hm_speciality_activities', function (Blueprint $table) {
+        Schema::create('hm_specialty_activities', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('speciality_id');
+            $table->unsignedInteger('specialty_id');
             $table->unsignedInteger('activity_id');
             $table->decimal('performance', 8, 2)->nullable();
-            $table->timestamps();
 
-            $table->foreign('speciality_id')->references('id')->on('hm_specialties');
+            $table->foreign('specialty_id')->references('id')->on('hm_specialties');
             $table->foreign('activity_id')->references('id')->on('hm_activities');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('hm_medical_programming', function (Blueprint $table) {
@@ -199,8 +201,8 @@ class CreateHmRrhhTable extends Migration
         Schema::dropIfExists('hm_user_professions');
         Schema::dropIfExists('hm_user_specialties');
         Schema::dropIfExists('hm_medical_programming');
-        Schema::dropIfExists('hm_profession_activity');
-        Schema::dropIfExists('hm_speciality_activities');
+        Schema::dropIfExists('hm_profession_activities');
+        Schema::dropIfExists('hm_specialty_activities');
         Schema::dropIfExists('hm_activities');
         Schema::dropIfExists('hm_activity_types');
         Schema::dropIfExists('hm_mother_activities');

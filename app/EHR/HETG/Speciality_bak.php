@@ -26,7 +26,7 @@ class Speciality extends Model
         //$activities = $this->all();
         //return $activities->groupBy('medico_especialidad');
 
-        $activities = ExecutedActivity::where('speciality_id', $this->id)->get();
+        $activities = ExecutedActivity::where('specialty_id', $this->id)->get();
         return $activities;
     }
 
@@ -45,5 +45,5 @@ class Speciality extends Model
      *
      * @var string
      */
-    protected $table = 'hm_speciality';
+    protected $table = 'hm_specialty';
 }

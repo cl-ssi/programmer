@@ -5,10 +5,10 @@ namespace App\EHR\HETG;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProfessionActivity extends Model
+class SpecialtyActivity extends Model
 {
     protected $fillable = [
-        'profession_id','activity_id','performance'
+        'specialty_id','activity_id','performance'
     ];
 
     use SoftDeletes;
@@ -25,5 +25,5 @@ class ProfessionActivity extends Model
      * @var string
      */
 
-    protected $table = 'hm_profession_activities';
+     protected $table = 'hm_specialty_activities';
 }

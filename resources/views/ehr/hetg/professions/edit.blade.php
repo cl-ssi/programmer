@@ -36,6 +36,41 @@
         </fieldset>
     </div>
 
+    <hr>
+      <fieldset class="form-group col-12 col-md-6">
+        <h3><label for="">Actividades (Escribir rendimiento si se selecciona)</label></h3>
+        <table>
+
+            {{-- {{$specialty->activities}} --}}
+          @foreach($activities as $activity)
+
+                  <tr>
+                    <td>
+                        @if($profession->activities->where('id',$activity->id)->count() > 0)
+                            <input class="form-check" type="checkbox" checked name="activity_id[]" value="{{ $activity->id }}">
+                        @else
+                            <input class="form-check" type="checkbox" name="activity_id[]" value="{{ $activity->id }}">
+                        @endif
+                    </td>
+                    <td>
+                      <label class="form-check-label">
+                        {{ $activity->activity_name }}
+                      </label>
+                    </td>
+                    <td>
+                      @if($profession->activities->where('id',$activity->id)->count() > 0)
+                          <input type="text" name="performance_activity_{{$activity->id}}" value="{{$profession->activities->where('id',$activity->id)->first()->pivot->performance}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">
+                      @else
+                          <input type="text" name="performance_activity_{{$activity->id}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">
+                      @endif
+                    </td>
+                  </tr>
+
+          @endforeach
+        </table>
+      </fieldset>
+    <hr>
+
     <button type="submit" class="btn btn-primary">Guardar</button>
 
 </form>

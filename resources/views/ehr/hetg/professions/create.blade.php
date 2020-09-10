@@ -36,6 +36,29 @@
         </fieldset>
     </div>
 
+    <hr>
+    <fieldset class="form-group col-12 col-md-6">
+      <label for="">Actividades (Escribir rendimiento si se selecciona)</label>
+      <table>
+        @foreach($activities as $activity)
+        <tr>
+          <td>
+              <input class="form-check" type="checkbox" name="activity_id[]" value="{{ $activity->id }}">
+          </td>
+          <td>
+            <label class="form-check-label">
+              {{ $activity->activity_name }}
+            </label>
+          </td>
+          <td>
+            <input type="text" name="performance_activity_{{$activity->id}}" class="form-control col-md-4" id="for_activity_name" placeholder="ej: 3">
+          </td>
+        </tr>
+        @endforeach
+      </table>
+    </fieldset>
+    <hr>
+
     <button type="submit" class="btn btn-primary">Guardar</button>
 
 </form>

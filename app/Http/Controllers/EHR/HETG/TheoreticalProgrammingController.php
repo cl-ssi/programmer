@@ -72,17 +72,26 @@ class TheoreticalProgrammingController extends Controller
     $professions = null;
     $activities = null;
     //si es programación médica
+
     if ($request->get('tipo') == 1) {
         $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+        $var = $request->get('specialty_id');
         $activities = Activity::orderBy('activity_name','ASC')
                                 ->where('activity_type_id',1) //ejemplo: actividades medicas
+                                ->whereHas('specialties', function($q) use($var) {
+                                    $q->where('specialty_id', $var);
+                                })
                                 ->get();
     }
     //si es programación médica
     else{
         $professions = Profession::orderBy('profession_name','ASC')->get();
+        $var = $request->get('profession_id');
         $activities = Activity::orderBy('activity_name','ASC')
                                 ->where('activity_type_id',2) //ejemplo: actividades medicas
+                                ->whereHas('professions', function($q) use($var) {
+                                    $q->where('profession_id', $var);
+                                })
                                 ->get();
     }
 

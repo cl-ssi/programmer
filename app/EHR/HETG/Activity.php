@@ -36,6 +36,18 @@ class Activity extends Model
         return $this->belongsTo('App\User');
     }
 
+    public function specialties() {
+        return $this->belongsToMany('App\EHR\HETG\Specialty','hm_specialty_activities')
+                    ->wherePivot('deleted_at', null)
+                    ->withPivot('performance');
+    }
+
+    public function professions() {
+        return $this->belongsToMany('App\EHR\HETG\Profession','hm_profession_activities')
+                    ->wherePivot('deleted_at', null)
+                    ->withPivot('performance');
+    }
+
   use SoftDeletes;
   /**
    * The attributes that should be mutated to dates.

@@ -32,6 +32,12 @@ class Profession extends Model
         return $this->belongsTo('App\User');
     }
 
+    public function activities() {
+        return $this->belongsToMany('App\EHR\HETG\Activity','hm_profession_activities')
+                    ->wherePivot('deleted_at', null)
+                    ->withPivot('performance');
+    }
+
     use SoftDeletes;
     /**
      * The attributes that should be mutated to dates.

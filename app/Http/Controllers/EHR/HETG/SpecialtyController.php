@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\EHR\HETG;
 
 use App\EHR\HETG\Specialty;
+use App\EHR\HETG\SpecialtyActivity;
+use App\EHR\HETG\Activity;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +18,7 @@ class SpecialtyController extends Controller
      */
     public function index()
     {
-      $specialties = Specialty::all();
+      $specialties = Specialty::orderBy('specialty_name','ASC')->get();
       return view('ehr.hetg.specialties.index', compact('specialties'));
     }
 
@@ -27,7 +29,8 @@ class SpecialtyController extends Controller
      */
     public function create()
     {
-      return view('ehr.hetg.specialties.create');
+        $activities = Activity::where('activity_type_id',1)->orderBy('activity_name','ASC')->get(); //obtiene medicas
+        return view('ehr.hetg.specialties.create',compact('activities'));
     }
 
     /**
@@ -41,6 +44,14 @@ class SpecialtyController extends Controller
       $specialty = new Specialty($request->All());
       $specialty->user_id = Auth::id();
       $specialty->save();
+
+      foreach ($request->activity_id as $key => $id) {
+          $specialty_activity = new SpecialtyActivity();
+          $specialty_activity->specialty_id = $specialty->id;
+          $specialty_activity->activity_id = $id;
+          $specialty_activity->performance = $request->input('performance_activity_'.$id);
+          $specialty_activity->save();
+      }
 
       session()->flash('info', 'La especialidad ha sido creada.');
       return redirect()->route('ehr.hetg.specialties.index');
@@ -65,7 +76,8 @@ class SpecialtyController extends Controller
      */
     public function edit(Specialty $specialty)
     {
-        return view('ehr.hetg.specialties.edit', compact('specialty'));
+        $activities = Activity::where('activity_type_id',1)->orderBy('activity_name','ASC')->get(); //obtiene medicas
+        return view('ehr.hetg.specialties.edit', compact('specialty','activities'));
     }
 
     /**
@@ -81,6 +93,17 @@ class SpecialtyController extends Controller
       $specialty->user_id = Auth::id();
       $specialty->save();
 
+      SpecialtyActivity::where('specialty_id',$specialty->id)->delete();
+      if ($request->activity_id != null) {
+          foreach ($request->activity_id as $key => $id) {
+              $specialty_activity = new SpecialtyActivity();
+              $specialty_activity->specialty_id = $specialty->id;
+              $specialty_activity->activity_id = $id;
+              $specialty_activity->performance = $request->input('performance_activity_'.$id);
+              $specialty_activity->save();
+          }
+      }
+
       session()->flash('info', 'La especialidad ha sido editada.');
       return redirect()->route('ehr.hetg.specialties.index');
     }
@@ -93,8 +116,10 @@ class SpecialtyController extends Controller
      */
     public function destroy(Specialty $specialty)
     {
-      $specialty->delete();
-      session()->flash('success', 'La especialidad ha sido eliminada');
-      return redirect()->route('ehr.hetg.specialties.index');
+        SpecialtyActivity::where('specialty_id',$specialty->id)->delete();
+
+        $specialty->delete();
+        session()->flash('success', 'La especialidad ha sido eliminada');
+        return redirect()->route('ehr.hetg.specialties.index');
     }
 }

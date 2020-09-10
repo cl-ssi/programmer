@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\EHR\HETG;
 
 use App\EHR\HETG\Profession;
+use App\EHR\HETG\ProfessionActivity;
+use App\EHR\HETG\Activity;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +18,7 @@ class ProfessionController extends Controller
      */
     public function index()
     {
-        $professions = Profession::all();
+        $professions = Profession::orderBy('profession_name','ASC')->get();
         return view('ehr.hetg.professions.index', compact('professions'));
     }
 
@@ -27,7 +29,8 @@ class ProfessionController extends Controller
      */
     public function create()
     {
-        return view('ehr.hetg.professions.create');
+        $activities = Activity::where('activity_type_id',2)->orderBy('activity_name','ASC')->get(); //obtiene NO medicas
+        return view('ehr.hetg.professions.create',compact('activities'));
     }
 
     /**
@@ -41,6 +44,14 @@ class ProfessionController extends Controller
       $profession = new Profession($request->All());
       $profession->user_id = Auth::id();
       $profession->save();
+
+      foreach ($request->activity_id as $key => $id) {
+          $profession_activity = new ProfessionActivity();
+          $profession_activity->profession_id = $profession->id;
+          $profession_activity->activity_id = $id;
+          $profession_activity->performance = $request->input('performance_activity_'.$id);
+          $profession_activity->save();
+      }
 
       session()->flash('info', 'La profesión ha sido creada.');
       return redirect()->route('ehr.hetg.professions.index');
@@ -65,7 +76,8 @@ class ProfessionController extends Controller
      */
     public function edit(Profession $profession)
     {
-        return view('ehr.hetg.professions.edit', compact('profession'));
+        $activities = Activity::where('activity_type_id',2)->orderBy('activity_name','ASC')->get(); //obtiene NO medicas
+        return view('ehr.hetg.professions.edit', compact('profession','activities'));
     }
 
     /**
@@ -81,6 +93,17 @@ class ProfessionController extends Controller
       $profession->user_id = Auth::id();
       $profession->save();
 
+      ProfessionActivity::where('profession_id',$profession->id)->delete();
+      if ($request->activity_id != null) {
+          foreach ($request->activity_id as $key => $id) {
+              $profession_activity = new ProfessionActivity();
+              $profession_activity->profession_id = $profession->id;
+              $profession_activity->activity_id = $id;
+              $profession_activity->performance = $request->input('performance_activity_'.$id);
+              $profession_activity->save();
+          }
+      }
+
       session()->flash('info', 'La profesión ha sido editada.');
       return redirect()->route('ehr.hetg.professions.index');
     }
@@ -93,8 +116,10 @@ class ProfessionController extends Controller
      */
     public function destroy(Profession $profession)
     {
-      $profession->delete();
-      session()->flash('success', 'La profesión ha sido eliminada');
-      return redirect()->route('ehr.hetg.professions.index');
+        ProfessionActivity::where('profession_id',$profession->id)->delete();
+
+        $profession->delete();
+        session()->flash('success', 'La profesión ha sido eliminada');
+        return redirect()->route('ehr.hetg.professions.index');
     }
 }

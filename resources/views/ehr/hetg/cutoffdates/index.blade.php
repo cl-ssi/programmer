@@ -76,6 +76,7 @@
                   <th>Especialidad</th>
                   <th>Actividad</th>
                   <th>Hrs. Asignadas</th>
+                  <th>Rdto/Hr</th>
                 </tr>
               </thead>
               <tbody>
@@ -88,7 +89,8 @@
                                       <td>{{$key2}}</td>
                                       <td>{{$key3}}</td>
                                       <td>{{$key4}}</td>
-                                      <td>{{$value4}}</td>
+                                      <td>{{$value4['assigned_hour']}}</td>
+                                      <td>{{$value4['rdto_hour']}}</td>
                                   </tr>
                               @endforeach
                           @endforeach
@@ -116,6 +118,7 @@
                   <th>Especialidad</th>
                   <th>Actividad</th>
                   <th>Hrs. Asignadas</th>
+                  <th>Rdto/Hr</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,7 +131,8 @@
                                       <td>{{$key2}}</td>
                                       <td>{{$key3}}</td>
                                       <td>{{$key4}}</td>
-                                      <td>{{$value4}}</td>
+                                      <td>{{$value4['assigned_hour']}}</td>
+                                      <td>{{$value4['rdto_hour']}}</td>
                                   </tr>
                               @endforeach
                           @endforeach

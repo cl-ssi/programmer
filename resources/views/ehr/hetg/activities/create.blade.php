@@ -28,7 +28,7 @@
 
     <fieldset class="form-group col">
       <label for="for_activity_type_id">Tipo de actividad</label>
-      <select name="activity_type_id" id="for_activity_type_id" class="form-control country" required>
+      <select name="activity_type_id" id="for_activity_type_id" class="form-control activity" required>
         <option value="">Seleccionar Tipo de Actividad</option>
         @foreach ($activityTypes as $key => $activityType)
         <option value="{{$activityType->id}}" id="{{$activityType->name}}">{{$activityType->name}}</option>
@@ -43,14 +43,14 @@
 
   </div>
 
-  <div id="dvPinNo" style="display: none">
+  {{-- <div id="dvPinNo" style="display: none">
     <hr>
     <fieldset class="form-group col-12 col-md-6">
       <label for="">Profesiones (Escribir rendimiento si se selecciona)</label>
       <table>
         @foreach($professions as $profession)
         <tr>
-          <td>            
+          <td>
               <input class="form-check" type="checkbox" name="profession_id[]" value="{{ $profession->id }}">
           </td>
           <td>
@@ -73,10 +73,10 @@
     <fieldset class="form-group col-12 col-md-6">
       <label for="">Especialidades (Escribir rendimiento si se selecciona Especialidad)</label>
       <table>
-        
+
         @foreach($specialties as $specialty)
         <tr>
-          <td>            
+          <td>
               <input class="form-check" type="checkbox" name="specialty_id[]" value="{{ $specialty->id }}">
           </td>
           <td>
@@ -92,7 +92,7 @@
       </table>
     </fieldset>
     <hr>
-  </div>
+  </div> --}}
 
   <button type="submit" class="btn btn-primary">Guardar</button>
 
@@ -101,30 +101,27 @@
 @endsection
 
 @section('custom_js')
-<link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
-<script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 
+    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
+    <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $("select.activity").change(function() {
+          var selectedcategory = $(this).children("option:selected").val();
+          if (selectedcategory == '2') {
+            $("#dvPinSi").hide();
+            $("#dvPinNo").show();
+          } else if (selectedcategory == '1') {
 
-<script type="text/javascript">
-  $(document).ready(function() {
-    $("select.country").change(function() {
-      var selectedcategory = $(this).children("option:selected").val();
-      if (selectedcategory == '2') {
-        $("#dvPinSi").hide();
-        $("#dvPinNo").show();
-      } else if (selectedcategory == '1') {
-
-        $("#dvPinSi").show();
-        $("#dvPinNo").hide();
-      } else {
-        $("#dvPinNo").hide();
-        $("#dvPinSi").hide();
-      }
-
-
-    });
-  });
-</script>
+            $("#dvPinSi").show();
+            $("#dvPinNo").hide();
+          } else {
+            $("#dvPinNo").hide();
+            $("#dvPinSi").hide();
+          }
+        });
+      });
+    </script> --}}
 
 @endsection
