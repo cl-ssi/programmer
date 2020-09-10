@@ -36,63 +36,24 @@
       </select>
     </fieldset>
 
-    <fieldset class="form-group col">
-      <label for="for_activity_name">Actividad</label>
-      <input type="text" class="form-control" id="for_activity_name" placeholder="" name="activity_name" required>
-    </fieldset>
+
 
   </div>
 
-  {{-- <div id="dvPinNo" style="display: none">
-    <hr>
-    <fieldset class="form-group col-12 col-md-6">
-      <label for="">Profesiones (Escribir rendimiento si se selecciona)</label>
-      <table>
-        @foreach($professions as $profession)
-        <tr>
-          <td>
-              <input class="form-check" type="checkbox" name="profession_id[]" value="{{ $profession->id }}">
-          </td>
-          <td>
-            <label class="form-check-label">
-              {{ $profession->profession_name }}
-            </label>
-          </td>
-          <td>
-            <input type="text" name="performance_profession_{{$profession->id}}" class="form-control col-md-4" id="for_activity_name" placeholder="ej: 3">
-          </td>
-        </tr>
-        @endforeach
-      </table>
-    </fieldset>
-    <hr>
-  </div>
+    <div class="row">
+        <fieldset class="form-group col">
+          <label for="for_activity_name">Actividad</label>
+          <input type="text" class="form-control" id="for_activity_name" placeholder="" name="activity_name" required>
+        </fieldset>
 
-  <div id="dvPinSi" style="display: none">
-  <hr>
-    <fieldset class="form-group col-12 col-md-6">
-      <label for="">Especialidades (Escribir rendimiento si se selecciona Especialidad)</label>
-      <table>
-
-        @foreach($specialties as $specialty)
-        <tr>
-          <td>
-              <input class="form-check" type="checkbox" name="specialty_id[]" value="{{ $specialty->id }}">
-          </td>
-          <td>
-            <label class="form-check-label">
-              {{ $specialty->specialty_name }}
-            </label>
-          </td>
-          <td>
-            <input type="text" name="performance_specialty_{{$specialty->id}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">
-          </td>
-        </tr>
-        @endforeach
-      </table>
-    </fieldset>
-    <hr>
-  </div> --}}
+        <fieldset class="form-group col">
+          <label for="for_performance">Rendimiento</label>
+          <select name="performance" id="for_performance" class="form-control activity">
+            <option value="1">R</option>
+            <option value="0">NR</option
+          </select>
+        </fieldset>
+    </div>
 
   <button type="submit" class="btn btn-primary">Guardar</button>
 
@@ -101,27 +62,5 @@
 @endsection
 
 @section('custom_js')
-
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
-    <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
-
-    <script type="text/javascript">
-      $(document).ready(function() {
-        $("select.activity").change(function() {
-          var selectedcategory = $(this).children("option:selected").val();
-          if (selectedcategory == '2') {
-            $("#dvPinSi").hide();
-            $("#dvPinNo").show();
-          } else if (selectedcategory == '1') {
-
-            $("#dvPinSi").show();
-            $("#dvPinNo").hide();
-          } else {
-            $("#dvPinNo").hide();
-            $("#dvPinSi").hide();
-          }
-        });
-      });
-    </script> --}}
 
 @endsection

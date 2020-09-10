@@ -57,13 +57,17 @@
                         {{ $activity->activity_name }}
                       </label>
                     </td>
-                    <td>
-                      @if($specialty->activities->where('id',$activity->id)->count() > 0)
-                          <input type="text" name="performance_activity_{{$activity->id}}" value="{{$specialty->activities->where('id',$activity->id)->first()->pivot->performance}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">
-                      @else
-                          <input type="text" name="performance_activity_{{$activity->id}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">
-                      @endif
-                    </td>
+                    @if($activity->performance == 0)
+                        <td>
+                          @if($specialty->activities->where('id',$activity->id)->count() > 0)
+                              <input type="text" name="performance_activity_{{$activity->id}}" value="{{$specialty->activities->where('id',$activity->id)->first()->pivot->performance}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">
+                          @else
+                              <input type="text" name="performance_activity_{{$activity->id}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">
+                          @endif
+                        </td>
+                    @else
+                        <td><input type="text" class="form-control col-md-6" placeholder="--" disabled></td>
+                    @endif
                   </tr>
 
           @endforeach

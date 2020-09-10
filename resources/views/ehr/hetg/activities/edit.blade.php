@@ -36,70 +36,24 @@
             </select>
         </fieldset>
 
+    </div>
+
+    <div class="row">
+
         <fieldset class="form-group col">
             <label for="for_activity_name">Actividad</label>
             <input type="text" class="form-control" id="for_activity_name" placeholder="" name="activity_name" required value="{{$activity->activity_name}}">
         </fieldset>
+
+        <fieldset class="form-group col">
+          <label for="for_performance">Rendimiento</label>
+          <select name="performance" id="for_performance" class="form-control activity">
+            <option value="1" {{ $activity->performance == 1 ? 'selected' : '' }}>R</option>
+            <option value="0" {{ $activity->performance == 0 ? 'selected' : '' }}>NR</option>
+          </select>
+        </fieldset>
+
     </div>
-
-    {{-- <div id="dvPinNo" style="display: none">
-      <hr>
-      <fieldset class="form-group col-12 col-md-6">
-        <label for="">Profesiones (Escribir rendimiento si se selecciona)</label>
-        <table>
-          @foreach($professions as $profession)
-              @foreach($activity->professions as $profession2)
-                  <tr>
-                    <td>
-                        <input class="form-check" type="checkbox" {{ $profession->id == $profession2->id ? 'checked' : '' }} name="profession_id[]" value="{{ $profession->id }}">
-                    </td>
-                    <td>
-                      <label class="form-check-label">
-                        {{ $profession->profession_name }}
-                      </label>
-                    </td>
-                    <td>
-                      <input type="text" name="performance_profession_{{$profession->id}}" class="form-control col-md-4" id="for_activity_name" placeholder="ej: 3">
-                    </td>
-                  </tr>
-            @endforeach
-          @endforeach
-        </table>
-      </fieldset>
-      <hr>
-    </div>
-
-    <div id="dvPinSi" style="display: none">
-    <hr>
-      <fieldset class="form-group col-12 col-md-6">
-        <label for="">Especialidades (Escribir rendimiento si se selecciona Especialidad)</label>
-        <table>
-
-          @foreach($specialties as $specialty)
-              @foreach($activity->specialties as $specialty2)
-                  <tr>
-                    <td>
-                        <input class="form-check" type="checkbox" {{ $specialty->id == $specialty2->id ? 'checked' : '' }} name="specialty_id[]" value="{{ $specialty->id }}">
-                    </td>
-                    <td>
-                      <label class="form-check-label">
-                        {{ $specialty->specialty_name }}
-                      </label>
-                    </td>
-                    <td>
-                        @if($specialty->id == $specialty2->id)
-                            <input type="text" name="performance_specialty_{{$specialty->id}}" value="{{$specialty2->pivot->performance}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">
-                        @else
-                            <input type="text" name="performance_specialty_{{$specialty->id}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">
-                        @endif
-                    </td>
-                  </tr>
-            @endforeach
-          @endforeach
-        </table>
-      </fieldset>
-      <hr>
-    </div> --}}
 
     <button type="submit" class="btn btn-primary">Guardar</button>
 
@@ -108,32 +62,5 @@
 @endsection
 
 @section('custom_js')
-
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
-    <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
-
-    <script type="text/javascript">
-      $(document).ready(function() {
-
-        $("select.activity").change(function() {
-          var selectedcategory = $(this).children("option:selected").val();
-          if (selectedcategory == '2') {
-            $("#dvPinSi").hide();
-            $("#dvPinNo").show();
-          } else if (selectedcategory == '1') {
-
-            $("#dvPinSi").show();
-            $("#dvPinNo").hide();
-          } else {
-            $("#dvPinNo").hide();
-            $("#dvPinSi").hide();
-          }
-        });
-
-        //ejecuta select
-        $("#for_activity_type_id").val({{$activity->activity_type_id}}).change();
-
-      });
-    </script> --}}
 
 @endsection

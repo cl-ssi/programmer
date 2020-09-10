@@ -77,6 +77,10 @@
                   <th>Actividad</th>
                   <th>Hrs. Asignadas</th>
                   <th>Rdto/Hr</th>
+                  <th>Rdto/Diario</th>
+                  <th>Rdto/Semanal</th>
+                  <th>Rdto/Mensual</th>
+                  <th>Rdto/Anual</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,7 +94,19 @@
                                       <td>{{$key3}}</td>
                                       <td>{{$key4}}</td>
                                       <td>{{$value4['assigned_hour']}}</td>
-                                      <td>{{$value4['rdto_hour']}}</td>
+                                      @if($value4['rdto_hour'] != null)
+                                          <td>{{$value4['rdto_hour']}}</td>
+                                          <td>{{$value4['assigned_hour'] * $value4['rdto_hour']}}</td>
+                                          <td>{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7}}</td>
+                                          <td>{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4}}</td>
+                                          <td>{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4 * 52}}</td>
+                                      @else
+                                          <td>--</td>
+                                          <td>--</td>
+                                          <td>--</td>
+                                          <td>--</td>
+                                          <td>--</td>
+                                      @endif
                                   </tr>
                               @endforeach
                           @endforeach
@@ -132,7 +148,11 @@
                                       <td>{{$key3}}</td>
                                       <td>{{$key4}}</td>
                                       <td>{{$value4['assigned_hour']}}</td>
-                                      <td>{{$value4['rdto_hour']}}</td>
+                                      @if($value4['rdto_hour'] != null)
+                                          <td>{{$value4['rdto_hour']}}</td>
+                                      @else
+                                          <td>--</td>
+                                      @endif
                                   </tr>
                               @endforeach
                           @endforeach

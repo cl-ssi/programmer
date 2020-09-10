@@ -68,7 +68,7 @@
 
       <fieldset class="form-group col">
           <label for="for_hour_performance">Rdto. por Hora</label>
-          <input type="text" class="form-control" id="for_hour_performance" placeholder="" name="hour_performance">
+          <input type="text" class="form-control" id="for_hour_performance" placeholder="--" disabled name="hour_performance">
       </fieldset>
     </div>
 

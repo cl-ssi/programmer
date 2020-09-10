@@ -133,6 +133,7 @@ class CreateHmRrhhTable extends Migration
             $table->unsignedInteger('mother_activity_id')->nullable();
             $table->unsignedInteger('activity_type_id')->nullable();
             $table->string('activity_name');
+            $table->boolean('performance')->default(0);
             $table->unsignedBigInteger('user_id');
 
             $table->foreign('user_id')->references('id')->on('users');
