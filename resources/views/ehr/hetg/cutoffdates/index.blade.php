@@ -93,20 +93,25 @@
                                       <td>{{$key2}}</td>
                                       <td>{{$key3}}</td>
                                       <td>{{$key4}}</td>
-                                      <td>{{$value4['assigned_hour']}}</td>
+
                                       @if($value4['rdto_hour'] != null)
-                                          <td>{{$value4['rdto_hour']}}</td>
-                                          <td>{{$value4['assigned_hour'] * $value4['rdto_hour']}}</td>
-                                          <td>{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7}}</td>
-                                          <td>{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4}}</td>
-                                          <td>{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4 * 52}}</td>
+                                          <input type="hidden" id="id_{{$value4['theoricalProgramming_id']}}" value="{{$value4['theoricalProgramming_id']}}" />
+                                          <td><label id="horas_{{$value4['theoricalProgramming_id']}}" value="{{$value4['assigned_hour']}}">{{$value4['assigned_hour']}}</label></td>
+                                          <td><input type="text" id="rdto_{{$value4['theoricalProgramming_id']}}" value="{{$value4['rdto_hour']}}" /></td>
+                                          <td><label id="diario_{{$value4['theoricalProgramming_id']}}">{{$value4['assigned_hour'] * $value4['rdto_hour']}}</label></td>
+                                          <td><label id="semanal_{{$value4['theoricalProgramming_id']}}">{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7}}</label></td>
+                                          <td><label id="mensual_{{$value4['theoricalProgramming_id']}}">{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4}}</label></td>
+                                          <td><label id="anual_{{$value4['theoricalProgramming_id']}}">{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4 * 52}}</label></td>
+
                                       @else
+                                          <td><label>{{$value4['assigned_hour']}}</label></td>
                                           <td>--</td>
                                           <td>--</td>
                                           <td>--</td>
                                           <td>--</td>
                                           <td>--</td>
                                       @endif
+
                                   </tr>
                               @endforeach
                           @endforeach
@@ -129,12 +134,16 @@
             <table class="table table-sm table-bordered text-center table-striped small">
               <thead>
                 <tr class="text-center">
-                  <th>Rut</th>
-                  <th>Contrato</th>
-                  <th>Especialidad</th>
-                  <th>Actividad</th>
-                  <th>Hrs. Asignadas</th>
-                  <th>Rdto/Hr</th>
+                    <th>Rut</th>
+                    <th>Contrato</th>
+                    <th>Especialidad</th>
+                    <th>Actividad</th>
+                    <th>Hrs. Asignadas</th>
+                    <th>Rdto/Hr</th>
+                    <th>Rdto/Diario</th>
+                    <th>Rdto/Semanal</th>
+                    <th>Rdto/Mensual</th>
+                    <th>Rdto/Anual</th>
                 </tr>
               </thead>
               <tbody>
@@ -147,12 +156,38 @@
                                       <td>{{$key2}}</td>
                                       <td>{{$key3}}</td>
                                       <td>{{$key4}}</td>
-                                      <td>{{$value4['assigned_hour']}}</td>
-                                      @if($value4['rdto_hour'] != null)
-                                          <td>{{$value4['rdto_hour']}}</td>
+
+                                      {{-- @if($value4['rdto_hour'] != null)
+                                          <td><input type="text" id="rdto" value="{{$value4['rdto_hour']}}" /></td>
+                                          <td>{{$value4['assigned_hour'] * $value4['rdto_hour']}}</td>
+                                          <td>{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7}}</td>
+                                          <td>{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4}}</td>
+                                          <td>{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4 * 52}}</td>
                                       @else
                                           <td>--</td>
+                                          <td>--</td>
+                                          <td>--</td>
+                                          <td>--</td>
+                                          <td>--</td>
+                                      @endif --}}
+
+                                      @if($value4['rdto_hour'] != null)
+                                          <input type="hidden" id="id_{{$value4['theoricalProgramming_id']}}" value="{{$value4['theoricalProgramming_id']}}" />
+                                          <td><label id="horas_{{$value4['theoricalProgramming_id']}}" value="{{$value4['assigned_hour']}}">{{$value4['assigned_hour']}}</label></td>
+                                          <td><input type="text" id="rdto_{{$value4['theoricalProgramming_id']}}" value="{{$value4['rdto_hour']}}" /></td>
+                                          <td><label id="diario_{{$value4['theoricalProgramming_id']}}">{{$value4['assigned_hour'] * $value4['rdto_hour']}}</label></td>
+                                          <td><label id="semanal_{{$value4['theoricalProgramming_id']}}">{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7}}</label></td>
+                                          <td><label id="mensual_{{$value4['theoricalProgramming_id']}}">{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4}}</label></td>
+                                          <td><label id="anual_{{$value4['theoricalProgramming_id']}}">{{($value4['assigned_hour'] * $value4['rdto_hour']) * 7 * 4 * 52}}</label></td>
+                                      @else
+                                          <td><label>{{$value4['assigned_hour']}}</label></td>
+                                          <td>--</td>
+                                          <td>--</td>
+                                          <td>--</td>
+                                          <td>--</td>
+                                          <td>--</td>
                                       @endif
+
                                   </tr>
                               @endforeach
                           @endforeach
@@ -173,5 +208,107 @@
 @endsection
 
 @section('custom_js')
+
+<script>
+$( document ).ready(function() {
+
+    @if($array_programacion_medica != null)
+    @foreach ($array_programacion_medica as $key1 => $value1)
+        @foreach ($value1 as $key2 => $value2)
+            @foreach ($value2 as $key3 => $value3)
+                @foreach ($value3 as $key4 => $value4)
+                    @if($value4['rdto_hour'] != null)
+                    // cuando se deja focus
+                        $("#rdto_{{$value4['theoricalProgramming_id']}}").change(function() {
+                            var id = $('#id_{{$value4['theoricalProgramming_id']}}').val();
+                            var horas = $('#horas_{{$value4['theoricalProgramming_id']}}').text();
+                            var rdto = $('#rdto_{{$value4['theoricalProgramming_id']}}').val();
+
+                            $('#diario_{{$value4['theoricalProgramming_id']}}').text(horas * rdto);
+                            $('#semanal_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7);
+                            $('#mensual_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7 * 4);
+                            $('#anual_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7 * 4 * 52);
+
+                            savePerformance(id, rdto);
+                        });
+                    // al presionar enter
+                    $('#rdto_{{$value4['theoricalProgramming_id']}}').keyup(function(e){
+                        if(e.keyCode == 13 || e.keyCode == 9)
+                        {
+                            var id = $('#id_{{$value4['theoricalProgramming_id']}}').val();
+                            var horas = $('#horas_{{$value4['theoricalProgramming_id']}}').text();
+                            var rdto = $('#rdto_{{$value4['theoricalProgramming_id']}}').val();
+
+                            $('#diario_{{$value4['theoricalProgramming_id']}}').text(horas * rdto);
+                            $('#semanal_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7);
+                            $('#mensual_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7 * 4);
+                            $('#anual_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7 * 4 * 52);
+
+                            savePerformance(id, rdto);
+                        }
+                    });
+                    @endif
+                @endforeach
+            @endforeach
+        @endforeach
+    @endforeach
+    @endif
+
+    @if($array_programacion_no_medica != null)
+    @foreach ($array_programacion_no_medica as $key1 => $value1)
+        @foreach ($value1 as $key2 => $value2)
+            @foreach ($value2 as $key3 => $value3)
+                @foreach ($value3 as $key4 => $value4)
+                    @if($value4['rdto_hour'] != null)
+                    // cuando se deja focus
+                        $("#rdto_{{$value4['theoricalProgramming_id']}}").change(function() {
+                            var id = $('#id_{{$value4['theoricalProgramming_id']}}').val();
+                            var horas = $('#horas_{{$value4['theoricalProgramming_id']}}').text();
+                            var rdto = $('#rdto_{{$value4['theoricalProgramming_id']}}').val();
+
+                            $('#diario_{{$value4['theoricalProgramming_id']}}').text(horas * rdto);
+                            $('#semanal_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7);
+                            $('#mensual_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7 * 4);
+                            $('#anual_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7 * 4 * 52);
+
+                            savePerformance(id, rdto);
+                        });
+                    // al presionar enter
+                    $('#rdto_{{$value4['theoricalProgramming_id']}}').keyup(function(e){
+                        if(e.keyCode == 13 || e.keyCode == 9)
+                        {
+                            var id = $('#id_{{$value4['theoricalProgramming_id']}}').val();
+                            var horas = $('#horas_{{$value4['theoricalProgramming_id']}}').text();
+                            var rdto = $('#rdto_{{$value4['theoricalProgramming_id']}}').val();
+
+                            $('#diario_{{$value4['theoricalProgramming_id']}}').text(horas * rdto);
+                            $('#semanal_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7);
+                            $('#mensual_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7 * 4);
+                            $('#anual_{{$value4['theoricalProgramming_id']}}').text(horas * rdto * 7 * 4 * 52);
+
+                            savePerformance(id, rdto);
+                        }
+                    });
+                    @endif
+                @endforeach
+            @endforeach
+        @endforeach
+    @endforeach
+    @endif
+
+    function savePerformance(id, performance_value) {
+      $.ajax({
+          url: "{{ route('ehr.hetg.cutoffdates.savePerformance') }}",
+          type: 'post',
+          data:{id:id,performance_value:performance_value},
+          headers: {
+              'X-CSRF-TOKEN': "{{ csrf_token() }}"
+          },
+      });
+    }
+});
+
+
+</script>
 
 @endsection

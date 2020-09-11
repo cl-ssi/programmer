@@ -57,6 +57,7 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->unsignedInteger('activity_id')->nullable();
             $table->string('start_date');
             $table->string('end_date');
+            $table->decimal('performance', 8, 2)->nullable();
             $table->string('contract_day_type')->nullable();
             $table->integer('year')->nullable();
             $table->unsignedBigInteger('user_id');
@@ -84,6 +85,7 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->string('start_date');
             $table->string('end_date');
             $table->integer('year')->nullable();
+
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');

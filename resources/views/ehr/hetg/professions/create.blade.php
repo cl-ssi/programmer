@@ -51,7 +51,11 @@
             </label>
           </td>
           <td>
-            <input type="text" name="performance_activity_{{$activity->id}}" class="form-control col-md-4" id="for_activity_name" placeholder="ej: 3">
+            @if($activity->performance == 1)
+                <input type="text" name="performance_activity_{{$activity->id}}" class="form-control col-md-4" id="for_activity_name" placeholder="ej: 3">
+            @else
+                <input type="text" name="performance_activity_{{$activity->id}}" class="form-control col-md-4" id="for_activity_name" placeholder="--" disabled>
+            @endif
           </td>
         </tr>
         @endforeach

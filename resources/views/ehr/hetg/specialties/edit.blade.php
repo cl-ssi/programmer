@@ -57,7 +57,7 @@
                         {{ $activity->activity_name }}
                       </label>
                     </td>
-                    @if($activity->performance == 0)
+                    @if($activity->performance == 1)
                         <td>
                           @if($specialty->activities->where('id',$activity->id)->count() > 0)
                               <input type="text" name="performance_activity_{{$activity->id}}" value="{{$specialty->activities->where('id',$activity->id)->first()->pivot->performance}}" class="form-control col-md-6" id="for_activity_name" placeholder="ej: 4">

@@ -352,40 +352,36 @@ class TheoreticalProgrammingController extends Controller
     }
 
     public function saveMyEvent(Request $request){
-        $year = $request->year;
-        $first_date = new Carbon($request->start_date);
-        $last_date = new Carbon($request->end_date);
+        // try {
+            $year = $request->year;
+            $first_date = new Carbon($request->start_date);
+            $last_date = new Carbon($request->end_date);
 
-        //registro permisos administrativos
-        if ($request->tipo_evento != "teorico") {
-            $theoreticalProgramming = new TheoreticalProgramming();
-            $theoreticalProgramming->rut = $request->rut;
-            $theoreticalProgramming->contract_day_type = $request->tipo_evento;
-            $theoreticalProgramming->start_date = $first_date;
-            $theoreticalProgramming->end_date = $last_date;
-            $theoreticalProgramming->year = $year;
-            $theoreticalProgramming->user_id = Auth::id();
-            $theoreticalProgramming->save();
-        }
-        //registro de teoricos
-        else {
-            //solo se inserta en esta semana
-            if ($request->tipo_ingreso == 1) {
+            //registro permisos administrativos
+            if ($request->tipo_evento != "teorico") {
                 $theoreticalProgramming = new TheoreticalProgramming();
                 $theoreticalProgramming->rut = $request->rut;
-                $theoreticalProgramming->contract_id = $request->contract_id;
-                $theoreticalProgramming->specialty_id = $request->specialty_id;
-                $theoreticalProgramming->profession_id = $request->profession_id;
-                $theoreticalProgramming->activity_id = $request->activity_id;
+                $theoreticalProgramming->contract_day_type = $request->tipo_evento;
                 $theoreticalProgramming->start_date = $first_date;
                 $theoreticalProgramming->end_date = $last_date;
                 $theoreticalProgramming->year = $year;
                 $theoreticalProgramming->user_id = Auth::id();
                 $theoreticalProgramming->save();
             }
-            //se inserta desde esta semana hacia adelante
+            //registro de teoricos
             else {
-                while (date('Y', strtotime($first_date)) == $year) {
+                //obtiene rendimiento
+                if ($request->specialty_id != null) {
+                    $Specialty = Specialty::find($request->specialty_id);
+                    $performance = $Specialty->activities->where('id',$request->activity_id)->first()->pivot->performance;
+                }else{
+                    $profession = Profession::find($request->profession_id);
+                    $performance = $profession->activities->where('id',$request->activity_id)->first()->pivot->performance;
+                }
+
+
+                //solo se inserta en esta semana
+                if ($request->tipo_ingreso == 1) {
                     $theoreticalProgramming = new TheoreticalProgramming();
                     $theoreticalProgramming->rut = $request->rut;
                     $theoreticalProgramming->contract_id = $request->contract_id;
@@ -394,15 +390,35 @@ class TheoreticalProgrammingController extends Controller
                     $theoreticalProgramming->activity_id = $request->activity_id;
                     $theoreticalProgramming->start_date = $first_date;
                     $theoreticalProgramming->end_date = $last_date;
+                    $theoreticalProgramming->performance = $performance;
                     $theoreticalProgramming->year = $year;
                     $theoreticalProgramming->user_id = Auth::id();
                     $theoreticalProgramming->save();
+                }
+                //se inserta desde esta semana hacia adelante
+                else {
+                    while (date('Y', strtotime($first_date)) == $year) {
+                        $theoreticalProgramming = new TheoreticalProgramming();
+                        $theoreticalProgramming->rut = $request->rut;
+                        $theoreticalProgramming->contract_id = $request->contract_id;
+                        $theoreticalProgramming->specialty_id = $request->specialty_id;
+                        $theoreticalProgramming->profession_id = $request->profession_id;
+                        $theoreticalProgramming->activity_id = $request->activity_id;
+                        $theoreticalProgramming->start_date = $first_date;
+                        $theoreticalProgramming->end_date = $last_date;
+                        $theoreticalProgramming->performance = $performance;
+                        $theoreticalProgramming->year = $year;
+                        $theoreticalProgramming->user_id = Auth::id();
+                        $theoreticalProgramming->save();
 
-                    $first_date = $first_date->addWeek(1);
-                    $last_date = $last_date->addWeek(1);
+                        $first_date = $first_date->addWeek(1);
+                        $last_date = $last_date->addWeek(1);
+                    }
                 }
             }
-        }
+        // } catch (\Exception $e) {
+        //     Storage::put('errores.txt', $e->getMessage());
+        // }
     }
 
     public function updateMyEvent(Request $request){
@@ -415,6 +431,15 @@ class TheoreticalProgrammingController extends Controller
           $start_date_start = new Carbon($request->start_date_start);
           $end_date_start = new Carbon($request->end_date_start);
 
+          //obtiene rendimiento
+          if ($request->specialty_id != null) {
+              $Specialty = Specialty::find($request->specialty_id);
+              $performance = $Specialty->activities->where('id',$request->activity_id)->first()->pivot->performance;
+          }else{
+              $profession = Profession::find($request->profession_id);
+              $performance = $profession->activities->where('id',$request->activity_id)->first()->pivot->performance;
+          }
+
           //solo se modifica el evento actual
           if ($request->tipo == 1) {
               $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
@@ -426,6 +451,7 @@ class TheoreticalProgrammingController extends Controller
                                                               ->where('end_date',$end_date_start)->first();
               $theoreticalProgramming->start_date = $start_date;
               $theoreticalProgramming->end_date = $end_date;
+              $theoreticalProgramming->performance = $performance;
               $theoreticalProgramming->save();
           }
           //se modifican todos los eventos hacia adelante
@@ -440,6 +466,7 @@ class TheoreticalProgrammingController extends Controller
                                                                   ->where('end_date',$end_date_start)->first();
                   $theoreticalProgramming->start_date = $start_date;
                   $theoreticalProgramming->end_date = $end_date;
+                  $theoreticalProgramming->performance = $performance;
                   $theoreticalProgramming->save();
 
                   $start_date = $start_date->addWeek(1);

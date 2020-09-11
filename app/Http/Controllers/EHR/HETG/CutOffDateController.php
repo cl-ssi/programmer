@@ -136,6 +136,9 @@ class CutOffDateController extends Controller
             $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = 0;
+            $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+                                      [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
+                                      [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = 0;
         }
         foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
             $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
@@ -143,7 +146,10 @@ class CutOffDateController extends Controller
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['assigned_hour'] += $theoricalProgramming->duration_theorical_programming;
             $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
-                                      [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = $theoricalProgramming->specialty->activities->where('id',$theoricalProgramming->activity->id)->first()->pivot->performance;
+                                      [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = $theoricalProgramming->performance;//$theoricalProgramming->specialty->activities->where('id',$theoricalProgramming->activity->id)->first()->pivot->performance;
+            $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+                                      [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
+                                      [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = $theoricalProgramming->id;
         }
         //NO programables - PROGRAMACION MÉDICA
         foreach ($medicalProgrammings->whereNotNull('specialty_id') as $key => $medicalProgramming) {
@@ -153,6 +159,9 @@ class CutOffDateController extends Controller
             $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
                                       [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
                                       [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = 0;
+            $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
+                                      [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
+                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['medicalProgramming_id'] = 0;
         }
         foreach ($medicalProgrammings->whereNotNull('specialty_id') as $key => $medicalProgramming) {
             $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
@@ -160,10 +169,11 @@ class CutOffDateController extends Controller
                                       [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['assigned_hour'] += $medicalProgramming->assigned_hour;
             $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
                                       [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
-                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = $medicalProgramming->specialty->activities->where('id',$medicalProgramming->activity->id)->first()->pivot->performance;
+                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = $medicalProgramming->hour_performance;//$medicalProgramming->specialty->activities->where('id',$medicalProgramming->activity->id)->first()->pivot->performance;
+            $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
+                                      [$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name]
+                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['medicalProgramming_id'] = $medicalProgramming->id;
         }
-
-
 
 
 
@@ -177,6 +187,9 @@ class CutOffDateController extends Controller
             $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = 0;
+            $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+                                      [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
+                                      [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = 0;
         }
         foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
             $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
@@ -184,7 +197,10 @@ class CutOffDateController extends Controller
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['assigned_hour'] += $theoricalProgramming->duration_theorical_programming;
             $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
-                                      [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = $theoricalProgramming->profession->activities->where('id',$theoricalProgramming->activity->id)->first()->pivot->performance;
+                                      [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = $theoricalProgramming->performance;//$theoricalProgramming->profession->activities->where('id',$theoricalProgramming->activity->id)->first()->pivot->performance;
+            $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+                                      [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
+                                      [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = $theoricalProgramming->id;
         }
         //NO programables - PROGRAMACION NO MÉDICA
         foreach ($medicalProgrammings->whereNotNull('profession_id') as $key => $medicalProgramming) {
@@ -194,6 +210,9 @@ class CutOffDateController extends Controller
             $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
                                       [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
                                       [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = 0;
+            $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
+                                      [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
+                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['medicalProgramming_id'] = 0;
         }
         foreach ($medicalProgrammings->whereNotNull('profession_id') as $key => $medicalProgramming) {
             $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
@@ -201,7 +220,10 @@ class CutOffDateController extends Controller
                                       [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['assigned_hour'] += $medicalProgramming->assigned_hour;
             $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
                                       [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
-                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = $medicalProgramming->profession->activities->where('id',$medicalProgramming->activity->id)->first()->pivot->performance;
+                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = $medicalProgramming->hour_performance;//$medicalProgramming->profession->activities->where('id',$medicalProgramming->activity->id)->first()->pivot->performance;
+            $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
+                                      [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
+                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['medicalProgramming_id'] = $medicalProgramming->id;
         }
 
         // dd($array_programacion_no_medica);
@@ -209,5 +231,11 @@ class CutOffDateController extends Controller
         $cutoffdates = CutOffDate::all();
         return view('ehr.hetg.cutoffdates.index', compact('cutoffdates','array_programacion_medica', 'array_programacion_no_medica'));
         // return redirect()->route('ehr.hetg.cutoffdates.index')->compact('array');
+    }
+
+    public function savePerformance(Request $request){
+        $theoreticalProgramming = TheoreticalProgramming::where('id',$request->id)->first();
+        $theoreticalProgramming->performance = $request->performance_value;
+        $theoreticalProgramming->save();
     }
 }
