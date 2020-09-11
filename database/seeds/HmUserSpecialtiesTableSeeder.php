@@ -52,6 +52,30 @@ class HmUserSpecialtiesTableSeeder extends Seeder
         UserSpecialty::Create(['user_id' => 1,'specialty_id'=>38]);
         UserSpecialty::Create(['user_id' => 1,'specialty_id'=>39]);
         UserSpecialty::Create(['user_id' => 1,'specialty_id'=>40]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>41]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>42]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>43]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>44]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>45]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>46]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>47]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>48]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>49]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>50]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>51]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>52]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>53]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>54]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>55]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>56]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>57]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>58]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>59]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>60]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>61]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>62]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>63]);
+        UserSpecialty::Create(['user_id' => 1,'specialty_id'=>64]);
 
         UserSpecialty::Create(['user_id' => 2,'specialty_id'=>13]);
 
