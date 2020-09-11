@@ -139,12 +139,12 @@
 
                         <a class="dropdown-item"
                             href="{{ route('ehr.hetg.specialties.index') }}">
-                            <i class="fas fa-file-contract fa-fw"></i> Especialidades (Rdtos)
+                            <i class="fas fa-file-contract fa-fw"></i> Especialidades (Rdtos sugeridos)
                         </a>
 
                         <a class="dropdown-item"
                             href="{{ route('ehr.hetg.professions.index') }}">
-                            <i class="fas fa-file-contract fa-fw"></i> Profesiones (Rdtos)
+                            <i class="fas fa-file-contract fa-fw"></i> Profesiones (Rdtos sugeridos)
                         </a>
 
                         <a class="dropdown-item"
