@@ -1,7 +1,7 @@
 <table class="table table-sm table-borderer">
     <thead>
         <tr>
-            <th>Id contrato</th>
+            <th>Contrato</th>
             <th>Especialista</th>
             <th>Especialidad</th>
             <th>Actividad</th>
@@ -13,7 +13,7 @@
     <tbody>
         @foreach( $programming as $row )
         <tr>
-            <td>{{ $row->contract->contract_id }}</td>
+            <td>{{ $row->contract->law }}</td>
             <td>{{ $row->rrhh->getFullNameAttribute() }}</td>
             <td>{{ $row->specialty->specialty_name }}</td>
             <td>{{ $row->activity->activity_name }}</td>

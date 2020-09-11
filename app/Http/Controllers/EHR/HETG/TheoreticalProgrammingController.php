@@ -68,36 +68,6 @@ class TheoreticalProgrammingController extends Controller
                 // })
                 ->orderby('name','ASC')->get();
 
-    $specialties = null;
-    $professions = null;
-    $activities = null;
-    //si es programación médica
-
-    if ($request->get('tipo') == 1) {
-        $specialties = Specialty::orderBy('specialty_name','ASC')->get();
-        $var = $request->get('specialty_id');
-        $activities = Activity::orderBy('activity_name','ASC')
-                                ->where('activity_type_id',1) //ejemplo: actividades medicas
-                                ->whereHas('specialties', function($q) use($var) {
-                                    $q->where('specialty_id', $var);
-                                })
-                                ->get();
-    }
-    //si es programación médica
-    else{
-        $professions = Profession::orderBy('profession_name','ASC')->get();
-        $var = $request->get('profession_id');
-        $activities = Activity::orderBy('activity_name','ASC')
-                                ->where('activity_type_id',2) //ejemplo: actividades medicas
-                                ->whereHas('professions', function($q) use($var) {
-                                    $q->where('profession_id', $var);
-                                })
-                                ->get();
-    }
-
-    $monday = Carbon::parse($date)->startOfWeek();
-    $sunday = Carbon::parse($date)->endOfWeek();
-
     //información para días contrato
     $contracts = Contract::where('rut',$rut)->where('year',$year)->get();
 
@@ -110,6 +80,50 @@ class TheoreticalProgrammingController extends Controller
             $contract_id = $contracts->first()->id;
         }
     }
+
+    //encuentra actividades segun tipo de profesional
+    $specialties = null;
+    $professions = null;
+    $activities = null;
+    //si es programación médica
+    if ($request->get('tipo') == 1) {
+        $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+        $var = $request->get('specialty_id');
+        $activities = Activity::orderBy('activity_name','ASC')
+                                ->where('activity_type_id',1) //ejemplo: actividades medicas
+                                ->whereHas('specialties', function($q) use($var) {
+                                    $q->where('specialty_id', $var);
+                                })
+                                ->get();
+
+        //corresponde a la actividad no programable (que se guarda en el modelo medicalProgramming)
+        $programming = MedicalProgramming::where('rut',$rut)
+                                         ->where('year',$year)
+                                         ->where('contract_id', $contract_id)
+                                         ->where('specialty_id', $var)
+                                         ->get();
+    }
+    //si es programación médica
+    else{
+        $professions = Profession::orderBy('profession_name','ASC')->get();
+        $var = $request->get('profession_id');
+        $activities = Activity::orderBy('activity_name','ASC')
+                                ->where('activity_type_id',2) //ejemplo: actividades medicas
+                                ->whereHas('professions', function($q) use($var) {
+                                    $q->where('profession_id', $var);
+                                })
+                                ->get();
+
+        //corresponde a la actividad no programable (que se guarda en el modelo medicalProgramming)
+        $programming = MedicalProgramming::where('rut',$rut)
+                                         ->where('year',$year)
+                                         ->where('contract_id', $contract_id)
+                                         ->where('profession_id', $var)
+                                         ->get();
+    }
+
+    $monday = Carbon::parse($date)->startOfWeek();
+    $sunday = Carbon::parse($date)->endOfWeek();
 
     //obtiene horas teóricas
     $theoreticalProgrammings = TheoreticalProgramming::where('year',$year)
@@ -172,9 +186,6 @@ class TheoreticalProgrammingController extends Controller
 
     $monday = Carbon::parse($date)->startOfWeek();
     $sunday = Carbon::parse($date)->endOfWeek();
-
-    //corresponde a la actividad no programable (que se guarda en el modelo medicalProgramming)
-    $programming = MedicalProgramming::where('rut',$rut)->get();
 
       return view('ehr.hetg.management.theoretical_programmer', compact('request','array','activities','contract_days','date','theoreticalProgrammings',
                                                                         'rrhhs','permisos_administrativos', 'specialties','professions','contracts',
