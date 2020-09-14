@@ -51,7 +51,7 @@
                 @canany(['programador'])
                     <a class="dropdown-item"
                         href="{{ route('ehr.hetg.calendar_programming.index') }}">
-                        <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador
+                        <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas
                     </a>
                 @endcanany
             </ul>

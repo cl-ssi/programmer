@@ -18,7 +18,9 @@ class ProfessionController extends Controller
      */
     public function index()
     {
-        $professions = Profession::orderBy('profession_name','ASC')->get();
+        $professions = Profession::whereHas('userProfessions', function ($query)  {
+                                        return $query->where('user_id',Auth::id());
+                                    })->orderBy('profession_name','ASC')->get();
         return view('ehr.hetg.professions.index', compact('professions'));
     }
 

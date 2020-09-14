@@ -6,8 +6,9 @@ use App\EHR\HETG\MotherActivity;
 use App\EHR\HETG\Activity;
 use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\CalendarProgramming;
-use App\EHR\HETG\MedicalProgrammings;
 use App\EHR\HETG\TheoreticalProgramming;
+use App\EHR\HETG\CutOffDate;
+use App\EHR\HETG\MedicalProgramming;
 use App\EHR\HETG\OperatingRoom;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -60,39 +61,73 @@ class CalendarProgrammingController extends Controller
       $rrhh = Rrhh::whereHas('contracts', function ($query) use ($year) {
                       return $query->where('year',$year);
                   })
-                  // ->whereHas('medical_programmings', function ($query) use ($users) {
-                  //     return $query->whereHas('specialty', function ($query) use ($users) {
-                  //         return $query->whereIn('specialty_id',$users->getSpecialtiesArray());
-                  //     });
-                  // })
                   ->orderby('name','ASC')->get();
-                  // dd($rrhh);
+
+      // $array = array();
+      // foreach ($rrhh as $key => $data) {
+      //   foreach ($data->contracts->where('year',$year)
+      //                            ->when($rut != 0, function ($query) use ($rut) {
+      //                               return $query->where('rut',$rut);
+      //                             }) as $key => $contract) {
+      //     foreach ($contract->medical_programmings->whereIn('activity_id',$ids_actividades)
+      //                                             // ->whereIn('specialty_id',$ids_specialities)
+      //                                             ->where('year', $year) as $key => $medical_programming) {
+      //       //dd($medical_programming->assigned_hour);
+      //       $data->assigned_hour += $medical_programming->assigned_hour;
+      //       $data->color = $medical_programming->Specialty->color;
+      //       $data->specialty_id = $medical_programming->Specialty->id;
+      //       $data->duration_medical_programming += $medical_programming->assigned_hour;// $data->medical_programmings->sum('assigned_hour');
+      //
+      //       $array[$this->formatear_cadena($medical_programming->Specialty->specialty_name)][$data->rut] = $data;
+      //     }
+      //   }
+      // }
 
 
-      $array = array();
-      foreach ($rrhh as $key => $data) {
-        foreach ($data->contracts->where('year',$year)
-                                 ->when($rut != 0, function ($query) use ($rut) {
-                                    return $query->where('rut',$rut);
-                                  }) as $key => $contract) {
-          foreach ($contract->medical_programmings->whereIn('activity_id',$ids_actividades)
-                                                  // ->whereIn('specialty_id',$ids_specialities)
-                                                  ->where('year', $year) as $key => $medical_programming) {
-            //dd($medical_programming->assigned_hour);
-            $data->assigned_hour += $medical_programming->assigned_hour;
-            $data->color = $medical_programming->Specialty->color;
-            $data->specialty_id = $medical_programming->Specialty->id;
-            $data->duration_medical_programming += $medical_programming->assigned_hour;// $data->medical_programmings->sum('assigned_hour');
 
-            $array[$this->formatear_cadena($medical_programming->Specialty->specialty_name)][$data->rut] = $data;
-          }
-        }
+
+
+
+
+
+
+      //obtiene bolsas de horas (TEÓRICAS) según fecha de corte
+      $cutoffdate = CutOffDate::orderBy('date', 'desc')->first();
+      $monday = Carbon::parse($cutoffdate->date)->startOfWeek();
+      $sunday = Carbon::parse($cutoffdate->date)->endOfWeek();
+      //obtiene datos programables del período
+      $theoreticalProgrammings = TheoreticalProgramming::whereBetween('start_date',[$monday,$sunday])
+                                                      ->whereNull('contract_day_type')
+                                                      ->get();
+
+      $cutoff_date = new Carbon($cutoffdate->date);
+      //obtiene datos NO programables del año
+      $medicalProgrammings = MedicalProgramming::where('year',$cutoff_date->get('year'))->get();
+
+      //se obtiene fechas de inicio y termino de cada isEventOverDiv
+      foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
+        $start  = new Carbon($theoricalProgramming->start_date);
+        $end    = new Carbon($theoricalProgramming->end_date);
+        $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
       }
 
-      // dd($array);
+      //programables - PROGRAMACION MÉDICA
+      $array = array();
+      foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
+          $array[$theoricalProgramming->specialty->specialty_name][$theoricalProgramming->rut] = $theoricalProgramming->first()->rrhh;
+          $array[$theoricalProgramming->specialty->specialty_name][$theoricalProgramming->rut]['assigned_hour'] = $theoricalProgramming->duration_theorical_programming;
+          $array[$theoricalProgramming->specialty->specialty_name][$theoricalProgramming->rut]['specialty_id'] = $theoricalProgramming->specialty_id;
+          $array[$theoricalProgramming->specialty->specialty_name][$theoricalProgramming->rut]['color'] = $theoricalProgramming->specialty->color;
+      }
 
+
+
+
+
+      //pabellones
       $operatingRooms = OperatingRoom::orderBy('name','ASC')->get();
 
+      //obtiene horas programadas de la semana
       $monday = Carbon::parse($date)->startOfWeek();
       $sunday = Carbon::parse($date)->endOfWeek();
       $calendarProgrammings = CalendarProgramming::whereBetween('start_date',[$monday,$sunday])->whereNotNull('operating_room_id')
@@ -100,39 +135,17 @@ class CalendarProgrammingController extends Controller
                                                      return $query->where('rut',$rut);
                                                  })->get();
 
-                                                 // dd($calendarProgrammings);
-
-        //días feriados, etc.
-       // $contract_days = CalendarProgramming::whereBetween('start_date',[$monday,$sunday])->whereNotNull('contract_day_type')
-       //                                     ->when($rut != 0, function ($query) use ($rut) {
-       //                                        return $query->where('rut',$rut);
-       //                                    })->get();
-
       foreach ($calendarProgrammings as $key => $calendarProgramming) {
-        //$calendarProgramming->duration = $calendarProgramming->end_date->diffInSeconds($calendarProgramming->start_date);
         $start  = new Carbon($calendarProgramming->start_date);
         $end    = new Carbon($calendarProgramming->end_date);
         $calendarProgramming->duration_calendar_programming = $start->diffInMinutes($end)/60;
       }
-      // dd($calendarProgrammings);
 
-      $theoreticalProgrammings = TheoreticalProgramming::all();
-      // $contract_days = CalendarProgramming::whereNotNull('contract_day_type')->get();
-      $contract_days = CalendarProgramming::where('id',100000)->get();
+      //obtiene horario teórico
+      $theoreticalProgrammings = TheoreticalProgramming::whereBetween('start_date',[$monday,$sunday])->get();
 
-      //se obtiene fechas de inicio y termino de cada isEventOverDiv
-      // foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
-      //   $week_day = $theoricalProgramming->week_day;
-      //   if ($theoricalProgramming->week_day == 0) {
-      //     $week_day = 7;
-      //   }
-      //   $dayofweek = date('w', strtotime($monday));
-      //   $result    = date('Y-m-d', strtotime(($week_day - $dayofweek).' day', strtotime($monday)));
-      //
-      //   $theoricalProgramming->start_date = $result . " " . $theoricalProgramming->start_time;
-      //   $theoricalProgramming->end_date = $result . " " . $theoricalProgramming->end_time;
-      // }
-      // dd($theoreticalProgrammings);
+      //obtiene dia administrativos de la semana
+      $contract_days = CalendarProgramming::whereBetween('start_date',[$monday,$sunday])->where('id',100000)->get();
 
       //devuelve listado de todos los profesionales
       $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {

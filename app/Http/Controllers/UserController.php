@@ -6,6 +6,7 @@ use App\User;
 use App\EHR\HETG\Specialty;
 use App\EHR\HETG\Profession;
 use App\EHR\HETG\UserSpecialty;
+use App\EHR\HETG\UserProfession;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -83,6 +84,19 @@ class UserController extends Controller
             }
         }
 
+        //asigna profesiones
+        foreach ($request->input('professions') as $key => $value) {
+            $userProfession = UserProfession::where('profession_id',$value)
+                                            ->where('user_id', $user->id)
+                                            ->get();
+            if ($userProfession->count() == 0) {
+                $userProfession = new UserProfession();
+                $userProfession->profession_id = $value;
+                $userProfession->user_id = $user->id;
+                $userProfession->save();
+            }
+        }
+
 
         session()->flash('success', 'Usuario Creado Exitosamente');
 
@@ -110,8 +124,8 @@ class UserController extends Controller
     {
         $permissions = Permission::OrderBy('name')->get();
         $specialties = Specialty::OrderBy('specialty_name')->get();
-
-        return view('users.edit', compact('user','permissions','specialties'));
+        $professions = Profession::OrderBy('profession_name')->get();
+        return view('users.edit', compact('user','permissions','specialties','professions'));
     }
 
     /**
@@ -142,6 +156,19 @@ class UserController extends Controller
                 $userSpecialty->specialty_id = $value;
                 $userSpecialty->user_id = $user->id;
                 $userSpecialty->save();
+            }
+        }
+
+        //asigna profesiones
+        foreach ($request->input('professions') as $key => $value) {
+            $userProfession = UserProfession::where('profession_id',$value)
+                                            ->where('user_id', $user->id)
+                                            ->get();
+            if ($userProfession->count() == 0) {
+                $userProfession = new UserProfession();
+                $userProfession->profession_id = $value;
+                $userProfession->user_id = $user->id;
+                $userProfession->save();
             }
         }
 

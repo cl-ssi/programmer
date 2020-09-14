@@ -105,13 +105,25 @@
 
             <br />
             <h4>Especialidades</h4>
-    
+
             @foreach($specialties as $specialty)
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="specialties[]"
                     value="{{ $specialty->id }}" {{ ($user->userSpecialties->contains('specialty_id', $specialty->id))?'checked':'' }}>
                 <label class="form-check-label">
                     {{ $specialty->specialty_name }}
+                </label>
+            </div>
+            @endforeach
+
+            <br />
+            <h4>Profesiones</h4>
+            @foreach($professions as $profession)
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="professions[]"
+                    value="{{ $profession->id }}" {{ ($user->userProfessions->contains('profession_id', $profession->id))?'checked':'' }}>
+                <label class="form-check-label">
+                    {{ $profession->profession_name }}
                 </label>
             </div>
             @endforeach

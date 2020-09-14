@@ -127,7 +127,7 @@ bottom: 5px;
                                                                                                                          "color": "#{{$doc->color}}",
                                                                                                                          "id":"{{$doc->rut}}",
                                                                                                                          "description":"{{$doc->specialty_id}}"}'>
-                <small>{{$doc->getShortNameAttribute()}}: <span id="{{$doc->rut}}"></span> ({{$doc->duration_medical_programming}})</small>
+                <small>{{$doc->getShortNameAttribute()}}: <span id="{{$doc->rut}}"></span> ({{$doc->assigned_hour}})</small>
             </div>
           @endforeach
         @endforeach
@@ -270,7 +270,6 @@ bottom: 5px;
   });
 
   // ############## inicialización de calendario
-
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var Draggable = FullCalendarInteraction.Draggable
@@ -330,7 +329,7 @@ bottom: 5px;
 
         @foreach ($calendarProgrammings as $key => $calendarProgramming)
           { id: '{{$calendarProgramming->rut}}', title: '{{$calendarProgramming->rrhh->getShortNameAttribute()}}',
-            color:'#{{$calendarProgramming->specialty->color}}', resourceId: '{{$calendarProgramming->operating_room_id}}',
+            color:'#{{$calendarProgramming->color}}', resourceId: '{{$calendarProgramming->operating_room_id}}',
             start: '{{$calendarProgramming->start_date}}', end: '{{$calendarProgramming->end_date}}',
             description: '{{$calendarProgramming->specialty_id}}'},
         @endforeach
@@ -811,6 +810,7 @@ bottom: 5px;
       let operating_room_id = event.getResources().map(function(resource) { return resource.id }).toString();
       let rut = event.id.toString();
       let specialty_id = event.extendedProps.description.toString();
+      console.log(event.extendedProps);
 
       $.ajax({
           url: "{{ route('ehr.hetg.calendar_programming.saveMyEvent') }}",
