@@ -38,7 +38,7 @@
 
     <hr>
       <fieldset class="form-group col-12 col-md-6">
-        <h3><label for="">Actividades (Escribir rendimiento si se selecciona)</label></h3>
+        <h3><label for="">Actividades No Médicas</label></h3>
         <table>
 
             {{-- {{$specialty->activities}} --}}

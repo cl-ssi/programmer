@@ -31,7 +31,7 @@ class ProfessionController extends Controller
      */
     public function create()
     {
-        $activities = Activity::where('activity_type_id',2)->orderBy('activity_name','ASC')->get(); //obtiene NO medicas
+        $activities = Activity::where('mother_activity_id',2)->where('activity_type_id',2)->orderBy('activity_name','ASC')->get(); //obtiene NO medicas
         return view('ehr.hetg.professions.create',compact('activities'));
     }
 
@@ -78,7 +78,7 @@ class ProfessionController extends Controller
      */
     public function edit(Profession $profession)
     {
-        $activities = Activity::where('activity_type_id',2)->orderBy('activity_name','ASC')->get(); //obtiene NO medicas
+        $activities = Activity::where('mother_activity_id',2)->where('activity_type_id',2)->orderBy('activity_name','ASC')->get(); //obtiene NO medicas
         return view('ehr.hetg.professions.edit', compact('profession','activities'));
     }
 

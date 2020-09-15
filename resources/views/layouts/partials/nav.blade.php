@@ -127,10 +127,10 @@
                             <i class="fas fa-person-booth fa-fw"></i> Pabellones
                         </a>
 
-                        <a class="dropdown-item"
+                        {{-- <a class="dropdown-item"
                             href="{{ route('ehr.hetg.mother_activities.index') }}">
                             <i class="fas fa-file-contract fa-fw"></i> Actividades Madre
-                        </a>
+                        </a> --}}
 
                         <a class="dropdown-item"
                             href="{{ route('ehr.hetg.activities.index') }}">
