@@ -18,6 +18,7 @@
             <th>Descripcion</th>
             {{-- <th>Establecimiento ID</th> --}}
             <th>Ubicación</th>
+            <th>Tipo</th>
             <th>Color</th>
             <th></th>
         </tr>
@@ -30,6 +31,8 @@
             <td>{{ $or->description }}</td>
             {{-- <td>{{ $or->establishment_id }}</td> --}}
             <td>{{ $or->location }}</td>
+            @if($or->medic_box == 1)<td>Box médico</td>
+            @else <td>Pabellón</td> @endif
             <td><span class="badge badge-primary" style="background-color: #{{$or->color}};">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
             <td>
       				<a href="{{ route('ehr.hetg.operating_rooms.edit', $or) }}"

@@ -127,6 +127,18 @@
                 </label>
             </div>
             @endforeach
+
+            <br />
+            <h4>Pabellones</h4>
+            @foreach($operating_rooms as $operating_room)
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="operating_rooms[]"
+                    value="{{ $operating_room->id }}" {{ ($user->userOperatingRooms->contains('operating_room_id', $operating_room->id))?'checked':'' }}>
+                <label class="form-check-label">
+                    {{ $operating_room->description }}
+                </label>
+            </div>
+            @endforeach
         </div>
 
     </div>

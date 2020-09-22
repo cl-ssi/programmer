@@ -19,9 +19,20 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->string('description')->nullable();
             $table->string('location')->nullable();
             $table->string('color')->nullable();
+            $table->boolean('medic_box')->default(0);
             $table->unsignedBigInteger('user_id');
 
             $table->foreign('user_id')->references('id')->on('users');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('hm_user_operating_rooms', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedInteger('operating_room_id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('operating_room_id')->references('id')->on('hm_operating_rooms')->onDelete('cascade');
+
             $table->timestamps();
             $table->softDeletes();
         });
@@ -120,6 +131,7 @@ class CreateHmOperatingRoomsTable extends Migration
         Schema::dropIfExists('hm_operating_room_programming');
         Schema::dropIfExists('hm_theoretical_programming');
         Schema::dropIfExists('hm_calendar_programming');
+        Schema::dropIfExists('hm_user_operating_rooms');
         Schema::dropIfExists('hm_operating_rooms');
     }
 }

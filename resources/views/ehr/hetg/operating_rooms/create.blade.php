@@ -29,6 +29,14 @@
         </fieldset>
 
         <fieldset class="form-group col">
+            <label for="for_medic_box">Tipo</label>
+            <select name="medic_box" id="for_medic_box" class="form-control">
+              <option value="0">Pabellón</option>
+              <option value="1">Box médico</option>
+            </select>
+        </fieldset>
+
+        <fieldset class="form-group col">
             <label for="for_name">Color</label>
             <input class="form-control jscolor" name="color" value="ab2567" required="">
         </fieldset>

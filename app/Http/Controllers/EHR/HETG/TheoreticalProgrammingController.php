@@ -95,7 +95,7 @@ class TheoreticalProgrammingController extends Controller
                                     $q->where('specialty_id', $var);
                                 })
                                 ->get();
-
+                                
         //corresponde a la actividad no programable (que se guarda en el modelo medicalProgramming)
         $programming = MedicalProgramming::where('rut',$rut)
                                          ->where('year',$year)

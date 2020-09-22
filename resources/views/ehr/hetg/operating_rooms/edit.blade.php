@@ -29,6 +29,14 @@
         </fieldset>
 
         <fieldset class="form-group col">
+            <label for="for_medic_box">Tipo</label>
+            <select name="medic_box" id="for_medic_box" class="form-control">
+              <option value="0" {{ $operatingRoom->medic_box == 0 ? 'selected' : '' }}>Pabellón</option>
+              <option value="1" {{ $operatingRoom->medic_box == 1 ? 'selected' : '' }}>Box médico</option>
+            </select>
+        </fieldset>
+
+        <fieldset class="form-group col">
             <label for="for_name">Color</label>
             <input class="form-control jscolor" id="color" name="color" required="" value="{{$operatingRoom->color}}" onchange="update(this.jscolor)">
         </fieldset>

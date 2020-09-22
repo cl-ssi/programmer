@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\User;
 use App\EHR\HETG\Specialty;
 use App\EHR\HETG\Profession;
+use App\EHR\HETG\OperatingRoom;
 use App\EHR\HETG\UserSpecialty;
 use App\EHR\HETG\UserProfession;
+use App\EHR\HETG\UserOperatingRoom;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -48,8 +50,8 @@ class UserController extends Controller
         $permissions = Permission::OrderBy('name')->get();
         $specialties = Specialty::OrderBy('specialty_name')->get();
         $professions = Profession::OrderBy('profession_name')->get();
-
-        return view('users.create', compact('permissions','specialties','professions'));
+        $operating_rooms = OperatingRoom::OrderBy('id')->get();
+        return view('users.create', compact('permissions','specialties','professions','operating_rooms'));
     }
 
     /**
@@ -72,30 +74,52 @@ class UserController extends Controller
         );
 
         //asigna especialidades
-        foreach ($request->input('specialties') as $key => $value) {
-            $userSpecialty = UserSpecialty::where('specialty_id',$value)
-                                          ->where('user_id', $user->id)
-                                          ->get();
-            if ($userSpecialty->count() == 0) {
-                $userSpecialty = new UserSpecialty();
-                $userSpecialty->specialty_id = $value;
-                $userSpecialty->user_id = $user->id;
-                $userSpecialty->save();
+        if ($request->input('specialties')!=null) {
+            foreach ($request->input('specialties') as $key => $value) {
+                $userSpecialty = UserSpecialty::where('specialty_id',$value)
+                                              ->where('user_id', $user->id)
+                                              ->get();
+                if ($userSpecialty->count() == 0) {
+                    $userSpecialty = new UserSpecialty();
+                    $userSpecialty->specialty_id = $value;
+                    $userSpecialty->user_id = $user->id;
+                    $userSpecialty->save();
+                }
             }
         }
 
+
         //asigna profesiones
-        foreach ($request->input('professions') as $key => $value) {
-            $userProfession = UserProfession::where('profession_id',$value)
-                                            ->where('user_id', $user->id)
-                                            ->get();
-            if ($userProfession->count() == 0) {
-                $userProfession = new UserProfession();
-                $userProfession->profession_id = $value;
-                $userProfession->user_id = $user->id;
-                $userProfession->save();
+        if ($request->input('professions')!=null) {
+            foreach ($request->input('professions') as $key => $value) {
+                $userProfession = UserProfession::where('profession_id',$value)
+                                                ->where('user_id', $user->id)
+                                                ->get();
+                if ($userProfession->count() == 0) {
+                    $userProfession = new UserProfession();
+                    $userProfession->profession_id = $value;
+                    $userProfession->user_id = $user->id;
+                    $userProfession->save();
+                }
             }
         }
+
+
+        //asigna pabellones
+        if ($request->input('operating_rooms')!=null) {
+            foreach ($request->input('operating_rooms') as $key => $value) {
+                $userOperatingRoom = UserOperatingRoom::where('operating_room_id',$value)
+                                                ->where('user_id', $user->id)
+                                                ->get();
+                if ($userOperatingRoom->count() == 0) {
+                    $userOperatingRoom = new UserOperatingRoom();
+                    $userOperatingRoom->operating_room_id = $value;
+                    $userOperatingRoom->user_id = $user->id;
+                    $userOperatingRoom->save();
+                }
+            }
+        }
+
 
 
         session()->flash('success', 'Usuario Creado Exitosamente');
@@ -125,7 +149,8 @@ class UserController extends Controller
         $permissions = Permission::OrderBy('name')->get();
         $specialties = Specialty::OrderBy('specialty_name')->get();
         $professions = Profession::OrderBy('profession_name')->get();
-        return view('users.edit', compact('user','permissions','specialties','professions'));
+        $operating_rooms = OperatingRoom::OrderBy('id')->get();
+        return view('users.edit', compact('user','permissions','specialties','professions','operating_rooms'));
     }
 
     /**
@@ -147,30 +172,51 @@ class UserController extends Controller
         );
 
         //asigna especialidades
-        foreach ($request->input('specialties') as $key => $value) {
-            $userSpecialty = UserSpecialty::where('specialty_id',$value)
-                                          ->where('user_id', $user->id)
-                                          ->get();
-            if ($userSpecialty->count() == 0) {
-                $userSpecialty = new UserSpecialty();
-                $userSpecialty->specialty_id = $value;
-                $userSpecialty->user_id = $user->id;
-                $userSpecialty->save();
+        if($request->input('specialties')!=null){
+            foreach ($request->input('specialties') as $key => $value) {
+                $userSpecialty = UserSpecialty::where('specialty_id',$value)
+                                              ->where('user_id', $user->id)
+                                              ->get();
+                if ($userSpecialty->count() == 0) {
+                    $userSpecialty = new UserSpecialty();
+                    $userSpecialty->specialty_id = $value;
+                    $userSpecialty->user_id = $user->id;
+                    $userSpecialty->save();
+                }
             }
         }
 
         //asigna profesiones
-        foreach ($request->input('professions') as $key => $value) {
-            $userProfession = UserProfession::where('profession_id',$value)
-                                            ->where('user_id', $user->id)
-                                            ->get();
-            if ($userProfession->count() == 0) {
-                $userProfession = new UserProfession();
-                $userProfession->profession_id = $value;
-                $userProfession->user_id = $user->id;
-                $userProfession->save();
+        if($request->input('professions')!=null){
+            foreach ($request->input('professions') as $key => $value) {
+                $userProfession = UserProfession::where('profession_id',$value)
+                                                ->where('user_id', $user->id)
+                                                ->get();
+                if ($userProfession->count() == 0) {
+                    $userProfession = new UserProfession();
+                    $userProfession->profession_id = $value;
+                    $userProfession->user_id = $user->id;
+                    $userProfession->save();
+                }
             }
         }
+
+
+        //asigna pabellones
+        if($request->input('operating_rooms')!=null){
+            foreach ($request->input('operating_rooms') as $key => $value) {
+                $userOperatingRoom = UserOperatingRoom::where('operating_room_id',$value)
+                                                      ->where('user_id', $user->id)
+                                                     ->get();
+                if ($userOperatingRoom->count() == 0) {
+                    $userOperatingRoom = new UserOperatingRoom();
+                    $userOperatingRoom->operating_room_id = $value;
+                    $userOperatingRoom->user_id = $user->id;
+                    $userOperatingRoom->save();
+                }
+            }
+        }
+
 
         session()->flash('success', 'Usuario Actualizado Exitosamente');
         return redirect()->route('users.index');

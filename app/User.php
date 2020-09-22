@@ -30,6 +30,10 @@ class User extends Authenticatable
         return $this->hasMany('App\EHR\HETG\UserProfession');
     }
 
+    public function userOperatingRooms() {
+        return $this->hasMany('App\EHR\HETG\UserOperatingRoom');
+    }
+
     public function medicalProgrammings() {
         return $this->hasMany('App\EHR\HETG\MedicalProgramming');
     }

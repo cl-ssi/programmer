@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Programación de Profesionales')
+@section('title', 'Programación de Horas')
 
 @section('content')
 
@@ -59,7 +59,7 @@ bottom: 5px;
 
 </style>
 
-<h3 class="mb-3">Programación de Profesionales.</h3>
+<h3 class="mb-3">Programación de Horas.</h3>
 
 <hr>
 
@@ -123,12 +123,21 @@ bottom: 5px;
         @foreach ($array as $key => $specialty)
           <small>{{str_replace('_', ' ', $key)}}</small>
           @foreach ($specialty as $key2 => $doc)
-            <div data-id="{{$doc->rut}}" class='fc-event' style="background-color: #{{$doc->color}};" data-color='#{{$doc->color}}' data-event='{"title":"{{$doc->getShortNameAttribute()}}",
-                                                                                                                         "color": "#{{$doc->color}}",
-                                                                                                                         "id":"{{$doc->rut}}",
-                                                                                                                         "description":"{{$doc->specialty_id}}"}'>
-                <small>{{$doc->getShortNameAttribute()}}: <span id="{{$doc->rut}}"></span> ({{$doc->assigned_hour}})</small>
-            </div>
+            @if($doc->specialty_id!=null)
+                <div data-id="{{$key2}}" class='fc-event' style="background-color: #{{$doc->color}};" data-color='#{{$doc->color}}' data-event='{"title":"{{$doc->getShortNameAttribute()}}",
+                                                                                                                             "color": "#{{$doc->color}}",
+                                                                                                                             "id":"{{$key2}}",
+                                                                                                                             "specialty_id":"{{$doc->specialty_id}}"}'>
+                    <small>{{$doc->getShortNameAttribute()}}: <span id="{{$key2}}"></span> ({{$doc->assigned_hour}})</small>
+                </div>
+            @else
+                <div data-id="{{$key2}}" class='fc-event' style="background-color: #{{$doc->color}};" data-color='#{{$doc->color}}' data-event='{"title":"{{$doc->getShortNameAttribute()}}",
+                                                                                                                             "color": "#{{$doc->color}}",
+                                                                                                                             "id":"{{$key2}}",
+                                                                                                                             "profession_id":"{{$doc->profession_id}}"}'>
+                    <small>{{$doc->getShortNameAttribute()}}: <span id="{{$key2}}"></span> ({{$doc->assigned_hour}})</small>
+                </div>
+            @endif
           @endforeach
         @endforeach
 
@@ -232,13 +241,13 @@ bottom: 5px;
 
       // ciclo para obtener totales por profesional segun eventos guardados en bd
       var cont_eventos_bd = 0;
-      @foreach ($calendarProgrammings as $key => $calendarProgramming)
-        @if($doc->rut == $calendarProgramming->rut)
+      @foreach ($calendarProgrammings as $key3 => $calendarProgramming)
+        @if($key2 == $calendarProgramming->rut)
           cont_eventos_bd+= {{$calendarProgramming->duration_calendar_programming}};
         @endif
       @endforeach
 
-      var bolsa_{{$doc->rut}} = {{$doc->assigned_hour}} - cont_eventos_bd;
+      var bolsa_{{$key2}} = {{$doc->assigned_hour}} - cont_eventos_bd;
     @endforeach
   @endforeach
 
@@ -258,8 +267,8 @@ bottom: 5px;
       cont = 0;
       cont_contratado = 0;
       @foreach ($specialty as $key2 => $doc)
-        document.getElementById("{{$doc->rut}}").innerHTML = bolsa_{{$doc->rut}};
-        cont += bolsa_{{$doc->rut}};
+        document.getElementById("{{$key2}}").innerHTML = bolsa_{{$key2}};
+        cont += bolsa_{{$key2}};
         cont_contratado += {{$doc->assigned_hour}};
       @endforeach
 
@@ -328,10 +337,19 @@ bottom: 5px;
       events: [
 
         @foreach ($calendarProgrammings as $key => $calendarProgramming)
-          { id: '{{$calendarProgramming->rut}}', title: '{{$calendarProgramming->rrhh->getShortNameAttribute()}}',
-            color:'#{{$calendarProgramming->color}}', resourceId: '{{$calendarProgramming->operating_room_id}}',
-            start: '{{$calendarProgramming->start_date}}', end: '{{$calendarProgramming->end_date}}',
-            description: '{{$calendarProgramming->specialty_id}}'},
+            //se imprimen horas de profesiones
+            @if($calendarProgramming->specialty != null)
+                { id: '{{$calendarProgramming->rut}}', title: '{{$calendarProgramming->rrhh->getShortNameAttribute()}}',
+                  color:'#{{$calendarProgramming->specialty->color}}', resourceId: '{{$calendarProgramming->operating_room_id}}',
+                  start: '{{$calendarProgramming->start_date}}', end: '{{$calendarProgramming->end_date}}',
+                  specialty_id: '{{$calendarProgramming->specialty_id}}'},
+            @else
+            //se imprimen horas de especialistas
+                { id: '{{$calendarProgramming->rut}}', title: '{{$calendarProgramming->rrhh->getShortNameAttribute()}}',
+                  color:'#{{$calendarProgramming->profession->color}}', resourceId: '{{$calendarProgramming->operating_room_id}}',
+                  start: '{{$calendarProgramming->start_date}}', end: '{{$calendarProgramming->end_date}}',
+                  profession_id: '{{$calendarProgramming->profession_id}}'},
+            @endif
         @endforeach
 
         //Solo si es que se selecciona un profesional, se cargan sus teoricos.
@@ -447,12 +465,12 @@ bottom: 5px;
         @foreach ($array as $key => $specialty)
           cont = 0;
           @foreach ($specialty as $key2 => $doc)
-            if(info.event.id == "{{$doc->rut}}"){
-              if((bolsa_{{$doc->rut}} - 1) < 0){alert("Excedió horas semanales contratas.");info.event.remove();return;} //revierte si se llega a cero
-              document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} - 1);
-              bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} - 1;
+            if(info.event.id == "{{$key2}}"){
+              if((bolsa_{{$key2}} - 1) < 0){alert("Excedió horas semanales contratas.");info.event.remove();return;} //revierte si se llega a cero
+              document.getElementById("{{$key2}}").innerHTML = (bolsa_{{$key2}} - 1);
+              bolsa_{{$key2}} = bolsa_{{$key2}} - 1;
             }
-            cont += bolsa_{{$doc->rut}};
+            cont += bolsa_{{$key2}};
           @endforeach
           document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
         @endforeach
@@ -575,12 +593,12 @@ bottom: 5px;
             @foreach ($array as $key => $specialty)
               cont = 0;
               @foreach ($specialty as $key2 => $doc)
-                if(info.event.id == "{{$doc->rut}}"){
-                  if((bolsa_{{$doc->rut}} - + diff_) < 0){alert("Excedió horas semanales contratas.");info.event.revert();return;}
-                  document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} + diff_);
-                  bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} + diff_;
+                if(info.event.id == "{{$key2}}"){
+                  if((bolsa_{{$key2}} - + diff_) < 0){alert("Excedió horas semanales contratas.");info.event.revert();return;}
+                  document.getElementById("{{$key2}}").innerHTML = (bolsa_{{$key2}} + diff_);
+                  bolsa_{{$key2}} = bolsa_{{$key2}} + diff_;
                 }
-                cont += bolsa_{{$doc->rut}};
+                cont += bolsa_{{$key2}};
               @endforeach
               document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
             @endforeach
@@ -616,11 +634,11 @@ bottom: 5px;
                 @foreach ($array as $key => $specialty)
                   cont = 0;
                   @foreach ($specialty as $key2 => $doc)
-                    if(info.event.id == "{{$doc->rut}}"){
-                      document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} + diff_);
-                      bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} + diff_;
+                    if(info.event.id == "{{$key2}}"){
+                      document.getElementById("{{$key2}}").innerHTML = (bolsa_{{$key2}} + diff_);
+                      bolsa_{{$key2}} = bolsa_{{$key2}} + diff_;
                     }
-                    cont += bolsa_{{$doc->rut}};
+                    cont += bolsa_{{$key2}};
                   @endforeach
                   document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
                 @endforeach
@@ -713,12 +731,12 @@ bottom: 5px;
         @foreach ($array as $key => $specialty)
           cont = 0;
           @foreach ($specialty as $key2 => $doc)
-            if(info.event.id == "{{$doc->rut}}"){
-              if((bolsa_{{$doc->rut}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-              document.getElementById("{{$doc->rut}}").innerHTML = (bolsa_{{$doc->rut}} - diff);
-              bolsa_{{$doc->rut}} = bolsa_{{$doc->rut}} - diff;
+            if(info.event.id == "{{$key2}}"){
+              if((bolsa_{{$key2}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+              document.getElementById("{{$key2}}").innerHTML = (bolsa_{{$key2}} - diff);
+              bolsa_{{$key2}} = bolsa_{{$key2}} - diff;
             }
-            cont += bolsa_{{$doc->rut}};
+            cont += bolsa_{{$key2}};
           @endforeach
           document.getElementById("total_disponibles_{{$key}}").innerHTML = cont;
         @endforeach
@@ -809,13 +827,26 @@ bottom: 5px;
       let end_date = event_end.getFullYear() + "-" + (event_end.getMonth() + 1) + "-" + event_end.getDate() + " " + event_end.getHours() + ":" + event_end.getMinutes()
       let operating_room_id = event.getResources().map(function(resource) { return resource.id }).toString();
       let rut = event.id.toString();
-      let specialty_id = event.extendedProps.description.toString();
-      console.log(event.extendedProps);
+
+      //obtiene id de especialidad
+      var specialty_id;
+      if (typeof event.extendedProps.specialty_id === 'undefined') {
+          specialty_id = null;
+      }else{
+          specialty_id = event.extendedProps.specialty_id.toString();
+      }
+      //obtiene id de profession
+      let profession_id;
+      if (typeof event.extendedProps.profession_id === 'undefined') {
+          profession_id = null;
+      }else{
+          profession_id = event.extendedProps.profession_id.toString();
+      }
 
       $.ajax({
           url: "{{ route('ehr.hetg.calendar_programming.saveMyEvent') }}",
           type: 'post',
-          data:{rut:rut,specialty_id:specialty_id,operating_room_id:operating_room_id,start_date:start_date,end_date:end_date},
+          data:{rut:rut,specialty_id:specialty_id,profession_id:profession_id,operating_room_id:operating_room_id,start_date:start_date,end_date:end_date},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -836,14 +867,28 @@ bottom: 5px;
 
       let operating_room_id = event.getResources().map(function(resource) { return resource.id }).toString();
       let rut = event.id.toString();
-      let specialty_id = event.extendedProps.description.toString();
+
+      //obtiene id de especialidad
+      let specialty_id;
+      if (typeof event.extendedProps.specialty_id === 'undefined') {
+          let specialty_id = null;
+      }else{
+          let specialty_id = event.extendedProps.specialty_id.toString();
+      }
+      //obtiene id de profession
+      let profession_id;
+      if (typeof event.extendedProps.profession_id === 'undefined') {
+          let profession_id = null;
+      }else{
+          let profession_id = event.extendedProps.profession_id.toString();
+      }
 
       console.log(rut + " " + operation_room_id_start + " " + operating_room_id + " F1" + start_date_start + " F1'" + start_date + " F2" + end_date_start + " F2'"  + end_date + " " + specialty_id);
 
       $.ajax({
           url: "{{ route('ehr.hetg.calendar_programming.updateMyEvent') }}",
           type: 'post',
-          data:{rut:rut,operation_room_id_start:operation_room_id_start, operating_room_id:operating_room_id,specialty_id:specialty_id,start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date},
+          data:{rut:rut,operation_room_id_start:operation_room_id_start, operating_room_id:operating_room_id,specialty_id:specialty_id,profession_id:profession_id,start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -858,12 +903,26 @@ bottom: 5px;
       let end_date = event_end.getFullYear() + "-" + (event_end.getMonth() + 1) + "-" + event_end.getDate() + " " + event_end.getHours() + ":" + event_end.getMinutes()
       let operating_room_id = event.getResources().map(function(resource) { return resource.id }).toString();
       let rut = event.id.toString();
-      let specialty_id = event.extendedProps.description.toString();
+
+      //obtiene id de especialidad
+      let specialty_id;
+      if (typeof event.extendedProps.specialty_id === 'undefined') {
+          let specialty_id = null;
+      }else{
+          let specialty_id = event.extendedProps.specialty_id.toString();
+      }
+      //obtiene id de profession
+      let profession_id;
+      if (typeof event.extendedProps.profession_id === 'undefined') {
+          let profession_id = null;
+      }else{
+          let profession_id = event.extendedProps.profession_id.toString();
+      }
 
       $.ajax({
           url: "{{ route('ehr.hetg.calendar_programming.deleteMyEvent') }}",
           type: 'post',
-          data:{rut:rut,specialty_id:specialty_id,operating_room_id:operating_room_id,start_date:start_date,end_date:end_date},
+          data:{rut:rut,specialty_id:specialty_id,profession_id:profession_id,operating_room_id:operating_room_id,start_date:start_date,end_date:end_date},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -883,12 +942,26 @@ bottom: 5px;
       let end_date = event_end.getFullYear() + "-" + (event_end.getMonth() + 1) + "-" + event_end.getDate() + " " + event_end.getHours() + ":" + event_end.getMinutes()
       let operating_room_id = event.getResources().map(function(resource) { return resource.id }).toString();
       let rut = event.id.toString();
-      let specialty_id = event.extendedProps.description.toString();
+
+      //obtiene id de especialidad
+      let specialty_id;
+      if (typeof event.extendedProps.specialty_id === 'undefined') {
+          let specialty_id = null;
+      }else{
+          let specialty_id = event.extendedProps.specialty_id.toString();
+      }
+      //obtiene id de profession
+      let profession_id;
+      if (typeof event.extendedProps.profession_id === 'undefined') {
+          let profession_id = null;
+      }else{
+          let profession_id = event.extendedProps.profession_id.toString();
+      }
 
       $.ajax({
           url: "{{ route('ehr.hetg.calendar_programming.deleteMyEventForce') }}",
           type: 'post',
-          data:{rut:rut,specialty_id:specialty_id,operating_room_id:operating_room_id,start_date:start_date,end_date:end_date},
+          data:{rut:rut,specialty_id:specialty_id,profession_id:profession_id,operating_room_id:operating_room_id,start_date:start_date,end_date:end_date},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
