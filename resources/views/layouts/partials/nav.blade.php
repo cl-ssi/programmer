@@ -39,30 +39,28 @@
                 @endcanany
 
                 @canany(['programador pabellon'])
-
-                <li class="navbar-nav dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador Quirurgico/Box
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                    <a class="dropdown-item" href="{{ route('ehr.hetg.operating_room_programming.index') }}">
-                        <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador de Pabellónes Quirurgicos
-                    </a>
-
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador de Box
-                    </a>
-                    </div>
-
-                </li>
-                
+                <a class="dropdown-item" href="{{ route('ehr.hetg.operating_room_programming.index') }}">
+                    <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador de Pabellónes
+                </a>
                 @endcanany
 
                 @canany(['programador'])
-                <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.index') }}">
-                    <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas
-                </a>
+                <li class="navbar-nav dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                        <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.index') }}">
+                            <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas de Pabellón
+                        </a>
+
+                        <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.indexbox') }}">
+                            <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas de Box
+                        </a>
+                    </div>
+
+                </li>
                 @endcanany
             </ul>
 

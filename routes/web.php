@@ -65,6 +65,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
             Route::get('/','EHR\HETG\ExecutedActivityController@index')->name('index');
         });
         Route::resource('medical_programming','EHR\HETG\MedicalProgrammingController');
+        
 
         Route::match(['get', 'post'],'calendar_programming/saveMyEvent','EHR\HETG\CalendarProgrammingController@saveMyEvent')->name('calendar_programming.saveMyEvent');
         Route::match(['get', 'post'],'calendar_programming/updateMyEvent','EHR\HETG\CalendarProgrammingController@updateMyEvent')->name('calendar_programming.updateMyEvent');
@@ -74,6 +75,8 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::get('data/from/{Date?}','EHR\HETG\CalendarProgrammingController@getDataFromDate')->name('data.from');
         Route::match(['get', 'post'],'calendar_programming/calendar_programmer_report','EHR\HETG\CalendarProgrammingController@calendar_programmer_report')->name('calendar_programming.calendar_programmer_report');
         Route::resource('calendar_programming','EHR\HETG\CalendarProgrammingController');
+        Route::get('calendar_programming/index/box','EHR\HETG\CalendarProgrammingController@indexbox')->name('calendar_programming.indexbox');;
+        //Route::get('data/from/{Date?}','EHR\HETG\CalendarProgrammingController@getDataFromDate')->name('data.from');
 
         Route::match(['get', 'post'],'theoretical_programming/saveMyEvent','EHR\HETG\TheoreticalProgrammingController@saveMyEvent')->name('theoretical_programming.saveMyEvent');
         Route::match(['get', 'post'],'theoretical_programming/updateMyEvent','EHR\HETG\TheoreticalProgrammingController@updateMyEvent')->name('theoretical_programming.updateMyEvent');

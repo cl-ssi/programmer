@@ -17,11 +17,11 @@ class UserOperatingRoom extends Model
     ];
 
     public function users() {
-        return $this->hasMany('App\User');
+        return $this->belongsTo('App\User');
     }
 
     public function operating_rooms() {
-        return $this->hasMany('App\EHR\HETG\OperatingRoom');
+        return $this->belongsTo('App\EHR\HETG\OperatingRoom');
     }
 
     use SoftDeletes;

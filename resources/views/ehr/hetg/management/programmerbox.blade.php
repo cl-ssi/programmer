@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Programación de Horas')
+@section('title', 'Programación de Horas de Box')
 
 @section('content')
 
@@ -59,7 +59,7 @@ bottom: 5px;
 
 </style>
 
-<h3 class="mb-3">Programación de Horas de Pabellon.</h3>
+<h3 class="mb-3">Programación de Horas de Box.</h3>
 
 <hr>
 
@@ -99,7 +99,7 @@ bottom: 5px;
         </select>
     </fieldset>
 
-    <fieldset class="form-group col">
+    <fieldset class="form-group col-6">
         <label for="for_rut">Especialista</label>
         <select name="rut" id="rut" class="form-control selectpicker" required="" onchange="this.form.submit()" data-live-search="true" data-size="5">
           <option value="0">Todos</option>
@@ -107,7 +107,14 @@ bottom: 5px;
             <option value="{{$rrhh->rut}}" {{ $rrhh->rut == $request->rut ? 'selected' : '' }}>{{$rrhh->getFullNameAttribute()}}</option>
           @endforeach
         </select>
+    </fieldset>              
+    <fieldset class="form-group col-3">
+    <label for="for_box">Box</label>
+    <select name="rut" id="rut" class="form-control selectpicker" required="" onchange="this.form.submit()" data-live-search="true" data-size="5">
+          <option value="0">Todos</option>          
+        </select> 
     </fieldset>
+
 
   </div>
 </form>
