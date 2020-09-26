@@ -38,7 +38,7 @@
 
     <hr>
     <fieldset class="form-group col-12 col-md-6">
-      <label for="">Actividades (Escribir rendimiento si se selecciona)</label>
+      <h3><label for="">Actividades No Médicas</label></h3>
       <table>
         @foreach($activities as $activity)
         <tr>

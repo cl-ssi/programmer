@@ -18,7 +18,7 @@
 
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programación Teórica
+                            <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programador Teórico
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -26,14 +26,14 @@
                             @canany(['programacion medica'])
                                 <a class="dropdown-item"
                                     href="{{ route('ehr.hetg.theoretical_programming.index','tipo=1') }}">
-                                    <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programación Médica
+                                    <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programador Médico
                                 </a>
                             @endcanany
 
                             @canany(['programacion no medica'])
                                 <a class="dropdown-item"
                                     href="{{ route('ehr.hetg.theoretical_programming.index','tipo=2') }}">
-                                    <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programacion No Médica
+                                    <i class="fas fa-calendar-alt fa-fw" style='color:red'></i> Programador No Médico
                                 </a>
                             @endcanany
 
@@ -51,7 +51,7 @@
                 @canany(['programador'])
                     <a class="dropdown-item"
                         href="{{ route('ehr.hetg.calendar_programming.index') }}">
-                        <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador
+                        <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas
                     </a>
                 @endcanany
             </ul>
@@ -123,14 +123,19 @@
                         </a>
 
                         <a class="dropdown-item"
+                            href="{{ route('ehr.hetg.contracts.index') }}">
+                            <i class="fas fa-file-contract fa-fw"></i> Contratos
+                        </a>
+
+                        <a class="dropdown-item"
                             href="{{ route('ehr.hetg.operating_rooms.index') }}">
                             <i class="fas fa-person-booth fa-fw"></i> Pabellones
                         </a>
 
-                        <a class="dropdown-item"
+                        {{-- <a class="dropdown-item"
                             href="{{ route('ehr.hetg.mother_activities.index') }}">
                             <i class="fas fa-file-contract fa-fw"></i> Actividades Madre
-                        </a>
+                        </a> --}}
 
                         <a class="dropdown-item"
                             href="{{ route('ehr.hetg.activities.index') }}">
@@ -145,11 +150,6 @@
                         <a class="dropdown-item"
                             href="{{ route('ehr.hetg.professions.index') }}">
                             <i class="fas fa-file-contract fa-fw"></i> Profesiones (Rdtos sugeridos)
-                        </a>
-
-                        <a class="dropdown-item"
-                            href="{{ route('ehr.hetg.contracts.index') }}">
-                            <i class="fas fa-file-contract fa-fw"></i> Contratos
                         </a>
 
                         <a class="dropdown-item"

@@ -123,6 +123,18 @@
     </div>
     @endforeach
 
+    <br />
+    <h4>Pabellones</h4>
+    @foreach($operating_rooms as $operating_room)
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="operating_rooms[]"
+            value="{{ $operating_room->id }}">
+        <label class="form-check-label">
+            {{ $operating_room->description }}
+        </label>
+    </div>
+    @endforeach
+
 
 
 

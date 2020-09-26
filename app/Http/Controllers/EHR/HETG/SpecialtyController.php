@@ -18,7 +18,9 @@ class SpecialtyController extends Controller
      */
     public function index()
     {
-      $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+      $specialties = Specialty::whereHas('userSpecialties', function ($query)  {
+                                      return $query->where('user_id',Auth::id());
+                                  })->orderBy('specialty_name','ASC')->get();
       return view('ehr.hetg.specialties.index', compact('specialties'));
     }
 
@@ -29,7 +31,8 @@ class SpecialtyController extends Controller
      */
     public function create()
     {
-        $activities = Activity::where('activity_type_id',1)->orderBy('activity_name','ASC')->get(); //obtiene medicas
+        $activities = Activity:://where('mother_activity_id',2)
+                                where('activity_type_id',1)->orderBy('activity_name','ASC')->get(); //obtiene medicas
         return view('ehr.hetg.specialties.create',compact('activities'));
     }
 
@@ -76,7 +79,8 @@ class SpecialtyController extends Controller
      */
     public function edit(Specialty $specialty)
     {
-        $activities = Activity::where('activity_type_id',1)->orderBy('activity_name','ASC')->get(); //obtiene medicas
+        $activities = Activity:://where('mother_activity_id',2)
+                                where('activity_type_id',1)->orderBy('activity_name','ASC')->get(); //obtiene medicas
         return view('ehr.hetg.specialties.edit', compact('specialty','activities'));
     }
 

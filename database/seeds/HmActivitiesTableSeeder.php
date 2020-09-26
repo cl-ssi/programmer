@@ -86,7 +86,7 @@ class HmActivitiesTableSeeder extends Seeder
         Activity::Create(['id_activity' => 3,'mother_activity_id' => 2,'activity_type_id'=>2,'activity_name'=>'Atención de Servicio de Urgencia (Desde Atención Ambulatoria).', 'performance'=>0,'user_id'=>1]);
         Activity::Create(['id_activity' => 48,'mother_activity_id' => 2,'activity_type_id'=>2,'activity_name'=>'Procedimientos (apoyo en procedimientos médicos y propios)', 'performance'=>0,'user_id'=>1]);
         Activity::Create(['id_activity' => 5,'mother_activity_id' => 2,'activity_type_id'=>2,'activity_name'=>'Turno (Todas las unidades hospitalarias)', 'performance'=>0,'user_id'=>1]);
-        Activity::Create(['id_activity' => 49,'mother_activity_id' => 2,'activity_type_id'=>2,'activity_name'=>'Pabellon', 'performance'=>0,'user_id'=>1]);
+        Activity::Create(['id_activity' => 49,'mother_activity_id' => 1,'activity_type_id'=>2,'activity_name'=>'Pabellon', 'performance'=>0,'user_id'=>1]);
         Activity::Create(['id_activity' => 11,'mother_activity_id' => 2,'activity_type_id'=>2,'activity_name'=>'Consultoría en salud', 'performance'=>0,'user_id'=>1]);
         Activity::Create(['id_activity' => 12,'mother_activity_id' => 2,'activity_type_id'=>2,'activity_name'=>'Ronda otro establecimiento', 'performance'=>0,'user_id'=>1]);
         Activity::Create(['id_activity' => 16,'mother_activity_id' => 2,'activity_type_id'=>2,'activity_name'=>'Visita Domiciliaria', 'performance'=>0,'user_id'=>1]);
