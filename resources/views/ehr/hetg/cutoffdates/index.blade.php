@@ -42,6 +42,9 @@
                        class="btn btn-sm btn-outline-info">
                         Consolidado Programación
                     </a>
+                    <a href="{{ route('ehr.hetg.management.report.reportcut', $cutoffdate) }}" class="btn btn-sm btn-outline-info">
+                    Exportar a Excel
+                    <i class="far fa-file-excel"></i></a>
       			</td>
         </tr>
         @endforeach
@@ -83,7 +86,7 @@
                   <th>Rdto/Anual</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody>                
                   @foreach ($array_programacion_medica as $key1 => $value1)
                       @foreach ($value1 as $key2 => $value2)
                           @foreach ($value2 as $key3 => $value3)

@@ -16,6 +16,9 @@ class ReportExport implements FromCollection, WithMapping, WithMultipleSheets
     * @return \Illuminate\Support\Collection
     */
     use Exportable;
+
+
+    
     public function collection()
     {
         return Contract::all();
