@@ -50,7 +50,7 @@ class UserController extends Controller
         $permissions = Permission::OrderBy('name')->get();
         $specialties = Specialty::OrderBy('specialty_name')->get();
         $professions = Profession::OrderBy('profession_name')->get();
-        $operating_rooms = OperatingRoom::OrderBy('id')->get();
+        $operating_rooms = OperatingRoom::OrderBy('id')->where('description','LIKE', 'Box%')->get();
         return view('users.create', compact('permissions','specialties','professions','operating_rooms'));
     }
 
@@ -149,7 +149,7 @@ class UserController extends Controller
         $permissions = Permission::OrderBy('name')->get();
         $specialties = Specialty::OrderBy('specialty_name')->get();
         $professions = Profession::OrderBy('profession_name')->get();
-        $operating_rooms = OperatingRoom::OrderBy('id')->get();
+        $operating_rooms = OperatingRoom::OrderBy('id')->where('description','LIKE', 'Box%')->get();
         return view('users.edit', compact('user','permissions','specialties','professions','operating_rooms'));
     }
 

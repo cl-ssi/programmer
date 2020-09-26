@@ -124,7 +124,7 @@
     @endforeach
 
     <br />
-    <h4>Pabellones</h4>
+    <h4>Box</h4>
     @foreach($operating_rooms as $operating_room)
     <div class="form-check">
         <input class="form-check-input" type="checkbox" name="operating_rooms[]"

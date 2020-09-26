@@ -59,7 +59,7 @@ bottom: 5px;
 
 </style>
 
-<h3 class="mb-3">Programación de Pabellones.</h3>
+<h3 class="mb-3">Programación de Pabellones Quirurgicos.</h3>
 
 <hr>
 
@@ -91,7 +91,7 @@ bottom: 5px;
     </fieldset>
 
     <fieldset class="form-group col">
-        <label for="for_operating_room">Pabellón</label>
+        <label for="for_operating_room">Pabellones Quirurgicos</label>
         <select name="operating_room" id="operating_room" class="form-control selectpicker" required="" onchange="this.form.submit()" data-live-search="true" data-size="5">
           <option value="0"></option>
           @foreach($operatingRooms as $operatingRoom)
