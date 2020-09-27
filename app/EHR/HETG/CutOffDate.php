@@ -4,9 +4,11 @@ namespace App\EHR\HETG;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class CutOffDate extends Model
+class CutOffDate extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     /**
      * The attributes that are mass assignable.
      *
@@ -16,7 +18,8 @@ class CutOffDate extends Model
         'id', 'date', 'observation', 'user_id'
     ];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo('App\User');
     }
 

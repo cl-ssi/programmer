@@ -4,9 +4,11 @@ namespace App\EHR\HETG;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class UserProfession extends Model
+class UserProfession extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     /**
      * The attributes that are mass assignable.
      *
@@ -16,11 +18,13 @@ class UserProfession extends Model
         'user_id', 'profession_id'
     ];
 
-    public function users() {
+    public function users()
+    {
         return $this->hasMany('App\User');
     }
 
-    public function professions() {
+    public function professions()
+    {
         return $this->hasMany('App\EHR\HETG\Profession');
     }
 

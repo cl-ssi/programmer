@@ -4,39 +4,46 @@ namespace App\EHR;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Patient extends Model
+class Patient extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'id', 'dv', 'name', 'fathers_family','mothers_family',
+        'id', 'dv', 'name', 'fathers_family', 'mothers_family',
         'birthDate', 'gender', 'nationality'
     ];
 
-    public function entries() {
+    public function entries()
+    {
         return $this->hasMany('App\EHR\HFA\Entry');
     }
 
-    public function fullName() {
-        return $this->name.' '.$this->fathers_family.' '.$this->mothers_family;
+    public function fullName()
+    {
+        return $this->name . ' ' . $this->fathers_family . ' ' . $this->mothers_family;
     }
 
-    public function run() {
-        return $this->id.'-'.$this->dv;
+    public function run()
+    {
+        return $this->id . '-' . $this->dv;
     }
 
-    public function runFormat() {
-        return number_format($this->id, 0,'.','.') . '-' . $this->dv;
+    public function runFormat()
+    {
+        return number_format($this->id, 0, '.', '.') . '-' . $this->dv;
     }
 
-    public function scopeSearch($query, $id) {
-        if($id != "") {
+    public function scopeSearch($query, $id)
+    {
+        if ($id != "") {
             return $query->where('id', "LIKE", "%$id%")
-                         ->orWhere('name', "LIKE", "%$id%");
+                ->orWhere('name', "LIKE", "%$id%");
         }
     }
 
@@ -50,9 +57,9 @@ class Patient extends Model
     protected $dates = ['deleted_at', 'birthDate'];
 
     /**
-    * The table associated with the model.
-    *
-    * @var string
-    */
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'ehr_patients';
 }

@@ -4,9 +4,12 @@ namespace App\EHR\HETG;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ProfessionActivity extends Model
+class ProfessionActivity extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     protected $fillable = [
         'profession_id','activity_id','performance'
     ];
