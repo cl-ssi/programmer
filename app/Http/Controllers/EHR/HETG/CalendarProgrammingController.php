@@ -48,8 +48,8 @@ class CalendarProgrammingController extends Controller
       $rut = $request->get('rut');
     }
 
-    $motherActivities = MotherActivity::where('id', 1)->get();
-    $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón
+    // $motherActivities = MotherActivity::where('id', 1)->get();
+    // $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón
 
     // $rrhh = Rrhh::whereHas('contracts', function ($query) use ($year) {
     //                return $query->where('year',$year);
@@ -131,7 +131,14 @@ class CalendarProgrammingController extends Controller
 
 
     //pabellones
-    $operatingRooms = OperatingRoom::where('medic_box', 0)->orderBy('name', 'ASC')->get();
+    // dd($request->operating_rooms);
+    $operatingRoomsTotal = OperatingRoom::where('medic_box', 0)->orderBy('name', 'ASC')->get();
+    $array_operating_room = $request->operating_rooms;
+    $operatingRooms = OperatingRoom::where('medic_box', 0)
+                                    ->when($array_operating_room, function ($q) use ($array_operating_room) {
+                                        return $q->whereIn('id', $array_operating_room);
+                                    })
+                                    ->orderBy('name', 'ASC')->get();
 
     //obtiene horas programadas de la semana
     $monday = Carbon::parse($date)->startOfWeek();
@@ -163,14 +170,11 @@ class CalendarProgrammingController extends Controller
 
 
     //dd($rrhh->first()->contracts->first()->medical_programmings->whereIn('activity_id',$ids_actividades)->WhereIn('specialty_id',$ids_specialities));
-    return view('ehr.hetg.management.programmer', compact('request', 'array', 'operatingRooms', 'calendarProgrammings', 'contract_days', 'date', 'theoreticalProgrammings', 'rrhhs'));
+    return view('ehr.hetg.management.programmer', compact('request', 'array', 'operatingRoomsTotal', 'operatingRooms', 'calendarProgrammings', 'contract_days', 'date', 'theoreticalProgrammings', 'rrhhs'));
   }
 
-  public function indexbox(Request $request)   
+  public function indexbox(Request $request)
     {
-      //dd('entre'); 
-      // dd($request->get('date'));
-      //primer form
       if ($request->get('date')) {
         $date = $request->get('date');
         $year = $request->get('year');
@@ -189,8 +193,8 @@ class CalendarProgrammingController extends Controller
         $rut = $request->get('rut');
       }
 
-      $motherActivities = MotherActivity::where('id', 1)->get();
-      $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón
+      // $motherActivities = MotherActivity::where('id', 1)->get();
+      // $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón
 
       // $rrhh = Rrhh::whereHas('contracts', function ($query) use ($year) {
       //                return $query->where('year',$year);
@@ -227,7 +231,7 @@ class CalendarProgrammingController extends Controller
       $theoreticalProgrammings = TheoreticalProgramming::whereBetween('start_date', [$monday, $sunday])
         ->whereNull('contract_day_type')
         ->whereHas('activity', function ($query) {
-          return $query->where('mother_activity_id', 1); //actividad de pabellón
+          return $query->where('mother_activity_id', 2); //Consulta Médica
         })
         ->get();
 
@@ -245,6 +249,30 @@ class CalendarProgrammingController extends Controller
 
       //programables - PROGRAMACION MÉDICA
       $array = array();
+      // foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
+      //   // $array[$theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->activity->activity_name] = $theoricalProgramming->rrhh;
+      //   $array[$theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->activity->activity_name]['assigned_hour'] = null;
+      //   $array[$theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->activity->activity_name]['specialty_id'] = $theoricalProgramming->specialty_id;
+      //   $array[$theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->activity->activity_name]['color'] = $theoricalProgramming->specialty->color;
+      // }
+      //
+      // //obtiene valor bolsa de horas
+      // foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
+      //   $array[$theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->activity->activity_name]['assigned_hour'] += $theoricalProgramming->duration_theorical_programming;
+      // }
+
+      // //programables - PROGRAMACION MÉDICA
+      // foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
+      //   $array[$theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->activity->activity_name]['assigned_hour'] = null;
+      //   $array[$theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->activity->activity_name]['profession_id'] = $theoricalProgramming->profession_id;
+      //   $array[$theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->activity->activity_name]['color'] = $theoricalProgramming->profession->color;
+      // }
+      //
+      // //obtiene valor bolsa de horas
+      // foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
+      //   $array[$theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->activity->activity_name]['assigned_hour'] += $theoricalProgramming->duration_theorical_programming;
+      // }
+      // dd($array);
       foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
         $array[$theoricalProgramming->specialty->specialty_name][$theoricalProgramming->rut] = $theoricalProgramming->rrhh;
         $array[$theoricalProgramming->specialty->specialty_name][$theoricalProgramming->rut]['specialty_id'] = $theoricalProgramming->specialty_id;
@@ -267,12 +295,23 @@ class CalendarProgrammingController extends Controller
       foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
         $array[$theoricalProgramming->profession->profession_name][$theoricalProgramming->rut]['assigned_hour'] += $theoricalProgramming->duration_theorical_programming;
       }
-      // dd($array);
 
 
 
       //pabellones
-      $operatingRooms = OperatingRoom::where('medic_box', 0)->orderBy('name', 'ASC')->get();
+      $users = User::find(Auth::id());
+      $operatingRoomsTotal = OperatingRoom::where('medic_box', 1)
+                                          ->whereIn('id',$users->getOperatingRoomsArray())
+                                          ->orderBy('name', 'ASC')
+                                          ->get();
+      $array_operating_room = $request->operating_rooms;
+      // dd($array_operating_room);
+      $operatingRooms = OperatingRoom::where('medic_box', 1)
+                                     ->whereIn('id',$users->getOperatingRoomsArray())
+                                     ->when($array_operating_room, function ($q) use ($array_operating_room) {
+                                          return $q->whereIn('id', $array_operating_room);
+                                      })
+                                      ->orderBy('name', 'ASC')->get();
 
       //obtiene horas programadas de la semana
       $monday = Carbon::parse($date)->startOfWeek();
@@ -302,18 +341,10 @@ class CalendarProgrammingController extends Controller
         return $query; //->where('year',$year);
       })->orderby('name', 'ASC')->get();
 
-      //$userboxs = UserOperatingRoom::where('user_id',Auth::id())->get();
-      $users = User::where('id',Auth::id())->get();
 
-      
-
-      //dd($userboxs);
-
-
-      //dd($rrhh->first()->contracts->first()->medical_programmings->whereIn('activity_id',$ids_actividades)->WhereIn('specialty_id',$ids_specialities));
-      return view('ehr.hetg.management.programmerbox', compact('request', 'array', 'operatingRooms', 'calendarProgrammings', 'contract_days', 'date', 'theoreticalProgrammings', 'rrhhs','users'));
+      return view('ehr.hetg.management.programmerbox', compact('request', 'array', 'operatingRoomsTotal', 'operatingRooms', 'calendarProgrammings', 'contract_days', 'date', 'theoreticalProgrammings', 'rrhhs','users'));
     }
-  
+
 
   // public function getData(Request $request)
   // {

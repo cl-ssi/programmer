@@ -40,7 +40,7 @@
 
                 @canany(['programador pabellon'])
                 <a class="dropdown-item" href="{{ route('ehr.hetg.operating_room_programming.index') }}">
-                    <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador de Pabellónes
+                    <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador de Pabellones
                 </a>
                 @endcanany
 
@@ -55,9 +55,9 @@
                             <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas de Pabellón
                         </a>
 
-                        <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.indexbox') }}">
+                        {{-- <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.indexbox') }}">
                             <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas de Box
-                        </a>
+                        </a> --}}
                     </div>
 
                 </li>

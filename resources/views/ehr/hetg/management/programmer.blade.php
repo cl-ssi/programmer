@@ -109,6 +109,22 @@ bottom: 5px;
         </select>
     </fieldset>
 
+    <fieldset class="form-group col-3">
+    <label for="for_box">Pabellones</label>
+    <select name="operating_rooms[]" id="for_operating_rooms" class="form-control selectpicker" onchange="this.form.submit()" data-live-search="true" multiple="" data-size="10" title="Seleccione..." multiple data-actions-box="true" required>
+
+        @if ($request->operating_rooms == null)
+            @foreach($operatingRoomsTotal as $operatingRoom)
+                <option value="{{ $operatingRoom->id }}" selected="selected" >{{ $operatingRoom->name }}</option>
+            @endforeach
+        @else
+            @foreach($operatingRoomsTotal as $operatingRoom)
+                <option value="{{ $operatingRoom->id }}" @if(in_array($operatingRoom->id, (array)$request->operating_rooms)) selected="selected" @endif>{{ $operatingRoom->name }}</option>
+            @endforeach
+        @endif
+    </select>
+    </fieldset>
+
   </div>
 </form>
 

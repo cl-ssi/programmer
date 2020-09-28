@@ -87,6 +87,14 @@ class User extends Authenticatable
         return $array;
     }
 
+    public function getOperatingRoomsArray(){
+        $array = array();
+        foreach ($this->userOperatingRooms as $key => $userOperatingRoom) {
+            $array[$key] = $userOperatingRoom->operating_room_id;
+        }
+        return $array;
+    }
+
     /**
      * The attributes that should be hidden for arrays.
      *

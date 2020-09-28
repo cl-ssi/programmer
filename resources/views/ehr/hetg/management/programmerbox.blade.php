@@ -65,7 +65,7 @@ bottom: 5px;
 
 <h5 class="mb-3"></h5>
 
-<form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.calendar_programming.index') }}">
+<form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.calendar_programming.indexbox') }}">
 
 <div align="right">
   <p>
@@ -107,12 +107,22 @@ bottom: 5px;
             <option value="{{$rrhh->rut}}" {{ $rrhh->rut == $request->rut ? 'selected' : '' }}>{{$rrhh->getFullNameAttribute()}}</option>
           @endforeach
         </select>
-    </fieldset>              
+    </fieldset>
+
     <fieldset class="form-group col-3">
-    <label for="for_box">Box</label>
-    <select name="rut" id="rut" class="form-control selectpicker" required="" onchange="this.form.submit()" data-live-search="true" data-size="5">
-          <option value="0">Todos</option>          
-        </select> 
+    <label for="for_box">Box's</label>
+    <select name="operating_rooms[]" id="for_operating_rooms" class="form-control selectpicker" onchange="this.form.submit()" data-live-search="true" multiple="" data-size="10" title="Seleccione..." multiple data-actions-box="true" required>
+
+        @if ($request->operating_rooms == null)
+            @foreach($operatingRoomsTotal as $operatingRoom)
+                <option value="{{ $operatingRoom->id }}" selected="selected" >{{ $operatingRoom->name }}</option>
+            @endforeach
+        @else
+            @foreach($operatingRoomsTotal as $operatingRoom)
+                <option value="{{ $operatingRoom->id }}" @if(in_array($operatingRoom->id, (array)$request->operating_rooms)) selected="selected" @endif>{{ $operatingRoom->name }}</option>
+            @endforeach
+        @endif
+    </select>
     </fieldset>
 
 
