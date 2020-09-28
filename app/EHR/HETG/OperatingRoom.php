@@ -4,9 +4,12 @@ namespace App\EHR\HETG;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class OperatingRoom extends Model
+class OperatingRoom extends Model implements Auditable
 {
+
+    use \OwenIt\Auditing\Auditable;
     /**
      * The attributes that are mass assignable.
      *

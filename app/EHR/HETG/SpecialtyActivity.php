@@ -4,11 +4,13 @@ namespace App\EHR\HETG;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class SpecialtyActivity extends Model
+class SpecialtyActivity extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     protected $fillable = [
-        'specialty_id','activity_id','performance'
+        'specialty_id', 'activity_id', 'performance'
     ];
 
     use SoftDeletes;
@@ -25,5 +27,5 @@ class SpecialtyActivity extends Model
      * @var string
      */
 
-     protected $table = 'hm_specialty_activities';
+    protected $table = 'hm_specialty_activities';
 }
