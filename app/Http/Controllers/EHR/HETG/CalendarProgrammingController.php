@@ -89,6 +89,7 @@ class CalendarProgrammingController extends Controller
         return $query->where('mother_activity_id', 1); //actividad de pabellón
       })
       ->get();
+      // dd($theoreticalProgrammings);
 
     $cutoff_date = new Carbon($cutoffdate->date);
     //obtiene datos NO programables del año

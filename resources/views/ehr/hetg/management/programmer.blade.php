@@ -887,16 +887,17 @@ bottom: 5px;
       //obtiene id de especialidad
       let specialty_id;
       if (typeof event.extendedProps.specialty_id === 'undefined') {
-          let specialty_id = null;
+          specialty_id = null;
       }else{
-          let specialty_id = event.extendedProps.specialty_id.toString();
+          specialty_id = event.extendedProps.specialty_id.toString();
+
       }
       //obtiene id de profession
       let profession_id;
       if (typeof event.extendedProps.profession_id === 'undefined') {
-          let profession_id = null;
+          profession_id = null;
       }else{
-          let profession_id = event.extendedProps.profession_id.toString();
+          profession_id = event.extendedProps.profession_id.toString();
       }
 
       console.log(rut + " " + operation_room_id_start + " " + operating_room_id + " F1" + start_date_start + " F1'" + start_date + " F2" + end_date_start + " F2'"  + end_date + " " + specialty_id);
@@ -923,16 +924,16 @@ bottom: 5px;
       //obtiene id de especialidad
       let specialty_id;
       if (typeof event.extendedProps.specialty_id === 'undefined') {
-          let specialty_id = null;
+          specialty_id = null;
       }else{
-          let specialty_id = event.extendedProps.specialty_id.toString();
+          specialty_id = event.extendedProps.specialty_id.toString();
       }
       //obtiene id de profession
       let profession_id;
       if (typeof event.extendedProps.profession_id === 'undefined') {
-          let profession_id = null;
+          profession_id = null;
       }else{
-          let profession_id = event.extendedProps.profession_id.toString();
+          profession_id = event.extendedProps.profession_id.toString();
       }
 
       $.ajax({
@@ -962,16 +963,16 @@ bottom: 5px;
       //obtiene id de especialidad
       let specialty_id;
       if (typeof event.extendedProps.specialty_id === 'undefined') {
-          let specialty_id = null;
+          specialty_id = null;
       }else{
-          let specialty_id = event.extendedProps.specialty_id.toString();
+          specialty_id = event.extendedProps.specialty_id.toString();
       }
       //obtiene id de profession
       let profession_id;
       if (typeof event.extendedProps.profession_id === 'undefined') {
-          let profession_id = null;
+          profession_id = null;
       }else{
-          let profession_id = event.extendedProps.profession_id.toString();
+          profession_id = event.extendedProps.profession_id.toString();
       }
 
       $.ajax({

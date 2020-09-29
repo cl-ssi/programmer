@@ -74,7 +74,15 @@ class TheoreticalProgrammingController extends Controller
     //obtiene contrato_id para obtener información
     $contract_id=null;
     if ($request->get('contract_id') != null) {
-        $contract_id = $request->get('contract_id');
+        $contract_id = null;
+        foreach ($contracts as $key => $contract) {
+            if ($contract->id == $request->get('contract_id')) {
+                $contract_id = $request->get('contract_id');
+            }
+        }
+        if ($contract_id == null) {
+            $contract_id = $contracts->first()->id;
+        }
     }else{
         if ($contracts->count()>0) {
             $contract_id = $contracts->first()->id;
@@ -95,7 +103,7 @@ class TheoreticalProgrammingController extends Controller
                                     $q->where('specialty_id', $var);
                                 })
                                 ->get();
-                                
+
         //corresponde a la actividad no programable (que se guarda en el modelo medicalProgramming)
         $programming = MedicalProgramming::where('rut',$rut)
                                          ->where('year',$year)
