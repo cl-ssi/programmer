@@ -372,7 +372,7 @@ bottom: 5px;
         @if($request->rut != 0)
           @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
             @if($theoreticalProgramming->rut == $request->rut)
-                { id:99999, title: 'teorico', rendering: 'background', overlap: false,
+                { id:99999, title: 'teorico', rendering: 'background', //overlap: false,
                   start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'},
             @endif
           @endforeach
@@ -382,7 +382,7 @@ bottom: 5px;
         @if($request->rut != 0)
           @foreach ($contract_days as $key => $contract_day)
             @if($contract_day->rut == $request->rut)
-                { id:99999, title: 'Administrativos', rendering: 'background', overlap: false,
+                { id:99999, title: 'Administrativos', rendering: 'background', //overlap: false,
                   start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'},
             @endif
           @endforeach
@@ -521,7 +521,7 @@ bottom: 5px;
         var rut = info.event.id;
         @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
           if({{$theoreticalProgramming->rut}} == rut){
-              var event={id:99999, title: 'teorico', rendering: 'background', overlap: false,
+              var event={id:99999, title: 'teorico', rendering: 'background', //overlap: false,
                         start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
               calendar.addEvent(event);
           }
@@ -530,7 +530,7 @@ bottom: 5px;
         //eventos días administrativos
         @foreach ($contract_days as $key => $contract_day)
             if({{$contract_day->rut}} == rut){
-                var event={id:99999, title: 'Administrativo', rendering: 'background', overlap: false,
+                var event={id:99999, title: 'Administrativo', rendering: 'background', //overlap: false,
                           start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'};
                 calendar.addEvent(event);
             }
@@ -685,7 +685,7 @@ bottom: 5px;
         var rut = info.event.id;
         @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
           if({{$theoreticalProgramming->rut}} == rut){
-              var event={id:99999, title: 'teorico', rendering: 'background', overlap: false,
+              var event={id:99999, title: 'teorico', rendering: 'background', //overlap: false,
                         start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
               calendar.addEvent(event);
           }
@@ -694,7 +694,7 @@ bottom: 5px;
         //eventos días administrativos
         @foreach ($contract_days as $key => $contract_day)
             if({{$contract_day->rut}} == rut){
-                var event={id:99999, title: 'Administrativo', rendering: 'background', overlap: false,
+                var event={id:99999, title: 'Administrativo', rendering: 'background', //overlap: false,
                           start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'};
                 calendar.addEvent(event);
             }
@@ -794,7 +794,7 @@ bottom: 5px;
         var rut = $(this).attr('data-id');
         @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
           if({{$theoreticalProgramming->rut}} == rut){
-              var event={id:99999, title: 'teorico', rendering: 'background', overlap: false,
+              var event={id:99999, title: 'teorico', rendering: 'background', //overlap: false,
                         start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
                 console.log(event);
               calendar.addEvent(event);
@@ -804,7 +804,7 @@ bottom: 5px;
         //eventos días administrativos
         @foreach ($contract_days as $key => $contract_day)
             if({{$contract_day->rut}} == rut){
-                var event={id:99999, title: 'Administrativo', rendering: 'background', overlap: false,
+                var event={id:99999, title: 'Administrativo', rendering: 'background', //overlap: false,
                           start: '{{$contract_day->start_date}}', end: '{{$contract_day->end_date}}'};
                 calendar.addEvent(event);
             }
