@@ -56,7 +56,7 @@ class OperatingRoomProgrammingController extends Controller
                                                     ->whereBetween('start_date',[$monday,$sunday])
                                                     ->get();
 
-      $operatingRooms = OperatingRoom::orderBy('name','ASC')->get();
+      $operatingRooms = OperatingRoom::where('medic_box',0)->orderBy('name','ASC')->get();
 
       //obtengo usuario propio
       $users = User::find(Auth::id());
