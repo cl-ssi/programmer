@@ -96,6 +96,14 @@ class TheoreticalProgrammingController extends Controller
     //si es programación médica
     if ($request->get('tipo') == 1) {
         $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+
+        // $collection1 = Specialty::where('id',CalendarProgramming::where('rut',$rut)->get()->first()->specialty_id)->get();
+        // $collection2 = Specialty::where('id','!=',CalendarProgramming::where('rut',$rut)->get()->first()->specialty_id)->get();
+        // // $specialties = Specialty::where('id',CalendarProgramming::where('rut',$rut)->get()->first()->specialty_id)->get();
+        // // $specialties->merge(Specialty::where('id','!=',CalendarProgramming::where('rut',$rut)->get()->first()->specialty_id));
+        // $collection1->merge($collection2);
+        // dd($collection1);
+
         $var = $request->get('specialty_id');
         $activities = Activity::orderBy('activity_name','ASC')
                                 ->where('activity_type_id',1) //ejemplo: actividades medicas
