@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\EHR\HETG\SpecialtyActivities;
+use App\EHR\HETG\SpecialtyActivity;
 
 class HmSpecialtyActivitiesTableSeeder extends Seeder
 {
