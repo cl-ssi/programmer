@@ -361,6 +361,13 @@ bottom: 5px;
               @endif
 
           @endforeach
+
+          //horas de pabellón
+          @foreach ($OperatingRoomProgrammings as $key => $OperatingRoomProgramming)
+            { id: 99999, title: 'Pabellón', rendering: 'background',
+              start: '{{$OperatingRoomProgramming->start_date}}', end: '{{$OperatingRoomProgramming->end_date}}'
+            },
+          @endforeach
       ],
 
       navLinkDayClick: function(date, jsEvent) {
@@ -485,7 +492,7 @@ bottom: 5px;
       //######### desplazamiento de eventos
 
       eventDragStart: function(info) {
-        console.log(info);
+
         // deleteMyDataForce(info.event);
         inicio_start = info.event.start;
         termino_start = info.event.end;
@@ -718,6 +725,8 @@ bottom: 5px;
       var contract_id = $("#for_contract_id"). val();
       var specialty_id = $("#for_specialty_id"). val();
       var profession_id = $("#for_profession_id"). val();
+
+      // console.log(rut+" "+activity_id+" "+contract_id+" "+specialty_id+" "+profession_id+" "+start_date_start+" "+start_date+" "+end_date_start+" "+end_date+" "+year+" "+tipo);
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.updateMyEvent') }}",

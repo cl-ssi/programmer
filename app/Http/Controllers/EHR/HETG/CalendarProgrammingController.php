@@ -72,16 +72,20 @@ class CalendarProgrammingController extends Controller
 
 
 
-    //obtiene bolsas de horas (TEÓRICAS) según fecha de corte
-    $cutoffdate = CutOffDate::orderBy('date', 'desc')->first();
+    // //obtiene bolsas de horas (TEÓRICAS) según fecha de corte
+    // $cutoffdate = CutOffDate::orderBy('date', 'desc')->first();
+    //
+    // if ($cutoffdate == null) {
+    //   session()->flash('danger', 'Para acceder al programador de horas, debe existir una fecha de corte.');
+    //   return redirect()->back();
+    // }
+    //
+    // $monday = Carbon::parse($cutoffdate->date)->startOfWeek();
+    // $sunday = Carbon::parse($cutoffdate->date)->endOfWeek();
 
-    if ($cutoffdate == null) {
-      session()->flash('danger', 'Para acceder al programador de horas, debe existir una fecha de corte.');
-      return redirect()->back();
-    }
+    $monday = Carbon::parse($date)->startOfWeek();
+    $sunday = Carbon::parse($date)->endOfWeek();
 
-    $monday = Carbon::parse($cutoffdate->date)->startOfWeek();
-    $sunday = Carbon::parse($cutoffdate->date)->endOfWeek();
     //obtiene datos programables del período
     $theoreticalProgrammings = TheoreticalProgramming::whereBetween('start_date', [$monday, $sunday])
       ->whereNull('contract_day_type')
@@ -89,11 +93,13 @@ class CalendarProgrammingController extends Controller
         return $query->where('mother_activity_id', 1); //actividad de pabellón
       })
       ->get();
+
       // dd($theoreticalProgrammings);
 
-    $cutoff_date = new Carbon($cutoffdate->date);
+    $formated_date = new Carbon($date);
+
     //obtiene datos NO programables del año
-    $medicalProgrammings = MedicalProgramming::where('year', $cutoff_date->get('year'))->get();
+    $medicalProgrammings = MedicalProgramming::where('year', $formated_date->get('year'))->get();
     // dd($medicalProgrammings);
 
     //se obtiene fechas de inicio y termino de cada isEventOverDiv
@@ -102,6 +108,7 @@ class CalendarProgrammingController extends Controller
       $end    = new Carbon($theoricalProgramming->end_date);
       $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end) / 60;
     }
+
 
     //programables - PROGRAMACION MÉDICA
     $array = array();

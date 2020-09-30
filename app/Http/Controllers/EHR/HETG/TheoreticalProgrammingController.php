@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-use App\EHR\HETG\OperatingRoom;
+use App\EHR\HETG\OperatingRoomProgramming;
 
 class TheoreticalProgrammingController extends Controller
 {
@@ -89,6 +89,10 @@ class TheoreticalProgrammingController extends Controller
         }
     }
 
+    //obtiene fechas límite
+    $monday = Carbon::parse($date)->startOfWeek();
+    $sunday = Carbon::parse($date)->endOfWeek();
+
     //encuentra actividades segun tipo de profesional
     $specialties = null;
     $professions = null;
@@ -118,6 +122,12 @@ class TheoreticalProgrammingController extends Controller
                                          ->where('contract_id', $contract_id)
                                          ->where('specialty_id', $var)
                                          ->get();
+
+        //obtiene operating operation_rooms
+        $OperatingRoomProgrammings = OperatingRoomProgramming::where('specialty_id',$var)
+                                                            ->whereBetween('start_date',[$monday,$sunday])
+                                                            ->get();
+                                                            // dd($OperatingRoomProgrammings);
     }
     //si es programación médica
     else{
@@ -136,10 +146,12 @@ class TheoreticalProgrammingController extends Controller
                                          ->where('contract_id', $contract_id)
                                          ->where('profession_id', $var)
                                          ->get();
-    }
 
-    $monday = Carbon::parse($date)->startOfWeek();
-    $sunday = Carbon::parse($date)->endOfWeek();
+        //obtiene operating operation_rooms
+        $OperatingRoomProgramming = OperatingRoomProgramming::where('profession_id',$var)
+                                                            ->whereBetween('start_date',[$monday,$sunday])
+                                                            ->get();
+    }
 
     //obtiene horas teóricas
     $theoreticalProgrammings = TheoreticalProgramming::where('year',$year)
@@ -205,7 +217,7 @@ class TheoreticalProgrammingController extends Controller
 
       return view('ehr.hetg.management.theoretical_programmer', compact('request','array','activities','contract_days','date','theoreticalProgrammings',
                                                                         'rrhhs','permisos_administrativos', 'specialties','professions','contracts',
-                                                                        'programming'));
+                                                                        'programming','OperatingRoomProgrammings'));
       // return view('ehr.hetg.management.theoretical_programmer',compact('request','rrhhs','array','theoricalProgrammings','contracts','rut','contract_days'));
     }
 
@@ -480,6 +492,8 @@ class TheoreticalProgrammingController extends Controller
               $theoreticalProgramming->end_date = $end_date;
               $theoreticalProgramming->performance = $performance;
               $theoreticalProgramming->save();
+
+
           }
           //se modifican todos los eventos hacia adelante
           else{

@@ -13,6 +13,12 @@
 
             <ul class="navbar-nav">
 
+                @canany(['programador pabellon'])
+                <a class="dropdown-item" href="{{ route('ehr.hetg.operating_room_programming.index') }}">
+                    <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador de Pabellones
+                </a>
+                @endcanany
+
                 @canany(['programacion teorica'])
                 <li class="navbar-nav dropdown">
 
@@ -36,12 +42,6 @@
 
                     </div>
                 </li>
-                @endcanany
-
-                @canany(['programador pabellon'])
-                <a class="dropdown-item" href="{{ route('ehr.hetg.operating_room_programming.index') }}">
-                    <i class="fas fa-calendar-alt fa-fw" style='color:green'></i> Programador de Pabellones
-                </a>
                 @endcanany
 
                 @canany(['programador'])
