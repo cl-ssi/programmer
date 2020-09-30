@@ -3,7 +3,8 @@
         <tr>
             <th>Contrato</th>
             <th>Especialista</th>
-            <th>Especialidad</th>
+            @if($request->tipo == 1) <th>Especialidad</th> @endif
+            @if($request->tipo == 2) <th>Profesión</th> @endif
             <th>Actividad</th>
             <th>Horas Asignadas</th>
             <th>Horas Performance</th>
@@ -15,15 +16,16 @@
         <tr>
             <td>{{ $row->contract->law }}</td>
             <td>{{ $row->rrhh->getFullNameAttribute() }}</td>
-            <td>{{ $row->specialty->specialty_name }}</td>
+            @if($request->tipo == 1) <td>{{ $row->specialty->specialty_name }}</td> @endif
+            @if($request->tipo == 2) <td>{{ $row->profession->profession_name }}</td> @endif
             <td>{{ $row->activity->activity_name }}</td>
             <td>{{ $row->assigned_hour }}</td>
             <td>{{ $row->hour_performance }}</td>
             <td nowrap>
-      				<a href="{{ route('ehr.hetg.medical_programming.edit', $row) }}"
+      				{{-- <a href="{{ route('ehr.hetg.medical_programming.edit', $row) }}"
       					class="btn btn-sm btn-outline-secondary">
       					<span class="fas fa-edit" aria-hidden="true"></span>
-      				</a>
+      				</a> --}}
       				<form method="POST" action="{{ route('ehr.hetg.medical_programming.destroy', $row) }}" class="d-inline">
       					@csrf
       					@method('DELETE')
@@ -43,12 +45,16 @@
 
     <input type="hidden" id="year" name="year" value="{{$request->year}}"/>
     <input type="hidden" id="rut" name="rut" value="{{$request->rut}}"/>
+    <input type="hidden" id="date" name="date" value="{{$date}}"/>
+    <input type="hidden" id="tipo" name="tipo" value="{{$request->tipo}}"/>
+
     @if($contracts->count() > 0)
         <input type="hidden" id="contract_id" name="contract_id" value="{{$contracts->first()->id}}"/>
     @else
         <input type="hidden" id="contract_id" name="contract_id" value="{{$request->contract_id}}"/>
     @endif
     <input type="hidden" id="specialty_id" name="specialty_id" value="{{$request->specialty_id}}"/>
+    <input type="hidden" id="profession_id" name="profession_id" value="{{$request->profession_id}}"/>
 
     <div class="row">
 

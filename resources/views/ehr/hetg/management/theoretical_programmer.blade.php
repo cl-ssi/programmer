@@ -281,6 +281,9 @@ bottom: 5px;
 
   $(document).ready(function(){
 
+    //ejecuta el evento change para que se carge el performance
+    $('#for_activity_id').trigger('change');
+
     //carga disponibilidad de contrato segun programable
     @foreach ($activities as $key => $activity)
         document.getElementById("{{$activity->id}}").innerHTML = bolsa_{{$activity->id}};
@@ -961,6 +964,22 @@ bottom: 5px;
     @foreach($contracts as $contract)
       if($("#for_contract_id").val() == {{$contract->id}}){
         $("#total_contrato").text({{$contract->weekly_hours}});
+      }
+    @endforeach
+  });
+
+  //add performance
+  $( "#for_activity_id" ).change(function() {
+    @foreach($activities as $activity)
+      if($("#for_activity_id").val() == {{$activity->id}}){
+        @if($request->tipo == 1)
+            let variable = '{{$activity->specialties->where('id',$request->specialty_id)->first()->pivot->performance}}';
+            $("#for_hour_performance").val(variable);
+        @else
+        let variable = '{{$activity->professions->where('id',$request->profession_id)->first()->pivot->performance}}';
+        $("#for_hour_performance").val(variable);
+        @endif
+
       }
     @endforeach
   });

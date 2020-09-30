@@ -115,6 +115,7 @@ class TheoreticalProgrammingController extends Controller
                                     $q->where('specialty_id', $var);
                                 })
                                 ->get();
+                                // dd($activities->first()->specialties->where('id',42)->first()->pivot);
 
         //corresponde a la actividad no programable (que se guarda en el modelo medicalProgramming)
         $programming = MedicalProgramming::where('rut',$rut)
@@ -122,6 +123,7 @@ class TheoreticalProgrammingController extends Controller
                                          ->where('contract_id', $contract_id)
                                          ->where('specialty_id', $var)
                                          ->get();
+                                         // dd($programming);
 
         //obtiene operating operation_rooms
         $OperatingRoomProgrammings = OperatingRoomProgramming::where('specialty_id',$var)
@@ -148,7 +150,7 @@ class TheoreticalProgrammingController extends Controller
                                          ->get();
 
         //obtiene operating operation_rooms
-        $OperatingRoomProgramming = OperatingRoomProgramming::where('profession_id',$var)
+        $OperatingRoomProgrammings = OperatingRoomProgramming::where('profession_id',$var)
                                                             ->whereBetween('start_date',[$monday,$sunday])
                                                             ->get();
     }

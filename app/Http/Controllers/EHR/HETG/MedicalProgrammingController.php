@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use App\EHR\HETG\TheoreticalProgramming;
 
 class MedicalProgrammingController extends Controller
 {
@@ -47,6 +49,47 @@ class MedicalProgrammingController extends Controller
      */
     public function store(Request $request)
     {
+
+    //obtiene contrato
+    $contracts = Contract::where('id',$request->contract_id)->get();
+
+    //obtiene horas teóricas
+    $monday = Carbon::parse($request->date)->startOfWeek();
+    $sunday = Carbon::parse($request->date)->endOfWeek();
+    $theoreticalProgrammings = TheoreticalProgramming::where('year',$request->year)
+                                                  ->where('rut',$request->rut)
+                                                  ->where('contract_id', $request->contract_id)
+                                                  ->where('specialty_id', $request->specialty_id)
+                                                  ->where('profession_id', $request->profession_id)
+                                                  ->whereBetween('start_date',[$monday,$sunday])
+                                                  ->get();
+
+    //se obtiene fechas de inicio y termino de cada isEventOverDiv
+    $cantidad_ingresada = 0;
+    foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
+      $start  = new Carbon($theoricalProgramming->start_date);
+      $end    = new Carbon($theoricalProgramming->end_date);
+      $cantidad_ingresada += $start->diffInMinutes($end)/60;
+    }
+    //obtiene horas no programables
+    $medical_programmings = MedicalProgramming::where('year',$request->year)
+                                              ->where('rut',$request->rut)
+                                              ->where('contract_id', $request->contract_id)
+                                              ->where('specialty_id', $request->specialty_id)
+                                              ->where('profession_id', $request->profession_id)
+                                              ->get();
+    foreach ($medical_programmings as $key => $medical_programming) {
+       $cantidad_ingresada += $medical_programming->assigned_hour;
+    }
+
+    $cantidad_adicional = $request->assigned_hour;
+    $cantidad_contrato = $contracts->first()->weekly_hours;
+    if (($cantidad_ingresada + $cantidad_adicional) > $cantidad_contrato) {
+        session()->flash('info', 'Excede la cantidad de horas contratadas.');
+        return redirect()->back();
+    }
+
+    // dd($request->All());
       $medica_programming = new MedicalProgramming($request->All());
       $medica_programming->user_id = Auth::id();
       $medica_programming->save();
