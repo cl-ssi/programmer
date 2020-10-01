@@ -609,7 +609,7 @@ class OperatingRoomController extends Controller
     {
         $operatingRoom = new OperatingRoom($request->All());
         //$operatingRoom->establishment_id = 1;
-        $operatingRoom->user_id = Auth::id();
+        //$operatingRoom->user_id = Auth::id();
         $operatingRoom->save();
 
         return redirect()->route('ehr.hetg.operating_rooms.index');
