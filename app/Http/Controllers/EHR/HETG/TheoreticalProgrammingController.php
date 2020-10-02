@@ -99,14 +99,48 @@ class TheoreticalProgrammingController extends Controller
     $activities = null;
     //si es programación médica
     if ($request->get('tipo') == 1) {
-        $specialties = Specialty::orderBy('specialty_name','ASC')->get();
 
-        // $collection1 = Specialty::where('id',CalendarProgramming::where('rut',$rut)->get()->first()->specialty_id)->get();
-        // $collection2 = Specialty::where('id','!=',CalendarProgramming::where('rut',$rut)->get()->first()->specialty_id)->get();
-        // // $specialties = Specialty::where('id',CalendarProgramming::where('rut',$rut)->get()->first()->specialty_id)->get();
-        // // $specialties->merge(Specialty::where('id','!=',CalendarProgramming::where('rut',$rut)->get()->first()->specialty_id));
-        // $collection1->merge($collection2);
-        // dd($collection1);
+        // $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+
+        // //se verifica si tiene teorico, si es asi, se busca la primera especialidad y se selecciona en la vista
+        // if ($rut != null) {
+        //     if (TheoreticalProgramming::where('rut',$rut)->count() > 0) {
+        //         $theoreticalProgramming = TheoreticalProgramming::where('rut',$rut)->first();
+        //         if ($theoreticalProgramming->count() > 0) {
+        //             // if ($specialties->first()->id == $request->get('specialty_id')) {
+        //                 $request->merge([
+        //                     'specialty_id' => $theoreticalProgramming->specialty_id,
+        //                 ]);
+        //             // }
+        //         }
+        //     }
+        // }
+
+        //obtiene especialidades ordenadas (si es que existe horario teorico, devuelve esa especialidad primero)
+        $TheoreticalProgramming = TheoreticalProgramming::where('rut',$rut)->first();
+        if ($rut != null) {
+            if ($TheoreticalProgramming!=null) {
+                $collection1 = Specialty::where('id',$TheoreticalProgramming->specialty_id)->get();
+                $collection2 = Specialty::where('id','!=',$TheoreticalProgramming->specialty_id)->orderBy('specialty_name','ASC')->get();
+                foreach ($collection2 as $key => $value) {
+                    $collection1->push($value);
+                }
+                $specialties = $collection1;
+            }else{
+                $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+            }
+
+            // dd($specialties);
+
+            // dd($collection1);
+            // dd($request->get('specialty_id'));
+            // if ($collection1->first()->id == $request->get('specialty_id')) {
+            //     $request->merge(['specialty_id' => $collection1->first()->id]);
+            // }
+
+        }else{
+            $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+        }
 
         $var = $request->get('specialty_id');
         $activities = Activity::orderBy('activity_name','ASC')
@@ -133,7 +167,20 @@ class TheoreticalProgrammingController extends Controller
     }
     //si es programación médica
     else{
-        $professions = Profession::orderBy('profession_name','ASC')->get();
+        // $professions = Profession::orderBy('profession_name','ASC')->get();
+
+        //obtiene especialidades ordenadas (si es que existe horario teorico, devuelve esa especialidad primero)
+        if ($rut != null) {
+            $collection1 = Profession::where('id',TheoreticalProgramming::where('rut',$rut)->get()->first()->profession_id)->get();
+            $collection2 = Profession::where('id','!=',TheoreticalProgramming::where('rut',$rut)->get()->first()->profession_id)->orderBy('profession_name','ASC')->get();
+            foreach ($collection2 as $key => $value) {
+                $collection1->push($value);
+            }
+            $professions = $collection1;
+        }else{
+            $professions = Profession::orderBy('profession_name','ASC')->get();
+        }
+
         $var = $request->get('profession_id');
         $activities = Activity::orderBy('activity_name','ASC')
                                 ->where('activity_type_id',2) //ejemplo: actividades medicas
@@ -156,13 +203,16 @@ class TheoreticalProgrammingController extends Controller
     }
 
     //obtiene horas teóricas
+    // dd($request->get('specialty_id'));
     $theoreticalProgrammings = TheoreticalProgramming::where('year',$year)
                                                   ->where('rut',$rut)
-                                                  // ->whereNull('contract_day_type')
+                                                  ->whereNull('contract_day_type')
                                                   ->where('contract_id', $contract_id)
                                                   ->where('specialty_id', $request->get('specialty_id'))
                                                   ->whereBetween('start_date',[$monday,$sunday])
                                                   ->get();
+
+                                                  // dd($theoreticalProgrammings);
 
       //se obtiene fechas de inicio y termino de cada isEventOverDiv
       foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
