@@ -66,9 +66,9 @@ class CreateHmRrhhTable extends Migration
             // $table->bigInteger('id_sigte')->nullable();
             $table->string('specialty_name');
             $table->string('color')->nullable();
-            $table->unsignedBigInteger('user_id');
+            //$table->unsignedBigInteger('user_id');
 
-            $table->foreign('user_id')->references('id')->on('users');
+            //$table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });

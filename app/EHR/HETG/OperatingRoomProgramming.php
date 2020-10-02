@@ -15,7 +15,8 @@ class OperatingRoomProgramming extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'operating_room_id', 'specialty_id', 'profession_id', 'start_date', 'end_date', 'year', 'user_id'
+        'id', 'operating_room_id', 'specialty_id', 'profession_id', 'start_date', 'end_date', 'year'
+        //, 'user_id'
     ];
 
     public function specialty() {

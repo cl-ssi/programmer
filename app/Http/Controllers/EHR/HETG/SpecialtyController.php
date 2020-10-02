@@ -45,7 +45,7 @@ class SpecialtyController extends Controller
     public function store(Request $request)
     {
       $specialty = new Specialty($request->All());
-      $specialty->user_id = Auth::id();
+      //$specialty->user_id = Auth::id();
       $specialty->save();
 
       foreach ($request->activity_id as $key => $id) {
@@ -94,7 +94,7 @@ class SpecialtyController extends Controller
     public function update(Request $request, Specialty $specialty)
     {
       $specialty->fill($request->all());
-      $specialty->user_id = Auth::id();
+      //$specialty->user_id = Auth::id();
       $specialty->save();
 
       SpecialtyActivity::where('specialty_id',$specialty->id)->delete();
