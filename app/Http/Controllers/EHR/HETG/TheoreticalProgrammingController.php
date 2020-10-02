@@ -118,7 +118,6 @@ class TheoreticalProgrammingController extends Controller
 
         //obtiene especialidades ordenadas (si es que existe horario teorico, devuelve esa especialidad primero)
         $TheoreticalProgramming = TheoreticalProgramming::where('rut',$rut)->first();
-        // dd($TheoreticalProgramming);
         if ($rut != null) {
             if ($TheoreticalProgramming!=null) {
                 $collection1 = Specialty::where('id',$TheoreticalProgramming->specialty_id)->get();
@@ -132,15 +131,6 @@ class TheoreticalProgrammingController extends Controller
             }else{
                 $specialties = Specialty::orderBy('specialty_name','ASC')->get();
             }
-
-            // dd($specialties);
-
-            // dd($collection1);
-            // dd($request->get('specialty_id'));
-            // if ($collection1->first()->id == $request->get('specialty_id')) {
-            //     $request->merge(['specialty_id' => $collection1->first()->id]);
-            // }
-
         }else{
             $specialties = Specialty::orderBy('specialty_name','ASC')->get();
         }
@@ -172,14 +162,33 @@ class TheoreticalProgrammingController extends Controller
     else{
         // $professions = Profession::orderBy('profession_name','ASC')->get();
 
+        // //obtiene especialidades ordenadas (si es que existe horario teorico, devuelve esa especialidad primero)
+        // if ($rut != null) {
+        //     $collection1 = Profession::where('id',TheoreticalProgramming::where('rut',$rut)->get()->first()->profession_id)->get();
+        //     $collection2 = Profession::where('id','!=',TheoreticalProgramming::where('rut',$rut)->get()->first()->profession_id)->orderBy('profession_name','ASC')->get();
+        //     foreach ($collection2 as $key => $value) {
+        //         $collection1->push($value);
+        //     }
+        //     $professions = $collection1;
+        // }else{
+        //     $professions = Profession::orderBy('profession_name','ASC')->get();
+        // }
+
         //obtiene especialidades ordenadas (si es que existe horario teorico, devuelve esa especialidad primero)
+        $TheoreticalProgramming = TheoreticalProgramming::where('rut',$rut)->first();
         if ($rut != null) {
-            $collection1 = Profession::where('id',TheoreticalProgramming::where('rut',$rut)->get()->first()->profession_id)->get();
-            $collection2 = Profession::where('id','!=',TheoreticalProgramming::where('rut',$rut)->get()->first()->profession_id)->orderBy('profession_name','ASC')->get();
-            foreach ($collection2 as $key => $value) {
-                $collection1->push($value);
+            if ($TheoreticalProgramming!=null) {
+                $collection1 = Profession::where('id',$TheoreticalProgramming->profession_id)->get();
+                // dd($collection1);
+                $collection2 = Profession::where('id','!=',$TheoreticalProgramming->profession_id)->orderBy('specialty_name','ASC')->get();
+                foreach ($collection2 as $key => $value) {
+                    $collection1->push($value);
+                }
+                $professions = $collection1;
+                $request->merge(['profession_id' => $collection1->first()->id]);
+            }else{
+                $professions = Profession::orderBy('profession_name','ASC')->get();
             }
-            $professions = $collection1;
         }else{
             $professions = Profession::orderBy('profession_name','ASC')->get();
         }
