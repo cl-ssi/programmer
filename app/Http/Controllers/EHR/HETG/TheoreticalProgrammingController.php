@@ -118,14 +118,17 @@ class TheoreticalProgrammingController extends Controller
 
         //obtiene especialidades ordenadas (si es que existe horario teorico, devuelve esa especialidad primero)
         $TheoreticalProgramming = TheoreticalProgramming::where('rut',$rut)->first();
+        // dd($TheoreticalProgramming);
         if ($rut != null) {
             if ($TheoreticalProgramming!=null) {
                 $collection1 = Specialty::where('id',$TheoreticalProgramming->specialty_id)->get();
+                // dd($collection1);
                 $collection2 = Specialty::where('id','!=',$TheoreticalProgramming->specialty_id)->orderBy('specialty_name','ASC')->get();
                 foreach ($collection2 as $key => $value) {
                     $collection1->push($value);
                 }
                 $specialties = $collection1;
+                $request->merge(['specialty_id' => $collection1->first()->id]);
             }else{
                 $specialties = Specialty::orderBy('specialty_name','ASC')->get();
             }
