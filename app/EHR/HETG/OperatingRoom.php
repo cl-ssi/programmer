@@ -16,7 +16,8 @@ class OperatingRoom extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'description', 'location', 'color', 'medic_box', 'user_id'
+        'id', 'name', 'description', 'location', 'color', 'medic_box'
+        //, 'user_id'
     ];
 
     public function calendarProgrammings() {
