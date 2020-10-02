@@ -153,15 +153,30 @@ bottom: 5px;
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
 
-      <br />
+      {{-- <br /> --}}
 
-      <div align="right">
-        <p>
-          <input name="date2" type="date" onchange="this.form.submit()">
-          <button id='prev'>Anterior</button>
-          <button id='next'>Próximo</button>
-        </p>
-      </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-sm">
+                {{-- Desde <input type="time" id="timeFrom" name="timeFrom" value="07:00" step='3600'>
+                Hasta <input type="time" id="endFrom" name="endFrom" value="20:00" step='3600'> --}}
+            </div>
+            <div class="col-sm">
+
+            </div>
+            <div class="col-sm">
+                <div align="right">
+                  <p>
+                    <input name="date2" type="date" onchange="this.form.submit()">
+                    <button id='prev'>Anterior</button>
+                    <button id='next'>Próximo</button>
+                  </p>
+                </div>
+            </div>
+          </div>
+        </div>
+
+
 
       </form>
 
@@ -216,6 +231,12 @@ bottom: 5px;
     <div id="page-loader" style="display: none">
       <span class="preloader-interior"></span>
     </div>
+
+    {{-- <div id="dialog-confirm" title="Mensaje del sistema">
+      <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+          Debe definir si la modificación se debe realizar solo esta semana o todas las semanas que quedan.
+      </p>
+    </div> --}}
 
   @endsection
 
@@ -283,6 +304,8 @@ bottom: 5px;
 
     //ejecuta el evento change para que se carge el performance
     $('#for_activity_id').trigger('change');
+    // $("#for_specialty_id").prop('selectedIndex', 0);
+    // $('#for_specialty_id').trigger('change');
 
     //carga disponibilidad de contrato segun programable
     @foreach ($activities as $key => $activity)
@@ -328,6 +351,7 @@ bottom: 5px;
       eventLimit: true, // allow "more" link when too many events
       displayEventEnd: true,
       allDaySlot: false,
+      scrollTime: '08:00',
       firstDay: 1,
       defaultDate: '{{$date}}',
       locale: 'es', // the initial locale
@@ -395,6 +419,7 @@ bottom: 5px;
         if (tipo_evento == 'teorico') {
             //se verifica que no exceda el máximo
             // if (window["bolsa_" + info.event.id] != '0') {
+
                 //se setea evento de 60 mins
                 info.event.setEnd(add_minutes(fecha_inicio,60));
                 if (confirm('¿Desea insertar solo en esta semana?')) {
@@ -402,6 +427,23 @@ bottom: 5px;
                 } else {
                     saveMyData(info.event, 2, tipo_evento);
                 }
+
+                // $(function() {
+                //     $( "#dialog-confirm" ).dialog({
+                //       resizable: false,
+                //       height: "auto",
+                //       width: 400,
+                //       modal: true,
+                //       buttons: {
+                //         "Esta semana": function() {
+                //             saveMyData(info.event, 1, tipo_evento);
+                //         },
+                //         "Todas las semanas": function() {
+                //           saveMyData(info.event, 2, tipo_evento);
+                //         }
+                //       }
+                //     });
+                // });
 
                 @foreach ($activities as $key => $activity)
                     if(info.event.id == "{{$activity->id}}"){
