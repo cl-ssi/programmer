@@ -12,7 +12,7 @@ class HmActivityTypesTableSeeder extends Seeder
      */
     public function run()
     {
-        ActivityType::Create(['id' => 1,'name' => 'Actividad médica', 'user_id'=>1]);
-        ActivityType::Create(['id' => 2,'name' => 'Actividad no médica', 'user_id'=>1]);
+        ActivityType::Create(['id' => 1,'name' => 'Actividad médica']);
+        ActivityType::Create(['id' => 2,'name' => 'Actividad no médica']);
     }
 }

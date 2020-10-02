@@ -15,7 +15,8 @@ class CutOffDate extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'date', 'observation', 'user_id'
+        'id', 'date', 'observation'
+        //, 'user_id'
     ];
 
     public function user()

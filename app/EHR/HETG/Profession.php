@@ -15,7 +15,8 @@ class Profession extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'id_profession', 'profession_name', 'color', 'user_id'
+        'id', 'id_profession', 'profession_name', 'color'
+        //, 'user_id'
     ];
 
     public function medical_programmings() {

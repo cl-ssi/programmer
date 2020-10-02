@@ -472,7 +472,7 @@ class CalendarProgrammingController extends Controller
   public function saveMyEvent(Request $request)
   {
     $calendarProgramming = new CalendarProgramming($request->all());
-    $calendarProgramming->user_id = Auth::id();
+    //$calendarProgramming->user_id = Auth::id();
     $calendarProgramming->save();
   }
 

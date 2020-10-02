@@ -39,7 +39,7 @@ class RrhhController extends Controller
     public function store(Request $request)
     {
       $rrhh = new Rrhh($request->All());
-      $rrhh->user_id = Auth::id();
+      //$rrhh->user_id = Auth::id();
       $rrhh->save();
 
       session()->flash('info', 'El recurso humano ha sido creado.');
@@ -78,7 +78,7 @@ class RrhhController extends Controller
     public function update(Request $request, Rrhh $rrhh)
     {
         $rrhh->fill($request->all());
-        $rrhh->user_id = Auth::id();
+        //$rrhh->user_id = Auth::id();
         $rrhh->save();
 
         session()->flash('info', 'El recurso humano ha sido editado.');

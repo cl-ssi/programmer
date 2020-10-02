@@ -39,7 +39,7 @@ class MotherActivityController extends Controller
     public function store(Request $request)
     {
       $motherActivity = new MotherActivity($request->All());
-      $motherActivity->user_id = Auth::id();
+      //$motherActivity->user_id = Auth::id();
       $motherActivity->save();
 
       session()->flash('info', 'La actividad madre ha sido creada.');
@@ -78,7 +78,7 @@ class MotherActivityController extends Controller
     public function update(Request $request, MotherActivity $motherActivity)
     {
       $motherActivity->fill($request->all());
-      $motherActivity->user_id = Auth::id();
+      //$motherActivity->user_id = Auth::id();
       $motherActivity->save();
 
       session()->flash('info', 'La actividad madre ha sido editada.');

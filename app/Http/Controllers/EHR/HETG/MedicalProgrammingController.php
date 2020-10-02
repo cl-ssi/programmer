@@ -91,7 +91,7 @@ class MedicalProgrammingController extends Controller
 
     // dd($request->All());
       $medica_programming = new MedicalProgramming($request->All());
-      $medica_programming->user_id = Auth::id();
+      //$medica_programming->user_id = Auth::id();
       $medica_programming->save();
 
       session()->flash('info', 'La programación ha sido creada.');
@@ -135,7 +135,7 @@ class MedicalProgrammingController extends Controller
     public function update(Request $request, MedicalProgramming $medicalProgramming)
     {
       $medicalProgramming->fill($request->all());
-      $medicalProgramming->user_id = Auth::id();
+      //$medicalProgramming->user_id = Auth::id();
       $medicalProgramming->save();
 
       session()->flash('info', 'La programación ha sido editada.');

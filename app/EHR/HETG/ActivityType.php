@@ -15,7 +15,8 @@ class ActivityType extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'user_id'
+        'id', 'name'
+        //, 'user_id'
     ];
 
     public function activities() {

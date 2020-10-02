@@ -45,9 +45,9 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->unsignedInteger('operating_room_id')->nullable();
             $table->datetime('start_date');
             $table->datetime('end_date');
-            $table->unsignedBigInteger('user_id');
+            //$table->unsignedBigInteger('user_id');
 
-            $table->foreign('user_id')->references('id')->on('users');
+            //$table->foreign('user_id')->references('id')->on('users');
             $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
             $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');
             $table->foreign('profession_id')->references('id')->on('hm_professions')->onDelete('cascade');
@@ -71,9 +71,9 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->decimal('performance', 8, 2)->nullable();
             $table->string('contract_day_type')->nullable();
             $table->integer('year')->nullable();
-            $table->unsignedBigInteger('user_id');
+            //$table->unsignedBigInteger('user_id');
 
-            $table->foreign('user_id')->references('id')->on('users');
+            //$table->foreign('user_id')->references('id')->on('users');
             // $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
             // $table->foreign('activity_id')->references('id')->on('hm_activities')->onDelete('cascade');
             $table->foreign('contract_id')->references('id')->on('hm_contracts')->onDelete('cascade');
@@ -111,8 +111,8 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->bigIncrements('id');
             $table->datetime('date');
             $table->string('observation');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            // $table->unsignedBigInteger('user_id');
+            // $table->foreign('user_id')->references('id')->on('users');
 
             $table->timestamps();
             $table->softDeletes();

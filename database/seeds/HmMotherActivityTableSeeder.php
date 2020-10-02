@@ -12,7 +12,7 @@ class HmMotherActivityTableSeeder extends Seeder
      */
     public function run()
     {
-        MotherActivity::Create(['id' => 1,'description' => 'Pabellón', 'user_id'=>1]);
-        MotherActivity::Create(['id' => 2,'description' => 'Consulta Médica', 'user_id'=>1]);
+        MotherActivity::Create(['id' => 1,'description' => 'Pabellón']);
+        MotherActivity::Create(['id' => 2,'description' => 'Consulta Médica']);
     }
 }
