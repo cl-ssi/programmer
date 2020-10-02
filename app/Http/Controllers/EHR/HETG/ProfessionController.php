@@ -45,7 +45,7 @@ class ProfessionController extends Controller
     public function store(Request $request)
     {
       $profession = new Profession($request->All());
-      $profession->user_id = Auth::id();
+      //$profession->user_id = Auth::id();
       $profession->save();
 
       foreach ($request->activity_id as $key => $id) {
@@ -94,7 +94,7 @@ class ProfessionController extends Controller
     public function update(Request $request, Profession $profession)
     {
       $profession->fill($request->all());
-      $profession->user_id = Auth::id();
+      //$profession->user_id = Auth::id();
       $profession->save();
 
       ProfessionActivity::where('profession_id',$profession->id)->delete();

@@ -15,7 +15,8 @@ class Rrhh extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id_deis', 'cod_estab_sirh', 'rut', 'dv', 'risk_group', 'missing_condition', 'missing_reason', 'name', 'fathers_family', 'mothers_family', 'job_title', 'user_id'
+        'id_deis', 'cod_estab_sirh', 'rut', 'dv', 'risk_group', 'missing_condition', 'missing_reason', 'name', 'fathers_family', 'mothers_family', 'job_title'
+        //, 'user_id'
     ];
 
     public function executedActivities() {

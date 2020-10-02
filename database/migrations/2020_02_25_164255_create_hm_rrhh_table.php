@@ -25,9 +25,9 @@ class CreateHmRrhhTable extends Migration
             $table->string('fathers_family');
             $table->string('mothers_family')->nullable();
             $table->string('job_title');
-            $table->unsignedBigInteger('user_id');
+            //$table->unsignedBigInteger('user_id');
 
-            $table->foreign('user_id')->references('id')->on('users');
+            //$table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -89,9 +89,9 @@ class CreateHmRrhhTable extends Migration
             // $table->bigInteger('id_sigte')->nullable();
             $table->string('profession_name');
             $table->string('color')->nullable();
-            $table->unsignedBigInteger('user_id');
+            //$table->unsignedBigInteger('user_id');
 
-            $table->foreign('user_id')->references('id')->on('users');
+            //$table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });
