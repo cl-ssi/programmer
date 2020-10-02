@@ -51,9 +51,9 @@ class CreateHmRrhhTable extends Migration
             $table->string('unit')->nullable();
             $table->string('unit_code')->nullable();
             $table->integer('year')->nullable();
-            $table->unsignedBigInteger('user_id');
+            //$table->unsignedBigInteger('user_id');
 
-            $table->foreign('user_id')->references('id')->on('users');
+            //$table->foreign('user_id')->references('id')->on('users');
             $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
 
             $table->timestamps();

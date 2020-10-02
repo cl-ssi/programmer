@@ -111,8 +111,8 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->bigIncrements('id');
             $table->datetime('date');
             $table->string('observation');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            // $table->unsignedBigInteger('user_id');
+            // $table->foreign('user_id')->references('id')->on('users');
 
             $table->timestamps();
             $table->softDeletes();

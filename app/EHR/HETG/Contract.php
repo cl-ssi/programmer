@@ -18,7 +18,8 @@ class Contract extends Model implements Auditable
         'id', 'rut', 'year', 'law', 'contract_id',  'weekly_hours', 'shift_system',
         'obs', 'legal_holidays', 'compensatory_rest', 'administrative_permit',
         'training_days', 'breastfeeding_time', 'weekly_collation',
-        'contract_start_date', 'contract_end_date', 'unit', 'unit_code', 'user_id'
+        'contract_start_date', 'contract_end_date', 'unit', 'unit_code'
+        //, 'user_id'
     ];
 
     public function rrhh() {

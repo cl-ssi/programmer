@@ -45,7 +45,7 @@ class CutOffDateController extends Controller
     public function store(Request $request)
     {
       $cutOffDate = new CutOffDate($request->All());
-      $cutOffDate->user_id = Auth::id();
+      //$cutOffDate->user_id = Auth::id();
       $cutOffDate->save();
 
       session()->flash('info', 'La fecha de corte ha sido creada.');
@@ -84,7 +84,7 @@ class CutOffDateController extends Controller
     public function update(Request $request, CutOffDate $cutoffdate)
     {
       $cutoffdate->fill($request->all());
-      $cutoffdate->user_id = Auth::id();
+      //$cutoffdate->user_id = Auth::id();
       $cutoffdate->save();
 
       session()->flash('info', 'La fecha de corte ha sido editada.');
