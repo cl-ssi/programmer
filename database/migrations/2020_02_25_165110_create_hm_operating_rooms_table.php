@@ -45,9 +45,9 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->unsignedInteger('operating_room_id')->nullable();
             $table->datetime('start_date');
             $table->datetime('end_date');
-            $table->unsignedBigInteger('user_id');
+            //$table->unsignedBigInteger('user_id');
 
-            $table->foreign('user_id')->references('id')->on('users');
+            //$table->foreign('user_id')->references('id')->on('users');
             $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
             $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');
             $table->foreign('profession_id')->references('id')->on('hm_professions')->onDelete('cascade');
