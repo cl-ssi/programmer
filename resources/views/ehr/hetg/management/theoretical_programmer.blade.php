@@ -429,42 +429,48 @@ bottom: 5px;
             //se verifica que no exceda el máximo
             // if (window["bolsa_" + info.event.id] != '0') {
 
+                // //se setea evento de 60 mins
+                // info.event.setEnd(add_minutes(fecha_inicio,60));
+                // if (confirm('¿Desea insertar solo en esta semana?')) {
+                //     saveMyData(info.event, 1, tipo_evento);
+                // } else {
+                //     saveMyData(info.event, 2, tipo_evento);
+                // }
+
                 //se setea evento de 60 mins
                 info.event.setEnd(add_minutes(fecha_inicio,60));
-                if (confirm('¿Desea insertar solo en esta semana?')) {
-                    saveMyData(info.event, 1, tipo_evento);
-                } else {
-                    saveMyData(info.event, 2, tipo_evento);
-                }
+                $(function() {
+                    $( "#dialog-confirm" ).dialog({
+                      resizable: false,
+                      height: "auto",
+                      width: 400,
+                      modal: true,
+                      buttons: {
+                        "Esta semana": function() {
+                            saveMyData(info.event, 1, tipo_evento);
+                            $(this).dialog('close');
+                        },
+                        "Todas las semanas": function() {
+                          saveMyData(info.event, 2, tipo_evento);
+                          $(this).dialog('close');
+                        }
+                    },
+                    close: function(event, ui){
 
-                // $(function() {
-                //     $( "#dialog-confirm" ).dialog({
-                //       resizable: false,
-                //       height: "auto",
-                //       width: 400,
-                //       modal: true,
-                //       buttons: {
-                //         "Esta semana": function() {
-                //             saveMyData(info.event, 1, tipo_evento);
-                //         },
-                //         "Todas las semanas": function() {
-                //           saveMyData(info.event, 2, tipo_evento);
-                //         }
-                //       }
-                //     });
-                // });
+                        @foreach ($activities as $key => $activity)
+                            if(info.event.id == "{{$activity->id}}"){
+                              document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + 1);
+                              bolsa_{{$activity->id}} = bolsa_{{$activity->id}} + 1;
 
-                // alert("");
-
-                @foreach ($activities as $key => $activity)
-                    if(info.event.id == "{{$activity->id}}"){
-                      document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + 1);
-                      bolsa_{{$activity->id}} = bolsa_{{$activity->id}} + 1;
-
-                      disponible_contrato = disponible_contrato + 1;
-                      document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
+                              disponible_contrato = disponible_contrato + 1;
+                              document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
+                            }
+                        @endforeach
                     }
-                @endforeach
+
+                    });
+                });
+
             // }
             // else{
             //     alert("Excedió horas semanales contratas.");
@@ -562,11 +568,29 @@ bottom: 5px;
 
         //tipo de evento teorico
         if (tipo_evento == 'teorico') {
-            if (confirm('¿Desea modificar solo este evento?')) {
-                updateMyData(info.event, 1);
-            } else {
-                updateMyData(info.event, 2);
-            }
+            // if (confirm('¿Desea modificar solo este evento?')) {
+            //     updateMyData(info.event, 1);
+            // } else {
+            //     updateMyData(info.event, 2);
+            // }
+            $(function() {
+                $( "#dialog-confirm" ).dialog({
+                  resizable: false,
+                  height: "auto",
+                  width: 400,
+                  modal: true,
+                  buttons: {
+                    "Esta semana": function() {
+                        updateMyData(info.event, 1);
+                        $(this).dialog('close');
+                    },
+                    "Todas las semanas": function() {
+                      updateMyData(info.event, 2);
+                      $(this).dialog('close');
+                    }
+                }
+                });
+            });
         }
         //tipo de evento administrativo
         else{
@@ -643,24 +667,48 @@ bottom: 5px;
 
                 //tipo de evento teorico
                 if (tipo_evento == 'teorico') {
-                    if (confirm('¿Desea eliminar solo este evento?')) {
-                        info.event.remove();
-                        deleteMyData(info.event, 1);
-                    } else {
-                        info.event.remove();
-                        deleteMyData(info.event, 2);
-                    }
+                    // if (confirm('¿Desea eliminar solo este evento?')) {
+                    //     info.event.remove();
+                    //     deleteMyData(info.event, 1);
+                    // } else {
+                    //     info.event.remove();
+                    //     deleteMyData(info.event, 2);
+                    // }
 
+                    $(function() {
+                        $( "#dialog-confirm" ).dialog({
+                          resizable: false,
+                          height: "auto",
+                          width: 400,
+                          modal: true,
+                          buttons: {
+                            "Esta semana": function() {
+                                info.event.remove();
+                                deleteMyData(info.event, 1);
+                                $(this).dialog('close');
+                            },
+                            "Todas las semanas": function() {
+                                info.event.remove();
+                                deleteMyData(info.event, 2);
+                              $(this).dialog('close');
+                            }
+                        },
+                        close: function(event, ui){
 
-                    @foreach ($activities as $key => $activity)
-                        if(info.event.id == "{{$activity->id}}"){
-                            document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} - diff_);
-                            bolsa_{{$activity->id}} = bolsa_{{$activity->id}} - diff_;
+                            @foreach ($activities as $key => $activity)
+                                if(info.event.id == "{{$activity->id}}"){
+                                    document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} - diff_);
+                                    bolsa_{{$activity->id}} = bolsa_{{$activity->id}} - diff_;
 
-                            disponible_contrato = disponible_contrato - diff_;
-                            document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
+                                    disponible_contrato = disponible_contrato - diff_;
+                                    document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
+                                }
+                            @endforeach
                         }
-                    @endforeach
+
+                        });
+                    });
+
                 }
                 //tipo de evento administrativo
                 else{
@@ -731,11 +779,30 @@ bottom: 5px;
             @endforeach
 
             console.log(info.event);
-            if (confirm('¿Desea modificar solo este evento?')) {
-                updateMyData(info.event, 1);
-            }else{
-                updateMyData(info.event, 2);
-            }
+            // if (confirm('¿Desea modificar solo este evento?')) {
+            //     updateMyData(info.event, 1);
+            // }else{
+            //     updateMyData(info.event, 2);
+            // }
+
+            $(function() {
+                $( "#dialog-confirm" ).dialog({
+                  resizable: false,
+                  height: "auto",
+                  width: 400,
+                  modal: true,
+                  buttons: {
+                    "Esta semana": function() {
+                        updateMyData(info.event, 1);
+                        $(this).dialog('close');
+                    },
+                    "Todas las semanas": function() {
+                        updateMyData(info.event, 2);
+                      $(this).dialog('close');
+                    }
+                }
+                });
+            });
 
         }else{
             alert("No se puede modificar un evento de día administrativo.");info.revert();return;
