@@ -24,9 +24,10 @@
     <div class="card mb-3">
         <div class="card-body">
             <div class="form-row">
-                {{-- <fieldset class="form-group col-8 col-md-2">
+
+                <fieldset class="form-group col-8 col-md-2">
                     <label for="for_run">Run *</label>
-                    <input type="number" class="form-control" name="run" id="for_run"
+                    <input type="number" class="form-control" name="id" id="for_id"
                         required autocomplete="off">
                 </fieldset>
 
@@ -34,7 +35,7 @@
                     <label for="for_dv">DV *</label>
                     <input type="text" class="form-control" name="dv" id="for_dv"
                         required>
-                </fieldset> --}}
+                </fieldset>
 
                 <fieldset class="form-group col-12 col-md-3">
                     <label for="for_name">Nombre y Apellido *</label>
@@ -46,7 +47,7 @@
                     <label for="for_email">Email *</label>
                     <input type="email" class="form-control" name="email" id="for_email"
                         style="text-transform: lowercase;"
-                        required autocomplete="off">
+                        autocomplete="off">
                 </fieldset>
 
                 {{-- <fieldset class="form-group col-12 col-md-3">

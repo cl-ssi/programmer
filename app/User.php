@@ -93,6 +93,14 @@ class User extends Authenticatable
         return $array;
     }
 
+    public function getProfessionsArray(){
+        $array = array();
+        foreach ($this->userProfessions as $key => $userProfession) {
+            $array[$key] = $userProfession->profession_id;
+        }
+        return $array;
+    }
+
     public function getOperatingRoomsArray(){
         $array = array();
         foreach ($this->userOperatingRooms as $key => $userOperatingRoom) {

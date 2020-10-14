@@ -124,6 +124,7 @@ bottom: 5px;
         <fieldset class="form-group col">
             <label for="for_profession_id">Profesión</label>
             <select name="profession_id" id="for_profession_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
+                <option>--</option>
               @foreach($professions as $profession)
                 <option value="{{$profession->id}}" {{ $profession->id == $request->profession_id ? 'selected' : '' }}>{{$profession->profession_name}}</option>
               @endforeach

@@ -16,17 +16,17 @@
 
             <div class="form-row">
 
-                {{-- <fieldset class="form-group col-8 col-md-2">
+                <fieldset class="form-group col-8 col-md-2">
                     <label for="for_run">Run</label>
-                    <input type="number" class="form-control" name="run" id="for_run"
-                        value="{{ $user->run }}" required>
+                    <input type="number" class="form-control" name="id" id="for_id"
+                        value="{{ $user->id }}" required>
                 </fieldset>
 
                 <fieldset class="form-group col-4 col-md-1">
                     <label for="for_dv">Dv</label>
                     <input type="text" class="form-control" name="dv" id="for_dv"
                         value="{{ $user->dv }}" required>
-                </fieldset> --}}
+                </fieldset>
 
                 <fieldset class="form-group col-12 col-md-3">
                     <label for="for_name">Nombre y Apellido</label>
@@ -37,7 +37,7 @@
                 <fieldset class="form-group col-12 col-md-3">
                     <label for="for_email">Email</label>
                     <input type="email" class="form-control" name="email" id="for_email"
-                        value="{{ $user->email }}" required style="text-transform: lowercase;">
+                        value="{{ $user->email }}" style="text-transform: lowercase;">
                 </fieldset>
 
             </div>

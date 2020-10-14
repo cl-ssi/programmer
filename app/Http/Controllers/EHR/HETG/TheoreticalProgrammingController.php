@@ -139,7 +139,6 @@ class TheoreticalProgrammingController extends Controller
                 if (Auth::user()->hasPermissionTo('administrador')) {
                     $collection2 = Specialty::where('id','!=',$TheoreticalProgramming->specialty_id)->orderBy('specialty_name','ASC')->get();
                 }else{
-
                     $collection2 = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
                 }
 
@@ -212,18 +211,30 @@ class TheoreticalProgrammingController extends Controller
         if ($rut != null) {
             if ($TheoreticalProgramming!=null) {
                 $collection1 = Profession::where('id',$TheoreticalProgramming->profession_id)->get();
-                // dd($collection1);
-                $collection2 = Profession::where('id','!=',$TheoreticalProgramming->profession_id)->orderBy('specialty_name','ASC')->get();
+                if (Auth::user()->hasPermissionTo('administrador')) {
+                    $collection2 = Profession::where('id','!=',$TheoreticalProgramming->profession_id)->orderBy('specialty_name','ASC')->get();
+                }else{
+                    $collection2 = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
+                }
+
                 foreach ($collection2 as $key => $value) {
                     $collection1->push($value);
                 }
                 $professions = $collection1;
                 $request->merge(['profession_id' => $collection1->first()->id]);
             }else{
-                $professions = Profession::orderBy('profession_name','ASC')->get();
+                if (Auth::user()->hasPermissionTo('administrador')) {
+                    $professions = Profession::orderBy('profession_name','ASC')->get();
+                }else{
+                    $professions = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
+                }
             }
         }else{
-            $professions = Profession::orderBy('profession_name','ASC')->get();
+            if (Auth::user()->hasPermissionTo('administrador')) {
+                $professions = Profession::orderBy('profession_name','ASC')->get();
+            }else{
+                $professions = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
+            }
         }
 
         $var = $request->get('profession_id');
