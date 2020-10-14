@@ -13,12 +13,18 @@ class User extends Authenticatable
     use Notifiable;
 
     /**
+    * Ambos son por que cambié el id
+    */
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'id', 'name', 'email', 'password'
+        'id', 'dv', 'rut', 'name', 'email', 'password'
     ];
 
     //relaciones

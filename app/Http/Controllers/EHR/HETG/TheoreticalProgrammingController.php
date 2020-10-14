@@ -57,16 +57,30 @@ class TheoreticalProgrammingController extends Controller
     //obtengo usuario propio
     $users = User::find(Auth::id());
 
-    //obtengo rrhh segun especalidades asociadas al usuario logeado
-    $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
-                    return $query->where('year',$year);
-                })
-                // ->whereHas('medical_programmings', function ($query) use ($users) {
-                //     return $query->whereHas('specialty', function ($query) use ($users) {
-                //         return $query->whereIn('specialty_id',$users->getSpecialtiesArray());
-                //     });
-                // })
-                ->orderby('name','ASC')->get();
+    // //obtengo rrhh segun especalidades asociadas al usuario logeado
+    // $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
+    //                 return $query->where('year',$year);
+    //             })
+    //             // ->whereHas('medical_programmings', function ($query) use ($users) {
+    //             //     return $query->whereHas('specialty', function ($query) use ($users) {
+    //             //         return $query->whereIn('specialty_id',$users->getSpecialtiesArray());
+    //             //     });
+    //             // })
+    //             ->orderby('name','ASC')->get();
+
+
+    //si es admin, se devuelve todo, si no, se devuelve lo configurado
+    if (Auth::user()->hasPermissionTo('administrador')) {
+        $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
+                        return $query->where('year',$year);
+                    })->orderby('name','ASC')->get();
+    }else{
+        $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
+                        return $query->where('year',$year);
+                    })
+                    ->where('rut',Auth::user()->id)
+                    ->orderby('name','ASC')->get();
+    }
 
     //información para días contrato
     $contracts = Contract::where('rut',$rut)->where('year',$year)->get();
@@ -121,17 +135,37 @@ class TheoreticalProgrammingController extends Controller
         if ($rut != null) {
             if ($TheoreticalProgramming!=null) {
                 $collection1 = Specialty::where('id',$TheoreticalProgramming->specialty_id)->get();
-                $collection2 = Specialty::where('id','!=',$TheoreticalProgramming->specialty_id)->orderBy('specialty_name','ASC')->get();
+                //si es admin, se devuelve todo, si no, se devuelve lo configurado
+                if (Auth::user()->hasPermissionTo('administrador')) {
+                    $collection2 = Specialty::where('id','!=',$TheoreticalProgramming->specialty_id)->orderBy('specialty_name','ASC')->get();
+                }else{
+
+                    $collection2 = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+                }
+
                 foreach ($collection2 as $key => $value) {
                     $collection1->push($value);
                 }
                 $specialties = $collection1;
                 $request->merge(['specialty_id' => $collection1->first()->id]);
             }else{
-                $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+
+                //si es admin, se devuelve todo, si no, se devuelve lo configurado
+                if (Auth::user()->hasPermissionTo('administrador')) {
+                    $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+                }else{
+
+                    $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+                }
+
             }
         }else{
-            $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+            //si es admin, se devuelve todo, si no, se devuelve lo configurado
+            if (Auth::user()->hasPermissionTo('administrador')) {
+                $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+            }else{
+                $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+            }
         }
 
         $var = $request->get('specialty_id');
@@ -261,6 +295,9 @@ class TheoreticalProgrammingController extends Controller
       $permisos_administrativos['breastfeeding_time'] += $contract->breastfeeding_time;
       $permisos_administrativos['weekly_collation'] += $contract->weekly_collation;
     }
+
+    //se deja el obteo vacio temporalmente
+    $permisos_administrativos = array(); //temporalmente hasta que se empiece a utilizar
 
     // obtiene información de dias administrativos
     $contract_days = TheoreticalProgramming::where('rut',$rut)
@@ -401,7 +438,7 @@ class TheoreticalProgrammingController extends Controller
         //### Se ingresa información del evento
         $calendarProgramming = new CalendarProgramming($request->all());
         $calendarProgramming->end_date = $request->end_date . " 23:59:59";
-        $calendarProgramming->user_id = Auth::id();
+        // $calendarProgramming->user_id = Auth::id();
         $calendarProgramming->save();
 
         session()->flash('info', 'El evento ha sido creado.');
@@ -454,7 +491,7 @@ class TheoreticalProgrammingController extends Controller
     }
 
     public function saveMyEvent(Request $request){
-        // try {
+        try {
             $year = $request->year;
             $first_date = new Carbon($request->start_date);
             $last_date = new Carbon($request->end_date);
@@ -467,7 +504,7 @@ class TheoreticalProgrammingController extends Controller
                 $theoreticalProgramming->start_date = $first_date;
                 $theoreticalProgramming->end_date = $last_date;
                 $theoreticalProgramming->year = $year;
-                $theoreticalProgramming->user_id = Auth::id();
+                // $theoreticalProgramming->user_id = Auth::id();
                 $theoreticalProgramming->save();
             }
             //registro de teoricos
@@ -494,7 +531,7 @@ class TheoreticalProgrammingController extends Controller
                     $theoreticalProgramming->end_date = $last_date;
                     $theoreticalProgramming->performance = $performance;
                     $theoreticalProgramming->year = $year;
-                    $theoreticalProgramming->user_id = Auth::id();
+                    // $theoreticalProgramming->user_id = Auth::id();
                     $theoreticalProgramming->save();
                 }
                 //se inserta desde esta semana hacia adelante
@@ -510,7 +547,7 @@ class TheoreticalProgrammingController extends Controller
                         $theoreticalProgramming->end_date = $last_date;
                         $theoreticalProgramming->performance = $performance;
                         $theoreticalProgramming->year = $year;
-                        $theoreticalProgramming->user_id = Auth::id();
+                        // $theoreticalProgramming->user_id = Auth::id();
                         $theoreticalProgramming->save();
 
                         $first_date = $first_date->addWeek(1);
@@ -518,9 +555,9 @@ class TheoreticalProgrammingController extends Controller
                     }
                 }
             }
-        // } catch (\Exception $e) {
-        //     Storage::put('errores.txt', $e->getMessage());
-        // }
+        } catch (\Exception $e) {
+            Storage::put('errores.txt', $e->getMessage());
+        }
     }
 
     public function updateMyEvent(Request $request){

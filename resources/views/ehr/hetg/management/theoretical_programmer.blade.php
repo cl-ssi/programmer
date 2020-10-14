@@ -99,6 +99,7 @@ bottom: 5px;
         <label for="for_contract_id">Contrato</label>
         {{-- <select name="contract_id" id="for_contract_id" class="form-control" required="" onchange="this.form.submit()"> --}}
         <select name="contract_id" id="for_contract_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
+            <option>--</option>
             @foreach($contracts as $contract)
               <option value="{{$contract->id}}" {{ $contract->id == $request->contract_id ? 'selected' : '' }}>{{$contract->law}}</option>
             @endforeach
@@ -110,6 +111,7 @@ bottom: 5px;
         <fieldset class="form-group col">
             <label for="for_specialty_id">Especialidad</label>
             <select name="specialty_id" id="for_specialty_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
+                <option>--</option>
               @foreach($specialties as $specialty)
                 <option value="{{$specialty->id}}" {{ $specialty->id == $request->specialty_id ? 'selected' : '' }}>{{$specialty->specialty_name}}</option>
               @endforeach
@@ -133,7 +135,7 @@ bottom: 5px;
         <label for="for_contract_id">Hrs</label><br />
         @if($contracts->count() > 0)
             <span id="disponible_contrato"></span> /
-            <b><span id="total_contrato">{{$contracts->first()->weekly_hours}}</span></b>
+            <b><span id="total_contrato"></span></b>
         @endif
     </fieldset>
 
@@ -195,7 +197,7 @@ bottom: 5px;
                     </div>
                 @endforeach
 
-                <small>DÌAS ADMINISTRATIVOS</small>
+                {{-- <small>DÌAS ADMINISTRATIVOS</small> --}}
 
                 @foreach ($permisos_administrativos as $key => $permiso_administrativo)
                     <div class='fc-event' data-event='{"title":"{{$key}}","id":"", "description":"{{$key}}", "color": "#A6C6F1"}'>
@@ -232,11 +234,11 @@ bottom: 5px;
       <span class="preloader-interior"></span>
     </div>
 
-    {{-- <div id="dialog-confirm" title="Mensaje del sistema">
+    <div id="dialog-confirm" title="Mensaje del sistema">
       <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
           Debe definir si la modificación se debe realizar solo esta semana o todas las semanas que quedan.
       </p>
-    </div> --}}
+    </div>
 
   @endsection
 
@@ -321,9 +323,16 @@ bottom: 5px;
     //asigna valor en variable
     document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
 
-    //asigna dias administrativos
+    //asigna dias administrativos (comentado por el momento - no borrar)
     @foreach ($permisos_administrativos as $key => $permiso_administrativo)
         document.getElementById("{{$key}}").innerHTML = bolsa_{{$key}};//{{$permiso_administrativo}};
+    @endforeach
+
+    //dias total contrato
+    @foreach($contracts as $contract)
+      if($("#for_contract_id").val() == {{$contract->id}}){
+        $("#total_contrato").text({{$contract->weekly_hours}});
+      }
     @endforeach
 
   });
@@ -444,6 +453,8 @@ bottom: 5px;
                 //       }
                 //     });
                 // });
+
+                // alert("");
 
                 @foreach ($activities as $key => $activity)
                     if(info.event.id == "{{$activity->id}}"){
@@ -745,6 +756,8 @@ bottom: 5px;
       var specialty_id = $("#for_specialty_id"). val();
       var profession_id = $("#for_profession_id"). val();
 
+      // console.log(rut,activity_id,contract_id,specialty_id,profession_id, start_date, end_date, year, tipo_ingreso, tipo_evento);
+
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.saveMyEvent') }}",
           type: 'post',
@@ -1001,14 +1014,14 @@ bottom: 5px;
 
   });
 
-  //obtiene cantidad de horas del contrato seleccionado
-  $( "#for_contract_id" ).change(function() {
-    @foreach($contracts as $contract)
-      if($("#for_contract_id").val() == {{$contract->id}}){
-        $("#total_contrato").text({{$contract->weekly_hours}});
-      }
-    @endforeach
-  });
+  // //obtiene cantidad de horas del contrato seleccionado
+  // $( "#for_contract_id" ).change(function() {
+  //   @foreach($contracts as $contract)
+  //     if($("#for_contract_id").val() == {{$contract->id}}){
+  //       $("#total_contrato").text({{$contract->weekly_hours}});
+  //     }
+  //   @endforeach
+  // });
 
   //add performance
   $( "#for_activity_id" ).change(function() {

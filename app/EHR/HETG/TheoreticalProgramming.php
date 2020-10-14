@@ -16,7 +16,7 @@ class TheoreticalProgramming extends Model implements Auditable
      */
     protected $fillable = [
         'id', 'contract_id', 'rut', 'specialty_id', 'activity_id', 'profession_id', 'week_day', 'start_time', 'end_time',
-        'performance', 'year', 'contract_day_type', 'user_id'
+        'performance', 'year', 'contract_day_type'
     ];
 
     // protected $casts = [
@@ -49,10 +49,10 @@ class TheoreticalProgramming extends Model implements Auditable
         return $this->belongsTo('App\EHR\HETG\Profession');
     }
 
-    public function user()
-    {
-        return $this->belongsTo('App\User');
-    }
+    // public function user()
+    // {
+    //     return $this->belongsTo('App\User');
+    // }
 
     use SoftDeletes;
     /**

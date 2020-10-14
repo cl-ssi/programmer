@@ -44,6 +44,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 // });
 
 Auth::routes();
+// Auth::routes(['password.update' => false]);
 
 Route::prefix('ehr')->as('ehr.')->group(function(){
     Route::get('patient/forget','EHR\PatientController@forget')->name('patient.forget');
@@ -65,7 +66,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
             Route::get('/','EHR\HETG\ExecutedActivityController@index')->name('index');
         });
         Route::resource('medical_programming','EHR\HETG\MedicalProgrammingController');
-        
+
 
         Route::match(['get', 'post'],'calendar_programming/saveMyEvent','EHR\HETG\CalendarProgrammingController@saveMyEvent')->name('calendar_programming.saveMyEvent');
         Route::match(['get', 'post'],'calendar_programming/updateMyEvent','EHR\HETG\CalendarProgrammingController@updateMyEvent')->name('calendar_programming.updateMyEvent');
@@ -110,25 +111,33 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         });
     });
 
-    Route::prefix('hfa')->as('hfa.')->middleware('auth')->group(function(){
-        Route::get('signature/{model}/{id}/request','EHR\HFA\SignatureController@request')->name('signature.request');
-        Route::get('signature/sign','EHR\HFA\SignatureController@sign')->name('signature.sign');
-        Route::get('entry/{entry}/request_signature','EHR\HFA\EntryController@requestSignature')->name('entry.request_signature');
-        Route::put('entry/{entry}/signature','EHR\HFA\EntryController@storeSignature')->name('entry.store_signature');
-        Route::resource('entry','EHR\HFA\EntryController');
-        Route::get('egress/{egress}/request_signature','EHR\HFA\EgressController@requestSignature')->name('egress.request_signature');
-        Route::put('egress/{egress}/signature','EHR\HFA\EgressController@storeSignature')->name('egress.store_signature');
-        Route::get('egress/create/{entry}', 'EHR\HFA\EgressController@create')->name('egress.create');
-        Route::resource('egress','EHR\HFA\EgressController')->except(['create']);;
-    });
+    // Route::prefix('hfa')->as('hfa.')->middleware('auth')->group(function(){
+    //     Route::get('signature/{model}/{id}/request','EHR\HFA\SignatureController@request')->name('signature.request');
+    //     Route::get('signature/sign','EHR\HFA\SignatureController@sign')->name('signature.sign');
+    //     Route::get('entry/{entry}/request_signature','EHR\HFA\EntryController@requestSignature')->name('entry.request_signature');
+    //     Route::put('entry/{entry}/signature','EHR\HFA\EntryController@storeSignature')->name('entry.store_signature');
+    //     Route::resource('entry','EHR\HFA\EntryController');
+    //     Route::get('egress/{egress}/request_signature','EHR\HFA\EgressController@requestSignature')->name('egress.request_signature');
+    //     Route::put('egress/{egress}/signature','EHR\HFA\EgressController@storeSignature')->name('egress.store_signature');
+    //     Route::get('egress/create/{entry}', 'EHR\HFA\EgressController@create')->name('egress.create');
+    //     Route::resource('egress','EHR\HFA\EgressController')->except(['create']);;
+    // });
+});
+
+Route::prefix('password')->as('password.')->group(function(){
+	Route::get('edit',   'UserController@editPassword')->name('edit')->middleware('auth');
+	Route::put('update', 'UserController@updatePassword')->name('update')->middleware('auth');
 });
 
 Route::prefix('users')->name('users.')->middleware('auth')->group(function () {
     Route::prefix('password')->name('password.')->group(function () {
         Route::get('/', 'UserController@showPasswordForm')->name('show_form');
-        Route::put('/', 'UserController@updatePassword')->name('update');
+        // Route::put('/', 'UserController@updatePassword')->name('update');
         Route::get('/{user}/restore', 'UserController@passwordRestore')->name('restore');
         Route::put('/{user}', 'UserController@passwordStore')->name('store');
+
+        // Route::get('edit',   'UserController@editPassword')->name('edit')->middleware('auth');
+	    // Route::put('update', 'UserController@updatePassword')->name('update')->middleware('auth');
     });
     Route::get('/', 'UserController@index')->name('index')->middleware('can:administrador');
     Route::get('/create', 'UserController@create')->name('create')->middleware('can:administrador');

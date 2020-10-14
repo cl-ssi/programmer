@@ -46,7 +46,7 @@
     <table class="table table-sm">
         <thead>
             <tr>
-                <th>id</th>
+                <th>Rut</th>
                 <th>Nombre</th>
                 <th>Email</th>
             </tr>
@@ -54,7 +54,7 @@
         <tbody>
             @foreach($users as $user)
             <tr>
-                <td nowrap>{{ $user->id }}</td>
+                <td nowrap>{{ $user->id }} - {{ $user->dv }}</td>
                 <td nowrap><a href="{{ route('users.edit', $user) }}">{{ $user->name }}</a></td>
                 <td nowrap>{{ $user->email }}</td>
             </tr>

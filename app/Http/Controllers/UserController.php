@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
+use App\Http\Requests\updatePassword;
 
 class UserController extends Controller
 {
@@ -243,20 +244,56 @@ class UserController extends Controller
         return view('users.change_password');
     }
 
+    // /**
+    //  * Remove the specified resource from storage.
+    //  *
+    //  * @param  \App\User  $user
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function updatePassword(Request $request)
+    // {
+    //     if(Hash::check($request->input('current_password'), Auth()->user()->password)) {
+    //         Auth()->user()->password = bcrypt($request->input('new_password'));
+    //         Auth()->user()->save();
+    //     }
+    //
+    //     // TODO: Mostrar error si la clave antigua no coincide
+    //     return redirect()->route('home');
+    // }
+
     /**
-     * Remove the specified resource from storage.
+     * Show the form for change password.
      *
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function updatePassword(Request $request)
-    {
-        if(Hash::check($request->input('current_password'), Auth()->user()->password)) {
-            Auth()->user()->password = bcrypt($request->input('new_password'));
+    public function editPassword() {
+        return view('users.edit_password');
+    }
+
+    /**
+     * Update the current loged user password
+     *
+     * @param  \Illuminate\Http\updatePassword  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updatePassword(updatePassword $request) {
+        if(Hash::check($request->password, Auth()->user()->password)) {
+            Auth()->user()->password = bcrypt($request->newpassword);
             Auth()->user()->save();
+
+            session()->flash('success', 'Su clave ha sido cambiada con éxito.');
+
+            // if( Auth()->user()->hasPermissionTo('Users: must change password') ) {
+            //     Auth()->user()->revokePermissionTo('Users: must change password');
+            //     Auth::login(Auth()->user());
+            // }
+
+        }
+        else {
+            session()->flash('danger', 'La clave actual es erronea.');
         }
 
-        // TODO: Mostrar error si la clave antigua no coincide
         return redirect()->route('home');
     }
 

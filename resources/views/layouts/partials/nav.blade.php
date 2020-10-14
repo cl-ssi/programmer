@@ -162,14 +162,14 @@
             <ul class="navbar-nav ml-auto">
                 <!-- Authentication Links -->
                 @guest
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                 </li>
                 @if (Route::has('register'))
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                 </li>
-                @endif
+                @endif --}}
                 @else
                 <li class="nav-item dropdown">
 
@@ -183,6 +183,10 @@
                             <i class="fas fa-cog fa-fw"></i> Configuracion
                         </a>
                         @endcan
+
+                        <a class="nav-link" href="{{ route('password.edit') }}">
+                            <i class="fas fa-key fa-fw"></i> Cambiar Clave
+                        </a>
 
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">
