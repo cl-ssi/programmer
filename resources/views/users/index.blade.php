@@ -48,6 +48,7 @@
             <tr>
                 <th>Rut</th>
                 <th>Nombre</th>
+                <th>Rol</th>
                 <th>Email</th>
             </tr>
         </thead>
@@ -56,6 +57,7 @@
             <tr>
                 <td nowrap>{{ $user->id }} - {{ $user->dv }}</td>
                 <td nowrap><a href="{{ route('users.edit', $user) }}">{{ $user->name }}</a></td>
+                <td nowrap>{{ $user->roles->first()->name }}</td>
                 <td nowrap>{{ $user->email }}</td>
             </tr>
             @endforeach
