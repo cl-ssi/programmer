@@ -27,14 +27,12 @@
 
                 <fieldset class="form-group col-8 col-md-2">
                     <label for="for_run">Run *</label>
-                    <input type="number" class="form-control" name="id" id="for_id"
-                        required autocomplete="off">
+                    <input type="number" class="form-control" name="id" id="for_id" required autocomplete="off">
                 </fieldset>
 
                 <fieldset class="form-group col-4 col-md-1">
                     <label for="for_dv">DV *</label>
-                    <input type="text" class="form-control" name="dv" id="for_dv"
-                        required>
+                    <input type="text" class="form-control" name="dv" id="for_dv" required>
                 </fieldset>
 
                 <fieldset class="form-group col-12 col-md-3">
@@ -50,93 +48,77 @@
                         autocomplete="off">
                 </fieldset>
 
-                {{-- <fieldset class="form-group col-12 col-md-3">
-                    <label for="for_laboratory_id">Laboratorio</label>
-                    <select name="laboratory_id" id="for_laboratory_id" class="form-control">
-                        <option value=""></option>
-                        @foreach($laboratories as $lab)
-                        <option value="{{ $lab->id }}">{{ $lab->name }}</option>
-                        @endforeach
-                    </select>
-                    <small id="laboratoryHelp" class="form-text text-muted">Sólo para ingresos en laboratorio</small>
-                </fieldset>
-
-                <fieldset class="form-group col-12 col-md-6">
-                    <label for="for_establishment_id">Establecimiento *</label>
-                    <select name="establishment_id[]" id="for_establishment_id" class="form-control selectpicker" data-live-search="true" multiple="" data-size="10" title="Seleccione..." multiple data-actions-box="true" required>
-                        @foreach($establishments as $establishment)
-                            <option value="{{ $establishment->id }}">{{ $establishment->alias }}</option>
-                        @endforeach
-                    </select>
-                </fieldset> --}}
                 <fieldset class="form-group col-12 col-md-2">
                     <label for="for_password">Clave *</label>
                     <input type="password" class="form-control" name="password" id="for_password"
                         autocomplete="off" required>
                 </fieldset>
 
-                {{-- <fieldset class="form-group col-12 col-md-2">
-                    <label for="for_telephone">Telefono</label>
-                    <input type="text" class="form-control" name="telephone"
-                        id="for_telephone" placeholder="ej:+56912345678">
-                </fieldset>
-
-                <fieldset class="form-group col-12 col-md-2">
-                    <label for="for_function">Función</label>
-                    <input type="text" class="form-control" name="function" id="for_function">
-                </fieldset> --}}
             </div>
       </div>
   </div>
 
-    <h4>Permisos</h4>
-    @foreach($permissions as $permission)
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="permissions[]"
-            value="{{ $permission->name }}">
-        <label class="form-check-label">
-            {{ $permission->name }}
-        </label>
+  <hr />
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+            <h4>Roles</h4>
+            <select class="selectpicker" name="roles[]" multiple>
+                @foreach($roles as $role)
+                    <option value="{{ $role->name }}">{{ $role->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-sm">
+            <h4>Permisos</h4>
+            <select class="selectpicker" name="permissions[]" multiple>
+                @foreach($permissions as $permission)
+                    <option value="{{ $permission->name }}">{{ $permission->name }}</option>
+                @endforeach
+            </select>
+        </div>
+      </div>
     </div>
-    @endforeach
 
     <br />
-    <h4>Especialidades</h4>
-    @foreach($specialties as $specialty)
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="specialties[]"
-            value="{{ $specialty->id }}">
-        <label class="form-check-label">
-            {{ $specialty->specialty_name }}
-        </label>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+            <h4>Especialidades</h4>
+            <select class="selectpicker" name="specialties[]" multiple>
+                @foreach($specialties as $specialty)
+                    <option value="{{ $specialty->id }}">{{ $specialty->specialty_name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-sm">
+            <h4>Profesiones</h4>
+            <select class="selectpicker" name="professions[]" multiple>
+                @foreach($professions as $profession)
+                    <option value="{{ $profession->id }}">{{ $profession->profession_name }}</option>
+                @endforeach
+            </select>
+        </div>
+      </div>
     </div>
-    @endforeach
 
     <br />
-    <h4>Profesiones</h4>
-    @foreach($professions as $profession)
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="professions[]"
-            value="{{ $profession->id }}">
-        <label class="form-check-label">
-            {{ $profession->profession_name }}
-        </label>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+            <h4>Box</h4>
+            <select class="selectpicker" name="operating_rooms[]" multiple>
+                @foreach($operating_rooms as $operating_room)
+                    <option value="{{ $operating_room->id }}">{{ $operating_room->description }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-sm">
+
+        </div>
+      </div>
     </div>
-    @endforeach
-
-    <br />
-    <h4>Box</h4>
-    @foreach($operating_rooms as $operating_room)
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="operating_rooms[]"
-            value="{{ $operating_room->id }}">
-        <label class="form-check-label">
-            {{ $operating_room->description }}
-        </label>
-    </div>
-    @endforeach
-
-
 
 
 

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use App\Http\Requests\updatePassword;
 
 class UserController extends Controller
@@ -49,10 +50,11 @@ class UserController extends Controller
     public function create()
     {
         $permissions = Permission::OrderBy('name')->get();
+        $roles = Role::OrderBy('name')->get();
         $specialties = Specialty::OrderBy('specialty_name')->get();
         $professions = Profession::OrderBy('profession_name')->get();
         $operating_rooms = OperatingRoom::OrderBy('id')->where('description','LIKE', 'Box%')->get();
-        return view('users.create', compact('permissions','specialties','professions','operating_rooms'));
+        return view('users.create', compact('permissions','roles','specialties','professions','operating_rooms'));
     }
 
     /**
@@ -64,12 +66,18 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $user = new User();
+        $user->id = $request->input('id');
+        $user->dv = $request->input('dv');
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->password = bcrypt($request->input('password'));
         $user->save();
 
         //asigna permisos
+        $user->syncRoles(
+            is_array($request->input('roles')) ? $request->input('roles') : array()
+        );
+
         $user->syncPermissions(
             is_array($request->input('permissions')) ? $request->input('permissions') : array()
         );
@@ -148,10 +156,11 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $permissions = Permission::OrderBy('name')->get();
+        $roles = Role::OrderBy('name')->get();
         $specialties = Specialty::OrderBy('specialty_name')->get();
         $professions = Profession::OrderBy('profession_name')->get();
         $operating_rooms = OperatingRoom::OrderBy('id')->where('description','LIKE', 'Box%')->get();
-        return view('users.edit', compact('user','permissions','specialties','professions','operating_rooms'));
+        return view('users.edit', compact('user','permissions','roles','specialties','professions','operating_rooms'));
     }
 
     /**
@@ -168,6 +177,10 @@ class UserController extends Controller
         $user->save();
 
         //asigna permisos
+        $user->syncRoles(
+            is_array($request->input('roles')) ? $request->input('roles') : array()
+        );
+
         $user->syncPermissions(
             is_array($request->input('permissions')) ? $request->input('permissions') : array()
         );
