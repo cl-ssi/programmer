@@ -87,8 +87,7 @@ class TheoreticalProgrammingController extends Controller
 
     //obtiene contrato_id para obtener información
     $contract_id=null;
-    if ($request->get('contract_id') != null) {
-        $contract_id = null;
+    if ($request->get('contract_id') != null && $request->get('contract_id') != "--") {
         foreach ($contracts as $key => $contract) {
             if ($contract->id == $request->get('contract_id')) {
                 $contract_id = $request->get('contract_id');

@@ -457,7 +457,6 @@ bottom: 5px;
                         }
                     },
                     close: function(event, ui){
-
                         @foreach ($activities as $key => $activity)
                             if(info.event.id == "{{$activity->id}}"){
                               document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + 1);
@@ -768,18 +767,6 @@ bottom: 5px;
                 return;
             }
 
-            @foreach ($activities as $key => $activity)
-                if(info.event.id == "{{$activity->id}}"){
-                    // if((bolsa_{{$activity->id}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-                    document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + diff);
-                    bolsa_{{$activity->id}} = bolsa_{{$activity->id}} + diff;
-
-                    disponible_contrato = disponible_contrato + diff;
-                    document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
-                }
-            @endforeach
-
-            console.log(info.event);
             // if (confirm('¿Desea modificar solo este evento?')) {
             //     updateMyData(info.event, 1);
             // }else{
@@ -801,6 +788,19 @@ bottom: 5px;
                         updateMyData(info.event, 2);
                       $(this).dialog('close');
                     }
+                },
+                close: function(event, ui){
+
+                    @foreach ($activities as $key => $activity)
+                        if(info.event.id == "{{$activity->id}}"){
+                            // if((bolsa_{{$activity->id}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+                            document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + diff);
+                            bolsa_{{$activity->id}} = bolsa_{{$activity->id}} + diff;
+
+                            disponible_contrato = disponible_contrato + diff;
+                            document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
+                        }
+                    @endforeach
                 }
                 });
             });
