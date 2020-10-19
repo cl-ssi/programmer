@@ -49,6 +49,7 @@
                 <th>Rut</th>
                 <th>Nombre</th>
                 <th>Rol</th>
+                <th>Prof/Espec</th>
                 <th>Email</th>
             </tr>
         </thead>
@@ -62,11 +63,28 @@
                         {{$role->name}},
                     @endforeach
                 </td>
+                <td nowrap>
+                    @foreach ($user->specialties as $key => $specialty)
+                        {{$specialty->specialty_name}},
+                        @if ($key == 2)
+                            @break
+                        @endif
+                    @endforeach
+                    @foreach ($user->professions as $key => $profession)
+                        {{$profession->profession_name}},
+                        @if ($key == 2)
+                            @break
+                        @endif
+                    @endforeach
+                </td>
                 <td nowrap>{{ $user->email }}</td>
             </tr>
             @endforeach
+
         </tbody>
     </table>
+
+    {{-- {{$user->logs}} --}}
 </div>
 
 @endsection

@@ -212,9 +212,6 @@ bottom: 5px;
 
         <div id='calendar'></div>
         <div style='clear:both'></div>
-        <div id="dialog" title="Basic dialog">
-          <p>Seleccione el tipo de permiso:</p>
-        </div>
 
         </div>
 
@@ -229,7 +226,21 @@ bottom: 5px;
 </div>
 
 
+    @canany(['administrador'])
+        <br /><hr />
+        <div style="height: 300px; overflow-y: scroll;">
+            <h4 class="mt-3">Historial de cambios</h4>
+            @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
+                @if ($theoreticalProgramming->activity)
+                    <table class="table table-sm small text-muted mt-3">
+                        <thead><tr><th>{{$theoreticalProgramming->activity->activity_name}}</th></tr></thead>
+                    </table>
+                @endif
 
+                @include('partials.audit_loop', ['audits' => $theoreticalProgramming->audits] )
+            @endforeach
+        </div>
+    @endcanany
 
     <div id="page-loader" style="display: none">
       <span class="preloader-interior"></span>
@@ -239,6 +250,10 @@ bottom: 5px;
       <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
           Debe definir si la modificación se debe realizar solo esta semana o todas las semanas que quedan.
       </p>
+    </div>
+
+    <div id="dialog" title="Basic dialog">
+      <p>Seleccione el tipo de permiso:</p>
     </div>
 
   @endsection

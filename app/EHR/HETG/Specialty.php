@@ -34,6 +34,12 @@ class Specialty extends Model implements Auditable
         return $this->hasMany('App\EHR\HETG\UserSpecialty');
     }
 
+    public function users()
+    {
+        return $this->belongsToMany('App\EHR\HETG\User', 'hm_user_specialties')
+            ->wherePivot('deleted_at', null);
+    }
+
     public function user()
     {
         return $this->belongsTo('App\User');
@@ -42,8 +48,8 @@ class Specialty extends Model implements Auditable
     public function activities()
     {
         return $this->belongsToMany('App\EHR\HETG\Activity', 'hm_specialty_activities')
-            ->wherePivot('deleted_at', null)
-            ->withPivot('performance');
+                    ->wherePivot('deleted_at', null)
+                    ->withPivot('performance');
     }
 
     use SoftDeletes;

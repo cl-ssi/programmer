@@ -21,6 +21,8 @@
 
 </form>
 
+@include('partials.audit', ['audits' => $motherActivity->audits] )
+
 @endsection
 
 @section('custom_js')

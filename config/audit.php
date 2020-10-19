@@ -14,6 +14,7 @@ return [
     */
 
     'implementation' => OwenIt\Auditing\Models\Audit::class,
+    // 'implementation' => App\EHR\HETG\Audit::class,
 
     /*
     |--------------------------------------------------------------------------

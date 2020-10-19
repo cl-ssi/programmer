@@ -31,11 +31,17 @@ class Profession extends Model implements Auditable
         return $this->hasMany('App\EHR\HETG\UserProfession');
     }
 
+    public function users() {
+        return $this->belongsToMany('App\EHR\HETG\User', 'hm_user_professions')
+            ->wherePivot('deleted_at', null);
+    }
+
     public function user() {
         return $this->belongsTo('App\User');
     }
 
-    public function activities() {
+    public function activities()
+    {
         return $this->belongsToMany('App\EHR\HETG\Activity','hm_profession_activities')
                     ->wherePivot('deleted_at', null)
                     ->withPivot('performance');

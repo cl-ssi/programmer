@@ -142,6 +142,8 @@
 
 </form>
 
+@include('partials.audit', ['audits' => $contract->audits] )
+
 @endsection
 
 @section('custom_js')

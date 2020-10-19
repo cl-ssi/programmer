@@ -84,7 +84,7 @@
             <h4>Especialidades</h4>
             <select class="selectpicker" name="specialties[]" multiple>
                 @foreach($specialties as $specialty)
-                    <option value="{{ $specialty->id }}" {{ ($user->userSpecialties->contains('specialty_id', $specialty->id))?'selected':'' }}>{{ $specialty->specialty_name }}</option>
+                    <option value="{{ $specialty->id }}" {{ ($user->specialties->contains('id', $specialty->id))?'selected':'' }}>{{ $specialty->specialty_name }}</option>
                 @endforeach
             </select>
         </div>
@@ -92,7 +92,7 @@
             <h4>Profesiones</h4>
             <select class="selectpicker" name="professions[]" multiple>
                 @foreach($professions as $profession)
-                    <option value="{{ $profession->id }}" {{ ($user->userProfessions->contains('profession_id', $profession->id))?'selected':'' }}>{{ $profession->profession_name }}</option>
+                    <option value="{{ $profession->id }}" {{ ($user->professions->contains('id', $profession->id))?'selected':'' }}>{{ $profession->profession_name }}</option>
                 @endforeach
             </select>
         </div>
@@ -119,10 +119,7 @@
 
     <button type="submit" class="btn btn-primary mt-3">Guardar</button>
 
-
 </form>
-
-
 
 @endsection
 

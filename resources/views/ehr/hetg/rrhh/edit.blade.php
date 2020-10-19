@@ -53,6 +53,8 @@
 
 </form>
 
+@include('partials.audit', ['audits' => $rrhh->audits])
+
 @endsection
 
 @section('custom_js')

@@ -79,6 +79,12 @@
 
 </form>
 
+@include('partials.audit', ['audits' => $specialty->audits])
+
+@foreach ($specialty->activities as $key => $activity)
+    @include('partials.audit_loop', ['audits' => $activity->audits])
+@endforeach
+
 @endsection
 
 @section('custom_js')

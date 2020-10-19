@@ -23,9 +23,14 @@ class UserProfession extends Model implements Auditable
         return $this->hasMany('App\User');
     }
 
+    // public function professions()
+    // {
+    //     return $this->hasMany('App\EHR\HETG\Profession');
+    // }
+
     public function professions()
     {
-        return $this->hasMany('App\EHR\HETG\Profession');
+        return $this->belongsTo('App\EHR\HETG\Profession');
     }
 
     use SoftDeletes;

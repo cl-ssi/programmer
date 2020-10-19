@@ -59,6 +59,8 @@
 
 </form>
 
+@include('partials.audit', ['audits' => $activity->audits] )
+
 @endsection
 
 @section('custom_js')

@@ -34,6 +34,10 @@ class Contract extends Model implements Auditable
         return $this->belongsTo('App\User');
     }
 
+    public function logs() {
+        return $this->morphMany('App\EHR\HETG\Log','model')->where('diferences','<>',"[]");
+    }
+
     use SoftDeletes;
     /**
      * The attributes that should be mutated to dates.

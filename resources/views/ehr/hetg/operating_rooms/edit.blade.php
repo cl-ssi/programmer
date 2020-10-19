@@ -46,6 +46,8 @@
 
 </form>
 
+@include('partials.audit', ['audits' => $operatingRoom->audits] )
+
 @endsection
 
 @section('custom_js')

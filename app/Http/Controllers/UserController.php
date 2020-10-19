@@ -26,6 +26,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::orderBy('name', 'asc')->get();
+        // dd($users->first()->specialties);
 
         if ($request) {
 
@@ -187,6 +188,11 @@ class UserController extends Controller
 
         //asigna especialidades
         if($request->input('specialties')!=null){
+
+            //elimina lo no seleccionado
+            $userSpecialties = UserSpecialty::where('user_id', $user->id)->whereNotIn('specialty_id',$request->input('specialties'))->delete();
+
+            //agrega las nuevas especialidades
             foreach ($request->input('specialties') as $key => $value) {
                 $userSpecialty = UserSpecialty::where('specialty_id',$value)
                                               ->where('user_id', $user->id)
@@ -202,6 +208,11 @@ class UserController extends Controller
 
         //asigna profesiones
         if($request->input('professions')!=null){
+
+            //elimina lo no seleccionado
+            $UserProfessions = UserProfession::where('user_id', $user->id)->whereNotIn('profession_id',$request->input('professions'))->delete();
+
+            //agrega las nuevas profesiones
             foreach ($request->input('professions') as $key => $value) {
                 $userProfession = UserProfession::where('profession_id',$value)
                                                 ->where('user_id', $user->id)

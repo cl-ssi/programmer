@@ -9,6 +9,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class TheoreticalProgramming extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
+
     /**
      * The attributes that are mass assignable.
      *

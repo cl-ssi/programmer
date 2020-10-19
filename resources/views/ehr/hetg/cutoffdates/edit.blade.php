@@ -27,6 +27,8 @@
 
 </form>
 
+@include('partials.audit', ['audits' => $cutoffdate->audits] )
+
 @endsection
 
 @section('custom_js')
