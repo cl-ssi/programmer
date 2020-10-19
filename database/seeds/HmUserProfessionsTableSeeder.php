@@ -24,17 +24,17 @@ class HmUserProfessionsTableSeeder extends Seeder
         UserProfession::Create(['user_id' => 17430005,'profession_id'=>10]);
         UserProfession::Create(['user_id' => 17430005,'profession_id'=>11]);
 
-        UserProfession::Create(['user_id' => 2,'profession_id'=>1]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>2]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>3]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>4]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>5]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>6]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>7]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>8]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>9]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>10]);
-        UserProfession::Create(['user_id' => 2,'profession_id'=>11]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>1]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>2]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>3]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>4]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>5]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>6]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>7]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>8]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>9]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>10]);
+        UserProfession::Create(['user_id' => 15432977,'profession_id'=>11]);
 
         //tabla pivote
         UserProfession::Create(['user_id' => 16939743,'profession_id'=>1]);
