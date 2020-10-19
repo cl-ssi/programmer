@@ -648,7 +648,7 @@ class TheoreticalProgrammingController extends Controller
                                                             ->where('specialty_id',$request->specialty_id)
                                                             ->where('profession_id',$request->profession_id)
                                                             ->where('start_date',$first_date)
-                                                            ->where('end_date',$last_date);
+                                                            ->where('end_date',$last_date)->first();
             $theoreticalProgramming->delete();
         }
         //se elimina desde el evento actual
@@ -660,7 +660,7 @@ class TheoreticalProgrammingController extends Controller
                                                                 ->where('specialty_id',$request->specialty_id)
                                                                 ->where('profession_id',$request->profession_id)
                                                                 ->where('start_date',$first_date)
-                                                                ->where('end_date',$last_date);
+                                                                ->where('end_date',$last_date)->first();
                 $theoreticalProgramming->delete();
 
                 $first_date = $first_date->addWeek(1);

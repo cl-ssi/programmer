@@ -507,7 +507,7 @@ class CalendarProgrammingController extends Controller
       ->where('specialty_id', $request->specialty_id)
       ->where('operating_room_id', $request->operating_room_id)
       ->where('start_date', $request->start_date)
-      ->where('end_date', $request->end_date);
+      ->where('end_date', $request->end_date)->first();
     $calendarProgramming->delete(); //forceDelete
   }
 
@@ -518,7 +518,7 @@ class CalendarProgrammingController extends Controller
       ->where('specialty_id', $request->specialty_id)
       ->where('operating_room_id', $request->operating_room_id)
       ->where('start_date', $request->start_date)
-      ->where('end_date', $request->end_date);
+      ->where('end_date', $request->end_date)->first();
     $calendarProgramming->forceDelete();
   }
 

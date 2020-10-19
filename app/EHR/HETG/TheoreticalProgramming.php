@@ -8,6 +8,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class TheoreticalProgramming extends Model implements Auditable
 {
+    use SoftDeletes;
     use \OwenIt\Auditing\Auditable;
 
     /**
@@ -55,7 +56,6 @@ class TheoreticalProgramming extends Model implements Auditable
     //     return $this->belongsTo('App\User');
     // }
 
-    use SoftDeletes;
     /**
      * The attributes that should be mutated to dates.
      *
