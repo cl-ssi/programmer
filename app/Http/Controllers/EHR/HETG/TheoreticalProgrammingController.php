@@ -258,7 +258,6 @@ class TheoreticalProgrammingController extends Controller
     }
 
     //obtiene horas teóricas
-    // dd($request->get('specialty_id'));
     $theoreticalProgrammings = TheoreticalProgramming::where('year',$year)
                                                   ->where('rut',$rut)
                                                   ->whereNull('contract_day_type')
@@ -276,6 +275,23 @@ class TheoreticalProgrammingController extends Controller
         $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
       }
       // dd($theoreticalProgrammings);
+
+      //obtiene teoricos eliminados
+      $theoreticalProgrammingDeleted = TheoreticalProgramming::where('year',$year)
+                                                    ->where('rut',$rut)
+                                                    ->whereNull('contract_day_type')
+                                                    ->where('contract_id', $contract_id)
+                                                    ->where('specialty_id', $request->get('specialty_id'))
+                                                    ->whereBetween('start_date',[$monday,$sunday])
+                                                    ->onlyTrashed()->get();
+
+        //se obtiene fechas de inicio y termino de cada isEventOverDiv
+        foreach ($theoreticalProgrammingDeleted as $key => $theoricalProgramming) {
+          $start  = new Carbon($theoricalProgramming->start_date);
+          $end    = new Carbon($theoricalProgramming->end_date);
+          $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
+        }
+
 
     //obtiene información de programas médicos asignados
     $medicalProgrammings = MedicalProgramming::where('year',$year)
@@ -325,7 +341,7 @@ class TheoreticalProgrammingController extends Controller
     $monday = Carbon::parse($date)->startOfWeek();
     $sunday = Carbon::parse($date)->endOfWeek();
 
-      return view('ehr.hetg.management.theoretical_programmer', compact('request','array','activities','contract_days','date','theoreticalProgrammings',
+      return view('ehr.hetg.management.theoretical_programmer', compact('request','array','activities','contract_days','date','theoreticalProgrammings','theoreticalProgrammingDeleted',
                                                                         'rrhhs','permisos_administrativos', 'specialties','professions','contracts',
                                                                         'programming','OperatingRoomProgrammings'));
       // return view('ehr.hetg.management.theoretical_programmer',compact('request','rrhhs','array','theoricalProgrammings','contracts','rut','contract_days'));

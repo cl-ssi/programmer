@@ -230,15 +230,37 @@ bottom: 5px;
         <br /><hr />
         <div style="height: 300px; overflow-y: scroll;">
             <h4 class="mt-3">Historial de cambios</h4>
+
+            {{-- teóricos activos --}}
             @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
                 @if ($theoreticalProgramming->activity)
                     <table class="table table-sm small text-muted mt-3">
-                        <thead><tr><th>{{$theoreticalProgramming->activity->activity_name}}</th></tr></thead>
+                        <thead><tr class="table-primary"><th>{{$theoreticalProgramming->activity->activity_name}}</th></tr></thead>
                     </table>
                 @endif
-
                 @include('partials.audit_loop', ['audits' => $theoreticalProgramming->audits] )
             @endforeach
+
+            {{-- no programable en calendario --}}
+            @foreach ($programming  as $key => $progr)
+                @if ($progr->activity)
+                    <table class="table table-sm small text-muted mt-3">
+                        <thead><tr class="table-warning"><th>{{$progr->activity->activity_name}}</th></tr></thead>
+                    </table>
+                @endif
+                @include('partials.audit_loop', ['audits' => $progr->audits] )
+            @endforeach
+
+            {{-- teóricos eliminados --}}
+            @foreach ($theoreticalProgrammingDeleted as $key => $theoreticalProgramming)
+                @if ($theoreticalProgramming->activity)
+                    <table class="table table-sm small text-muted mt-3">
+                        <thead><tr class="table-danger"><th>{{$theoreticalProgramming->activity->activity_name}}</th></tr></thead>
+                    </table>
+                @endif
+                @include('partials.audit_loop', ['audits' => $theoreticalProgramming->audits] )
+            @endforeach
+
         </div>
     @endcanany
 

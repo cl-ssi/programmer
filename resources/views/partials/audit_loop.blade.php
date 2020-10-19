@@ -4,7 +4,7 @@
     <thead>
         <tr>
             <th>IP</th>
-            <th>URL</th>
+            {{-- <th>URL</th> --}}
             <th>Modelo</th>
             <th>Fecha</th>
             <th>Usuario</th>
@@ -13,10 +13,10 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($audits->sortByDesc('updated_at') as $audit)
+        @foreach($audits->sortByDesc('updated_at') as $key => $audit)
         <tr>
             <td>{{ $audit->ip_address }}</td>
-            <td>{{ $audit->url }}</td>
+            {{-- <td>{{ $audit->url }}</td> --}}
             <td>{{ $audit->auditable_type }}</td>
             <td>{{ $audit->created_at }}</td>
             <td>
@@ -27,7 +27,9 @@
             <td>{{ $audit->event }}</td>
             <td>
             @foreach($audit->getModified() as $attribute => $modified)
-                <strong>{{ $attribute }}</strong> :  {{ isset($modified['old']) ? $modified['old'] : '' }}  => {{ $modified['new'] }} <br>
+                @if ($audit->event != "deleted")
+                    <strong>{{ $attribute }}</strong> :  {{ isset($modified['old']) ? $modified['old'] : '' }}  => {{ isset($modified['new']) ? $modified['new'] : '' }} <br>
+                @endif
             @endforeach
             </td>
         </tr>
