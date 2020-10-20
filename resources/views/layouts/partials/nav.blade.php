@@ -150,7 +150,7 @@
                     </a>
 
                     {{-- <a class="dropdown-item"
-                            href="{{ route('ehr.hetg.medical_programming.index') }}">
+                            href="{{ route('ehr.hetg.unscheduled_programming.index') }}">
                     <i class="fas fa-notes-medical fa-fw"></i> Programación
                     </a> --}}
 

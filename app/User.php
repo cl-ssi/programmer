@@ -60,8 +60,8 @@ class User extends Authenticatable
         return $this->hasMany('App\EHR\HETG\UserOperatingRoom');
     }
 
-    public function medicalProgrammings() {
-        return $this->hasMany('App\EHR\HETG\MedicalProgramming');
+    public function unscheduledProgrammings() {
+        return $this->hasMany('App\EHR\HETG\UnscheduledProgramming');
     }
 
     public function calendarProgrammings() {

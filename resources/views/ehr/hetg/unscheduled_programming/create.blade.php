@@ -8,7 +8,7 @@
 
 <h3 class="mb-3">Nueva Programación Médica</h3>
 
-<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.medical_programming.store') }}">
+<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.unscheduled_programming.store') }}">
     @csrf
     @method('POST')
 

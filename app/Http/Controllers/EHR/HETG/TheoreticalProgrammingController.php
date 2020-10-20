@@ -9,7 +9,7 @@ use App\EHR\HETG\Profession;
 use App\EHR\HETG\CalendarProgramming;
 use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\Contract;
-use App\EHR\HETG\MedicalProgramming;
+use App\EHR\HETG\UnscheduledProgramming;
 use App\EHR\HETG\TheoreticalProgramming;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -61,7 +61,7 @@ class TheoreticalProgrammingController extends Controller
     // $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
     //                 return $query->where('year',$year);
     //             })
-    //             // ->whereHas('medical_programmings', function ($query) use ($users) {
+    //             // ->whereHas('unscheduled_programmings', function ($query) use ($users) {
     //             //     return $query->whereHas('specialty', function ($query) use ($users) {
     //             //         return $query->whereIn('specialty_id',$users->getSpecialtiesArray());
     //             //     });
@@ -130,7 +130,7 @@ class TheoreticalProgrammingController extends Controller
         // }
 
         //obtiene especialidades ordenadas (si es que existe horario teorico, devuelve esa especialidad primero)
-        $TheoreticalProgramming = TheoreticalProgramming::where('rut',$rut)->first();
+        $TheoreticalProgramming = TheoreticalProgramming::whereNotNull('specialty_id')->where('rut',$rut)->first();
         if ($rut != null) {
             if ($TheoreticalProgramming!=null) {
                 $collection1 = Specialty::where('id',$TheoreticalProgramming->specialty_id)->get();
@@ -175,12 +175,12 @@ class TheoreticalProgrammingController extends Controller
                                 ->get();
                                 // dd($activities->first()->specialties->where('id',42)->first()->pivot);
 
-        //corresponde a la actividad no programable (que se guarda en el modelo medicalProgramming)
-        $programming = MedicalProgramming::where('rut',$rut)
-                                         ->where('year',$year)
-                                         ->where('contract_id', $contract_id)
-                                         ->where('specialty_id', $var)
-                                         ->get();
+        //corresponde a la actividad no programable (que se guarda en el modelo UnscheduledProgramming)
+        $programming = UnscheduledProgramming::where('rut',$rut)
+                                             ->where('year',$year)
+                                             ->where('contract_id', $contract_id)
+                                             ->where('specialty_id', $var)
+                                             ->get();
                                          // dd($programming);
 
         //obtiene operating operation_rooms
@@ -206,12 +206,12 @@ class TheoreticalProgrammingController extends Controller
         // }
 
         //obtiene especialidades ordenadas (si es que existe horario teorico, devuelve esa especialidad primero)
-        $TheoreticalProgramming = TheoreticalProgramming::where('rut',$rut)->first();
+        $TheoreticalProgramming = TheoreticalProgramming::whereNotNull('profession_id')->where('rut',$rut)->first();
         if ($rut != null) {
             if ($TheoreticalProgramming!=null) {
                 $collection1 = Profession::where('id',$TheoreticalProgramming->profession_id)->get();
                 if (Auth::user()->hasPermissionTo('administrador')) {
-                    $collection2 = Profession::where('id','!=',$TheoreticalProgramming->profession_id)->orderBy('specialty_name','ASC')->get();
+                    $collection2 = Profession::where('id','!=',$TheoreticalProgramming->profession_id)->orderBy('profession_name','ASC')->get();
                 }else{
                     $collection2 = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
                 }
@@ -244,12 +244,12 @@ class TheoreticalProgrammingController extends Controller
                                 })
                                 ->get();
 
-        //corresponde a la actividad no programable (que se guarda en el modelo medicalProgramming)
-        $programming = MedicalProgramming::where('rut',$rut)
-                                         ->where('year',$year)
-                                         ->where('contract_id', $contract_id)
-                                         ->where('profession_id', $var)
-                                         ->get();
+        //corresponde a la actividad no programable (que se guarda en el modelo UnscheduledProgramming)
+        $programming = UnscheduledProgramming::where('rut',$rut)
+                                             ->where('year',$year)
+                                             ->where('contract_id', $contract_id)
+                                             ->where('profession_id', $var)
+                                             ->get();
 
         //obtiene operating operation_rooms
         $OperatingRoomProgrammings = OperatingRoomProgramming::where('profession_id',$var)
@@ -294,13 +294,13 @@ class TheoreticalProgrammingController extends Controller
 
 
     //obtiene información de programas médicos asignados
-    $medicalProgrammings = MedicalProgramming::where('year',$year)
+    $unscheduledProgrammings = UnscheduledProgramming::where('year',$year)
                                             ->where('rut',$rut)
                                             ->whereIn('activity_id',$ids_actividades)
                                             ->get();
     $array = array();
-    foreach ($medicalProgrammings as $key => $medicalProgramming) {
-      $array[$medicalProgramming->contract->law] = $medicalProgrammings->where('contract_id',$medicalProgramming->contract_id);
+    foreach ($unscheduledProgrammings as $key => $unscheduledProgramming) {
+      $array[$unscheduledProgramming->contract->law] = $unscheduledProgrammings->where('contract_id',$unscheduledProgramming->contract_id);
     }
 
     //obtiene administrativos
@@ -518,6 +518,7 @@ class TheoreticalProgrammingController extends Controller
 
     public function saveMyEvent(Request $request){
         try {
+            // Storage::put('hola.txt', "asd");
             $year = $request->year;
             $first_date = new Carbon($request->start_date);
             $last_date = new Carbon($request->end_date);
@@ -652,36 +653,42 @@ class TheoreticalProgrammingController extends Controller
 
     //elimina el dato - queda respaldo de la eliminación
     public function deleteMyEvent(Request $request){
-      $year = $request->year;
-      $first_date = new Carbon($request->start_date);
-      $last_date = new Carbon($request->end_date);
+        try {
 
-      //solo se elimina el evento actual
-        if ($request->tipo == 1) {
-            $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
-                                                            ->where('activity_id',$request->activity_id)
-                                                            ->where('contract_id',$request->contract_id)
-                                                            ->where('specialty_id',$request->specialty_id)
-                                                            ->where('profession_id',$request->profession_id)
-                                                            ->where('start_date',$first_date)
-                                                            ->where('end_date',$last_date)->first();
-            $theoreticalProgramming->delete();
-        }
-        //se elimina desde el evento actual
-        else{
-            while (date('Y', strtotime($first_date)) == $year) {
-                $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
-                                                                ->where('activity_id',$request->activity_id)
-                                                                ->where('contract_id',$request->contract_id)
-                                                                ->where('specialty_id',$request->specialty_id)
-                                                                ->where('profession_id',$request->profession_id)
-                                                                ->where('start_date',$first_date)
-                                                                ->where('end_date',$last_date)->first();
-                $theoreticalProgramming->delete();
+            $year = $request->year;
+            $first_date = new Carbon($request->start_date);
+            $last_date = new Carbon($request->end_date);
 
-                $first_date = $first_date->addWeek(1);
-                $last_date = $last_date->addWeek(1);
-            }
+            //solo se elimina el evento actual
+              if ($request->tipo == 1) {
+                  $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                                  ->where('activity_id',$request->activity_id)
+                                                                  ->where('contract_id',$request->contract_id)
+                                                                  ->where('specialty_id',$request->specialty_id)
+                                                                  ->where('profession_id',$request->profession_id)
+                                                                  ->where('start_date',$first_date)
+                                                                  ->where('end_date',$last_date)->first();
+                  $theoreticalProgramming->delete();
+              }
+              //se elimina desde el evento actual
+              else{
+                  while (date('Y', strtotime($first_date)) == $year) {
+                      $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                                      ->where('activity_id',$request->activity_id)
+                                                                      ->where('contract_id',$request->contract_id)
+                                                                      ->where('specialty_id',$request->specialty_id)
+                                                                      ->where('profession_id',$request->profession_id)
+                                                                      ->where('start_date',$first_date)
+                                                                      ->where('end_date',$last_date)->first();
+                      $theoreticalProgramming->delete();
+
+                      $first_date = $first_date->addWeek(1);
+                      $last_date = $last_date->addWeek(1);
+                  }
+              }
+
+        } catch (\Exception $e) {
+            Storage::put('errores.txt', $e->getMessage());
         }
     }
 

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class Rrhh extends Model implements Auditable 
+class Rrhh extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     /**
@@ -28,10 +28,10 @@ class Rrhh extends Model implements Auditable
     }
 
     // public function programming() {
-    //     return $this->hasMany('App\EHR\HETG\OperatingRooms\MedicalProgramming', 'rut');
+    //     return $this->hasMany('App\EHR\HETG\OperatingRooms\UnscheduledProgramming', 'rut');
     // }
-    public function medical_programmings() {
-        return $this->hasMany('App\EHR\HETG\MedicalProgramming', 'rut');
+    public function unscheduled_programmings() {
+        return $this->hasMany('App\EHR\HETG\UnscheduledProgramming', 'rut');
     }
 
     public function calendarProgrammings() {

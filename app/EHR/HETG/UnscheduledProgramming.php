@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class MedicalProgramming extends Model implements Auditable
+class UnscheduledProgramming extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     /**
@@ -60,5 +60,5 @@ class MedicalProgramming extends Model implements Auditable
      *
      * @var string
      */
-    protected $table = 'hm_medical_programming';
+    protected $table = 'hm_unscheduled_programming';
 }

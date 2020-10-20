@@ -6,7 +6,7 @@
 
 <h3 class="mb-3">Editar Programación Médica</h3>
 
-<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.medical_programming.update', $medicalProgramming) }}">
+<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.unscheduled_programming.update', $unscheduledProgramming) }}">
     @csrf
     @method('PUT')
 
@@ -16,7 +16,7 @@
             <select name="rut" id="rut" class="form-control" required="">
               <option>--</option>
               @foreach($rrhh as $trab)
-                <option value="{{$trab->rut}}" {{ $trab->rut == $medicalProgramming->rut ? 'selected' : '' }}>{{$trab->getFullNameAttribute()}}</option>
+                <option value="{{$trab->rut}}" {{ $trab->rut == $unscheduledProgramming->rut ? 'selected' : '' }}>{{$trab->getFullNameAttribute()}}</option>
               @endforeach
             </select>
         </fieldset>
@@ -33,7 +33,7 @@
           <label for="for_specialty_id">Especialidad</label>
           <select name="specialty_id" id="for_specialty_id" class="form-control" required="">
             @foreach($specialties as $specialty)
-              <option value="{{$specialty->id}}" {{ $specialty->id == $medicalProgramming->specialty_id ? 'selected' : '' }}>{{$specialty->specialty_name}}</option>
+              <option value="{{$specialty->id}}" {{ $specialty->id == $unscheduledProgramming->specialty_id ? 'selected' : '' }}>{{$specialty->specialty_name}}</option>
             @endforeach
           </select>
       </fieldset>
@@ -42,7 +42,7 @@
           <label for="for_activity_id">Actividad</label>
           <select name="activity_id" id="for_activity_id" class="form-control" required="">
             @foreach($activities as $activity)
-              <option value="{{$activity->id}}" {{ $activity->id == $medicalProgramming->activity_id ? 'selected' : '' }}>{{$activity->id}} - {{$activity->activity_name}}</option>
+              <option value="{{$activity->id}}" {{ $activity->id == $unscheduledProgramming->activity_id ? 'selected' : '' }}>{{$activity->id}} - {{$activity->activity_name}}</option>
             @endforeach
           </select>
       </fieldset>
@@ -51,12 +51,12 @@
     <div class="row">
       <fieldset class="form-group col">
           <label for="for_assigned_hour">Horas Asignadas</label>
-          <input type="text" class="form-control" id="for_assigned_hour" placeholder="" name="assigned_hour" required value="{{$medicalProgramming->assigned_hour}}">
+          <input type="text" class="form-control" id="for_assigned_hour" placeholder="" name="assigned_hour" required value="{{$unscheduledProgramming->assigned_hour}}">
       </fieldset>
 
       <fieldset class="form-group col">
           <label for="for_hour_performance">Rdto. por Hora</label>
-          <input type="text" class="form-control" id="for_hour_performance" placeholder="" name="hour_performance" value="{{$medicalProgramming->hour_performance}}">
+          <input type="text" class="form-control" id="for_hour_performance" placeholder="" name="hour_performance" value="{{$unscheduledProgramming->hour_performance}}">
       </fieldset>
     </div>
 
@@ -64,12 +64,12 @@
       <fieldset class="form-group col">
           <label for="for_unit_code">Año</label>
           <select name="year" id="for_year" class="form-control" required="">
-            <option value="2020" {{ $medicalProgramming->year == "2020" ? 'selected' : '' }}>2020</option>
-            <option value="2021" {{ $medicalProgramming->year == "2021" ? 'selected' : '' }}>2021</option>
-            <option value="2022" {{ $medicalProgramming->year == "2022" ? 'selected' : '' }}>2022</option>
-            <option value="2023" {{ $medicalProgramming->year == "2023" ? 'selected' : '' }}>2023</option>
-            <option value="2024" {{ $medicalProgramming->year == "2024" ? 'selected' : '' }}>2024</option>
-            <option value="2025" {{ $medicalProgramming->year == "2025" ? 'selected' : '' }}>2025</option>
+            <option value="2020" {{ $unscheduledProgramming->year == "2020" ? 'selected' : '' }}>2020</option>
+            <option value="2021" {{ $unscheduledProgramming->year == "2021" ? 'selected' : '' }}>2021</option>
+            <option value="2022" {{ $unscheduledProgramming->year == "2022" ? 'selected' : '' }}>2022</option>
+            <option value="2023" {{ $unscheduledProgramming->year == "2023" ? 'selected' : '' }}>2023</option>
+            <option value="2024" {{ $unscheduledProgramming->year == "2024" ? 'selected' : '' }}>2024</option>
+            <option value="2025" {{ $unscheduledProgramming->year == "2025" ? 'selected' : '' }}>2025</option>
           </select>
       </fieldset>
     </div>
@@ -93,7 +93,7 @@
     // deja options que coincidan
     @foreach($contracts as $contract)
       if($("#rut").val() == {{$contract->rut}}){
-        $('#for_contract_id').append(`<option value="{{$contract->id}}" {{ $contract->id == $medicalProgramming->contract_id ? 'selected' : '' }}>{{$contract->law}} - {{$contract->contract_id}} - {{$contract->weekly_hours}} hrs.</option>`);
+        $('#for_contract_id').append(`<option value="{{$contract->id}}" {{ $contract->id == $unscheduledProgramming->contract_id ? 'selected' : '' }}>{{$contract->law}} - {{$contract->contract_id}} - {{$contract->weekly_hours}} hrs.</option>`);
       }
     @endforeach
   });

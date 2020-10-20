@@ -9,7 +9,7 @@ use App\Exports\ReportExportCut;
 use Maatwebsite\Excel\Facades\Excel;
 use App\EHR\HETG\CutOffDate;
 use Carbon\Carbon;
-use App\EHR\HETG\MedicalProgramming;
+use App\EHR\HETG\UnscheduledProgramming;
 use App\EHR\HETG\TheoreticalProgramming;
 
 class ReportController extends Controller
@@ -80,7 +80,7 @@ class ReportController extends Controller
 
         $date = new Carbon($cutoffdate->date);
         //obtiene datos NO programables del año
-        $medicalProgrammings = MedicalProgramming::where('year', $date->get('year'))->get();
+        $unscheduledProgrammings = UnscheduledProgramming::where('year', $date->get('year'))->get();
 
         //se obtiene fechas de inicio y termino de cada isEventOverDiv
         foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
@@ -104,15 +104,15 @@ class ReportController extends Controller
             $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id][$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name][$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = $theoricalProgramming->id;
         }
         //NO programables - PROGRAMACION MÉDICA
-        foreach ($medicalProgrammings->whereNotNull('specialty_id') as $key => $medicalProgramming) {
-            $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id][$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name][$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['assigned_hour'] = 0;
-            $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id][$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name][$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = 0;
-            $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id][$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name][$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['medicalProgramming_id'] = 0;
+        foreach ($unscheduledProgrammings->whereNotNull('specialty_id') as $key => $unscheduledProgramming) {
+            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id][$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name][$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['assigned_hour'] = 0;
+            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id][$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name][$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['rdto_hour'] = 0;
+            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id][$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name][$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['unscheduledProgramming'] = 0;
         }
-        foreach ($medicalProgrammings->whereNotNull('specialty_id') as $key => $medicalProgramming) {
-            $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id][$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name][$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['assigned_hour'] += $medicalProgramming->assigned_hour;
-            $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id][$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name][$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = $medicalProgramming->hour_performance; //$medicalProgramming->specialty->activities->where('id',$medicalProgramming->activity->id)->first()->pivot->performance;
-            $array_programacion_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id][$medicalProgramming->specialty->id_specialty . ' - ' . $medicalProgramming->specialty->specialty_name][$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['medicalProgramming_id'] = $medicalProgramming->id;
+        foreach ($unscheduledProgrammings->whereNotNull('specialty_id') as $key => $unscheduledProgramming) {
+            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id][$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name][$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['assigned_hour'] += $unscheduledProgramming->assigned_hour;
+            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id][$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name][$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['rdto_hour'] = $unscheduledProgramming->hour_performance; //$unscheduledProgramming->specialty->activities->where('id',$unscheduledProgramming->activity->id)->first()->pivot->performance;
+            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id][$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name][$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['unscheduledProgramming'] = $unscheduledProgramming->id;
         }
 
 
@@ -143,27 +143,27 @@ class ReportController extends Controller
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = $theoricalProgramming->id;
         }
         //NO programables - PROGRAMACION NO MÉDICA
-        foreach ($medicalProgrammings->whereNotNull('profession_id') as $key => $medicalProgramming) {
-            $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
-                                      [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
-                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['assigned_hour'] = 0;
-            $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
-                                      [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
-                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = 0;
-            $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
-                                      [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
-                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['medicalProgramming_id'] = 0;
+        foreach ($unscheduledProgrammings->whereNotNull('profession_id') as $key => $unscheduledProgramming) {
+            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+                                      [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
+                                      [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['assigned_hour'] = 0;
+            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+                                      [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
+                                      [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['rdto_hour'] = 0;
+            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+                                      [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
+                                      [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['unscheduledProgramming'] = 0;
         }
-        foreach ($medicalProgrammings->whereNotNull('profession_id') as $key => $medicalProgramming) {
-            $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
-                                      [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
-                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['assigned_hour'] += $medicalProgramming->assigned_hour;
-            $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
-                                      [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
-                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['rdto_hour'] = $medicalProgramming->hour_performance;//$medicalProgramming->profession->activities->where('id',$medicalProgramming->activity->id)->first()->pivot->performance;
-            $array_programacion_no_medica[$medicalProgramming->rut][$medicalProgramming->contract->contract_id]
-                                      [$medicalProgramming->profession->id_profession . ' - ' . $medicalProgramming->profession->profession_name]
-                                      [$medicalProgramming->activity->id_activity . ' - ' . $medicalProgramming->activity->activity_name]['medicalProgramming_id'] = $medicalProgramming->id;
+        foreach ($unscheduledProgrammings->whereNotNull('profession_id') as $key => $unscheduledProgramming) {
+            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+                                      [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
+                                      [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['assigned_hour'] += $unscheduledProgramming->assigned_hour;
+            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+                                      [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
+                                      [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['rdto_hour'] = $unscheduledProgramming->hour_performance;//$unscheduledProgramming->profession->activities->where('id',$unscheduledProgramming->activity->id)->first()->pivot->performance;
+            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+                                      [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
+                                      [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['unscheduledProgramming'] = $unscheduledProgramming->id;
         }
 
 

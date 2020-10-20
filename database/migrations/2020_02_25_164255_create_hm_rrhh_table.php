@@ -167,7 +167,7 @@ class CreateHmRrhhTable extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('hm_medical_programming', function (Blueprint $table) {
+        Schema::create('hm_unscheduled_programming', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('contract_id')->nullable();
             $table->unsignedInteger('rut')->nullable();
@@ -201,7 +201,7 @@ class CreateHmRrhhTable extends Migration
     {
         Schema::dropIfExists('hm_user_professions');
         Schema::dropIfExists('hm_user_specialties');
-        Schema::dropIfExists('hm_medical_programming');
+        Schema::dropIfExists('hm_unscheduled_programming');
         Schema::dropIfExists('hm_profession_activities');
         Schema::dropIfExists('hm_specialty_activities');
         Schema::dropIfExists('hm_activities');

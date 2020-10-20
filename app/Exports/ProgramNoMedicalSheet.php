@@ -8,7 +8,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\FromArray;
-use App\EHR\HETG\MedicalProgramming;
+use App\EHR\HETG\UnscheduledProgramming;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Collection;
@@ -62,7 +62,7 @@ class ProgramNoMedicalSheet implements WithTitle, WithHeadings,  ShouldAutoSize,
 
     public function collection()
     {
-        
+
         foreach ($this->array_programacion_no_medica as $key1 => $value1) {
 
             foreach ($value1 as $key2 => $value2) {
@@ -71,7 +71,7 @@ class ProgramNoMedicalSheet implements WithTitle, WithHeadings,  ShouldAutoSize,
                         $this->arreglo[$this->cont][0] = $key1;
                         $this->arreglo[$this->cont][1] = $key2;
                         $this->arreglo[$this->cont][2] = $key3;
-                        $this->arreglo[$this->cont][3] = $key4;                        
+                        $this->arreglo[$this->cont][3] = $key4;
                         $this->arreglo[$this->cont][4] = $value4['assigned_hour'];
                         $this->arreglo[$this->cont][5] = $value4['rdto_hour'];
                         $this->arreglo[$this->cont][6] = $value4['assigned_hour']* $value4['rdto_hour'];
@@ -81,7 +81,7 @@ class ProgramNoMedicalSheet implements WithTitle, WithHeadings,  ShouldAutoSize,
                         $this->cont= $this->cont+1;
                     }
                 }
-            }            
+            }
         }
 
         return new Collection([
@@ -89,12 +89,12 @@ class ProgramNoMedicalSheet implements WithTitle, WithHeadings,  ShouldAutoSize,
         ]);
     }
 
-    public function map($medicalprogramming): array
+    public function map($unscheduledProgramming): array
     {
 
         return [
-            $medicalprogramming[0]
-            
+            $unscheduledProgramming[0]
+
         ];
     }
 }

@@ -62,10 +62,10 @@
 
               @foreach ($array as $key => $contract)
                 <small>{{str_replace('_', ' ', $key)}}</small>
-                @foreach ($contract as $key2 => $medical_programming)
-                  <div class='fc-event' data-event='{"title":"{{$medical_programming->activity->activity_name}}",
-                                                     "id":"{{$medical_programming->activity_id}}", "description":"1"}'>
-                      <small>{{$medical_programming->activity->activity_name}}: <span id="{{$medical_programming->activity_id}}"></span></small>
+                @foreach ($contract as $key2 => $unscheduled_programming)
+                  <div class='fc-event' data-event='{"title":"{{$unscheduled_programming->activity->activity_name}}",
+                                                     "id":"{{$unscheduled_programming->activity_id}}", "description":"1"}'>
+                      <small>{{$unscheduled_programming->activity->activity_name}}: <span id="{{$unscheduled_programming->activity_id}}"></span></small>
                   </div>
                 @endforeach
               @endforeach
@@ -135,17 +135,17 @@
   // var bolsa_999 = 8;
 
   @foreach ($array as $key => $contract)
-    @foreach ($contract as $key2 => $medical_programming)
+    @foreach ($contract as $key2 => $unscheduled_programming)
 
       // ciclo para obtener totales por profesional segun eventos guardados en bd
       var cont_eventos_bd = 0;
       @foreach ($theoricalProgrammings as $key => $theoricalProgramming)
-        @if($medical_programming->activity_id == $theoricalProgramming->activity_id)
+        @if($unscheduled_programming->activity_id == $theoricalProgramming->activity_id)
           cont_eventos_bd+= {{$theoricalProgramming->duration_theorical_programming}};
         @endif
       @endforeach
 
-      var bolsa_{{$medical_programming->activity_id}} = {{$medical_programming->assigned_hour}} - cont_eventos_bd;
+      var bolsa_{{$unscheduled_programming->activity_id}} = {{$unscheduled_programming->assigned_hour}} - cont_eventos_bd;
     @endforeach
   @endforeach
 
@@ -166,8 +166,8 @@
     // document.getElementById("total_cirugia").innerHTML = bolsa_666 + bolsa_777 + bolsa_888 + bolsa_999;
 
     @foreach ($array as $key => $contract)
-      @foreach ($contract as $key2 => $medical_programming)
-        document.getElementById("{{$medical_programming->activity_id}}").innerHTML = bolsa_{{$medical_programming->activity_id}};
+      @foreach ($contract as $key2 => $unscheduled_programming)
+        document.getElementById("{{$unscheduled_programming->activity_id}}").innerHTML = bolsa_{{$unscheduled_programming->activity_id}};
       @endforeach
     @endforeach
 
@@ -244,11 +244,11 @@
 
         @foreach ($array as $key => $contract)
           cont = 0;
-          @foreach ($contract as $key2 => $medical_programming)
-            if(info.event.id == "{{$medical_programming->activity_id}}"){
-              // if((bolsa_{{$medical_programming->activity_id}} - 1) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-              document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - 1);
-              bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - 1;
+          @foreach ($contract as $key2 => $unscheduled_programming)
+            if(info.event.id == "{{$unscheduled_programming->activity_id}}"){
+              // if((bolsa_{{$unscheduled_programming->activity_id}} - 1) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+              document.getElementById("{{$unscheduled_programming->activity_id}}").innerHTML = (bolsa_{{$unscheduled_programming->activity_id}} - 1);
+              bolsa_{{$unscheduled_programming->activity_id}} = bolsa_{{$unscheduled_programming->activity_id}} - 1;
             }
           @endforeach
         @endforeach
@@ -279,10 +279,10 @@
             //console.log(info.event);
 
             @foreach ($array as $key => $contract)
-              @foreach ($contract as $key2 => $medical_programming)
-                if(info.event.id == "{{$medical_programming->activity_id}}"){
-                  document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} + diff_);
-                  bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} + diff_;
+              @foreach ($contract as $key2 => $unscheduled_programming)
+                if(info.event.id == "{{$unscheduled_programming->activity_id}}"){
+                  document.getElementById("{{$unscheduled_programming->activity_id}}").innerHTML = (bolsa_{{$unscheduled_programming->activity_id}} + diff_);
+                  bolsa_{{$unscheduled_programming->activity_id}} = bolsa_{{$unscheduled_programming->activity_id}} + diff_;
                 }
               @endforeach
             @endforeach
@@ -308,10 +308,10 @@
                 //console.log(info.event);
 
                 @foreach ($array as $key => $contract)
-                  @foreach ($contract as $key2 => $medical_programming)
-                    if(info.event.id == "{{$medical_programming->activity_id}}"){
-                      document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} + diff_);
-                      bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} + diff_;
+                  @foreach ($contract as $key2 => $unscheduled_programming)
+                    if(info.event.id == "{{$unscheduled_programming->activity_id}}"){
+                      document.getElementById("{{$unscheduled_programming->activity_id}}").innerHTML = (bolsa_{{$unscheduled_programming->activity_id}} + diff_);
+                      bolsa_{{$unscheduled_programming->activity_id}} = bolsa_{{$unscheduled_programming->activity_id}} + diff_;
                     }
                   @endforeach
                 @endforeach
@@ -342,11 +342,11 @@
         diff = (diff/60) - diff_;
 
         @foreach ($array as $key => $contract)
-          @foreach ($contract as $key2 => $medical_programming)
-            if(info.event.id == "{{$medical_programming->activity_id}}"){
-              if((bolsa_{{$medical_programming->activity_id}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
-              document.getElementById("{{$medical_programming->activity_id}}").innerHTML = (bolsa_{{$medical_programming->activity_id}} - diff);
-              bolsa_{{$medical_programming->activity_id}} = bolsa_{{$medical_programming->activity_id}} - diff;
+          @foreach ($contract as $key2 => $unscheduled_programming)
+            if(info.event.id == "{{$unscheduled_programming->activity_id}}"){
+              if((bolsa_{{$unscheduled_programming->activity_id}} - diff) < 0){alert("Excedió horas semanales contratas.");info.revert();return;} //revierte si se llega a cero
+              document.getElementById("{{$unscheduled_programming->activity_id}}").innerHTML = (bolsa_{{$unscheduled_programming->activity_id}} - diff);
+              bolsa_{{$unscheduled_programming->activity_id}} = bolsa_{{$unscheduled_programming->activity_id}} - diff;
             }
           @endforeach
         @endforeach

@@ -11,7 +11,7 @@ use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\Contract;
 use App\EHR\HETG\ExecutedActivity;
 use App\EHR\HETG\OperatingRoom;
-use App\EHR\HETG\MedicalProgramming;
+use App\EHR\HETG\UnscheduledProgramming;
 // use App\EHR\HETG\TheoreticalProgramming;
 use App\EHR\HETG\CalendarProgramming;
 use App\EHR\HETG\Specialty;
@@ -71,7 +71,7 @@ class OperatingRoomController extends Controller
         }
 
         //obtiene programación médica anual
-        $programacion = MedicalProgramming::where('year', '2020')->whereIn('activity_id', $ids_actividades)
+        $programacion = UnscheduledProgramming::where('year', '2020')->whereIn('activity_id', $ids_actividades)
                 // ->whereIn('specialty_id', $ids_specialities)
                 ->get();
 
@@ -152,7 +152,7 @@ class OperatingRoomController extends Controller
         // //obtener programación
         // $theoreticalProgrammings = TheoreticalProgramming::all();
         // //se obtiene programación médica para comparar specialidades con actvidades del teórico
-        // $programacion = MedicalProgramming::where('year', '2020')->whereIn('activity_id', $ids_actividades)->get();
+        // $programacion = UnscheduledProgramming::where('year', '2020')->whereIn('activity_id', $ids_actividades)->get();
         // $programacion_agrupada = $programacion->groupBy('specialty_id');
         // foreach ($programacion_agrupada as $key => $grupo) {
         //   foreach ($grupo as $key => $programacion) {
@@ -205,7 +205,7 @@ class OperatingRoomController extends Controller
         $contracts = $profesional->contracts->where('year',$now->startOfWeek()->format('Y'));
 
         /* Programación del profesional del año seleccionado */
-        $programming = $profesional->medical_programmings->where('year',$now->startOfWeek()->format('Y'));
+        $programming = $profesional->unscheduled_programmings->where('year',$now->startOfWeek()->format('Y'));
 
         /* Programación de pabellon */
         $programacion_pabellon = $programming->whereIn('activity_id',$ids_actividades);

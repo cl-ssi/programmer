@@ -26,8 +26,8 @@ class Contract extends Model implements Auditable
         return $this->belongsTo('App\EHR\HETG\Rrhh', 'rut');
     }
 
-    public function medical_programmings() {
-        return $this->hasMany('App\EHR\HETG\MedicalProgramming');
+    public function unscheduled_programmings() {
+        return $this->hasMany('App\EHR\HETG\UnscheduledProgramming');
     }
 
     public function user() {

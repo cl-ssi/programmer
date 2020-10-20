@@ -99,7 +99,7 @@ bottom: 5px;
         <label for="for_contract_id">Contrato</label>
         {{-- <select name="contract_id" id="for_contract_id" class="form-control" required="" onchange="this.form.submit()"> --}}
         <select name="contract_id" id="for_contract_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
-            <option>--</option>
+            <option value="">--</option>
             @foreach($contracts as $contract)
               <option value="{{$contract->id}}" {{ $contract->id == $request->contract_id ? 'selected' : '' }}>{{$contract->law}}</option>
             @endforeach
@@ -220,7 +220,7 @@ bottom: 5px;
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
       <br />
-      @include('ehr/hetg/medical_programming/index')
+      @include('ehr/hetg/unscheduled_programming/index')
 
   </div>
 </div>
@@ -912,6 +912,7 @@ bottom: 5px;
         var specialty_id = $("#for_specialty_id"). val();
         var profession_id = $("#for_profession_id"). val();
 
+        console.log(rut,activity_id,contract_id,specialty_id,profession_id,start_date,end_date,year,tipo);
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.deleteMyEvent') }}",
           type: 'post',

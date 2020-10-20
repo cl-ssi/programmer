@@ -19,8 +19,8 @@ class Profession extends Model implements Auditable
         //, 'user_id'
     ];
 
-    public function medical_programmings() {
-        return $this->hasMany('App\EHR\HETG\MedicalProgramming');
+    public function unscheduled_programmings() {
+        return $this->hasMany('App\EHR\HETG\UnscheduledProgramming');
     }
 
     public function calendarProgrammings() {

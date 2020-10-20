@@ -7,11 +7,11 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use App\EHR\HETG\MedicalProgramming;
+use App\EHR\HETG\UnscheduledProgramming;
 
 class MedicalSheet implements FromCollection, WithTitle, WithHeadings, WithMapping, ShouldAutoSize
 {
-    
+
 
     /**
      * @return Builder
@@ -20,7 +20,7 @@ class MedicalSheet implements FromCollection, WithTitle, WithHeadings, WithMappi
     public function headings(): array
     {
         return [
-          'Rut',          
+          'Rut',
           //'ID_Especialidad',
           'Especialidad',
           'ID_Actividad',
@@ -37,7 +37,7 @@ class MedicalSheet implements FromCollection, WithTitle, WithHeadings, WithMappi
 
     public function collection()
     {
-        return MedicalProgramming::all();
+        return UnscheduledProgramming::all();
     }
 
     /**
@@ -49,30 +49,30 @@ class MedicalSheet implements FromCollection, WithTitle, WithHeadings, WithMappi
     }
 
 
-    public function map($medicalprogramming): array
+    public function map($unscheduledProgramming): array
     {
-        if($medicalprogramming->hour_performance)
+        if($unscheduledProgramming->hour_performance)
             {
-               $porcentaje=round(($medicalprogramming->assigned_hour/$medicalprogramming->contract->weekly_hours)*100).'%';
+               $porcentaje=round(($unscheduledProgramming->assigned_hour/$unscheduledProgramming->contract->weekly_hours)*100).'%';
             }
             else
             $porcentaje='';
 
 
         return [
-            $medicalprogramming->rut,
-            $medicalprogramming->specialty->specialty_name,
-            $medicalprogramming->activity_id,
-            $medicalprogramming->activity->activity_name,            
-            $medicalprogramming->assigned_hour,
-            $medicalprogramming->hour_performance,
-            $medicalprogramming->contract->weekly_hours,
+            $unscheduledProgramming->rut,
+            $unscheduledProgramming->specialty->specialty_name,
+            $unscheduledProgramming->activity_id,
+            $unscheduledProgramming->activity->activity_name,
+            $unscheduledProgramming->assigned_hour,
+            $unscheduledProgramming->hour_performance,
+            $unscheduledProgramming->contract->weekly_hours,
             $porcentaje,
-            
-            
 
-            
-            
+
+
+
+
         ];
     }
 

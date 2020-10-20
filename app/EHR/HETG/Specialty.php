@@ -19,9 +19,9 @@ class Specialty extends Model implements Auditable
         //, 'user_id'
     ];
 
-    public function medical_programmings()
+    public function unscheduled_programmings()
     {
-        return $this->hasMany('App\EHR\HETG\MedicalProgramming');
+        return $this->hasMany('App\EHR\HETG\UnscheduledProgramming');
     }
 
     public function calendarProgrammings()

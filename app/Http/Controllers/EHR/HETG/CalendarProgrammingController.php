@@ -8,7 +8,7 @@ use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\CalendarProgramming;
 use App\EHR\HETG\TheoreticalProgramming;
 use App\EHR\HETG\CutOffDate;
-use App\EHR\HETG\MedicalProgramming;
+use App\EHR\HETG\UnscheduledProgramming;
 use App\EHR\HETG\OperatingRoom;
 use App\EHR\HETG\UserOperatingRoom;
 use Illuminate\Http\Request;
@@ -99,8 +99,8 @@ class CalendarProgrammingController extends Controller
     $formated_date = new Carbon($date);
 
     //obtiene datos NO programables del año
-    $medicalProgrammings = MedicalProgramming::where('year', $formated_date->get('year'))->get();
-    // dd($medicalProgrammings);
+    $unscheduledProgrammings = UnscheduledProgramming::where('year', $formated_date->get('year'))->get();
+    // dd($unscheduledProgrammings);
 
     //se obtiene fechas de inicio y termino de cada isEventOverDiv
     foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
@@ -177,7 +177,7 @@ class CalendarProgrammingController extends Controller
     })->orderby('name', 'ASC')->get();
 
 
-    //dd($rrhh->first()->contracts->first()->medical_programmings->whereIn('activity_id',$ids_actividades)->WhereIn('specialty_id',$ids_specialities));
+    //dd($rrhh->first()->contracts->first()->unscheduled_programmings->whereIn('activity_id',$ids_actividades)->WhereIn('specialty_id',$ids_specialities));
     return view('ehr.hetg.management.programmer', compact('request', 'array', 'operatingRoomsTotal', 'operatingRooms', 'calendarProgrammings', 'contract_days', 'date', 'theoreticalProgrammings', 'rrhhs'));
   }
 
@@ -245,8 +245,8 @@ class CalendarProgrammingController extends Controller
 
       $cutoff_date = new Carbon($cutoffdate->date);
       //obtiene datos NO programables del año
-      $medicalProgrammings = MedicalProgramming::where('year', $cutoff_date->get('year'))->get();
-      // dd($medicalProgrammings);
+      $unscheduledProgrammings = UnscheduledProgramming::where('year', $cutoff_date->get('year'))->get();
+      // dd($unscheduledProgramming);
 
       //se obtiene fechas de inicio y termino de cada isEventOverDiv
       foreach ($theoreticalProgrammings as $key => $theoricalProgramming) {
@@ -371,13 +371,13 @@ class CalendarProgrammingController extends Controller
   //   $array = array();
   //   foreach ($rrhh as $key => $data) {
   //     foreach ($data->contracts->where('year',2020) as $key => $contract) {
-  //       foreach ($contract->medical_programmings->whereIn('activity_id',$ids_actividades)
-  //                                               ->whereIn('specialty_id',$ids_specialities) as $key => $medical_programming) {
-  //         //dd($medical_programming->assigned_hour);
-  //         $data->assigned_hour += $medical_programming->assigned_hour;
-  //         $data->color = $medical_programming->Specialty->color;
-  //         $data->specialty_id = $medical_programming->Specialty->id;
-  //         $array[$this->formatear_cadena($medical_programming->Specialty->specialty_name)][$data->rut] = $data;
+  //       foreach ($contract->unscheduled_programmings->whereIn('activity_id',$ids_actividades)
+  //                                               ->whereIn('specialty_id',$ids_specialities) as $key => $unscheduled_programming) {
+  //         //dd($unscheduled_programming->assigned_hour);
+  //         $data->assigned_hour += $unscheduled_programming->assigned_hour;
+  //         $data->color = $unscheduled_programming->Specialty->color;
+  //         $data->specialty_id = $unscheduled_programming->Specialty->id;
+  //         $array[$this->formatear_cadena($unscheduled_programming->Specialty->specialty_name)][$data->rut] = $data;
   //       }
   //     }
   //   }
@@ -551,13 +551,13 @@ class CalendarProgrammingController extends Controller
     $array = array();
     foreach ($rrhh as $key => $data) {
       foreach ($data->contracts->where('year', 2020) as $key => $contract) {
-        foreach ($contract->medical_programmings->whereIn('activity_id', $ids_actividades)
-          ->whereIn('specialty_id', $ids_specialities) as $key => $medical_programming) {
-          //dd($medical_programming->assigned_hour);
-          $data->assigned_hour += $medical_programming->assigned_hour;
-          $data->color = $medical_programming->Specialty->color;
-          $data->specialty_id = $medical_programming->Specialty->id;
-          $array[$this->formatear_cadena($medical_programming->Specialty->specialty_name)][$data->rut] = $data;
+        foreach ($contract->unscheduled_programmings->whereIn('activity_id', $ids_actividades)
+          ->whereIn('specialty_id', $ids_specialities) as $key => $unscheduled_programming) {
+          //dd($unscheduled_programming->assigned_hour);
+          $data->assigned_hour += $unscheduled_programming->assigned_hour;
+          $data->color = $unscheduled_programming->Specialty->color;
+          $data->specialty_id = $unscheduled_programming->Specialty->id;
+          $array[$this->formatear_cadena($unscheduled_programming->Specialty->specialty_name)][$data->rut] = $data;
         }
       }
     }
@@ -599,22 +599,22 @@ class CalendarProgrammingController extends Controller
     $array = array();
     foreach ($rrhhs as $key => $rrhh) {
       foreach ($rrhh->contracts->where('year', 2020) as $key => $contract) {
-        foreach ($contract->medical_programmings //->whereIn('activity_id',$ids_actividades)
+        foreach ($contract->unscheduled_programmings //->whereIn('activity_id',$ids_actividades)
           // ->whereIn('specialty_id',$ids_specialities)
-          as $key => $medical_programming) {
+          as $key => $unscheduled_programming) {
 
           //se obtienen horas segun pabellon y consulta medica
-          if (in_array($medical_programming->activity_id, $ids_actividades_pabellon)) {
-            $rrhh->assigned_hour_activities_pabellon += $medical_programming->assigned_hour;
+          if (in_array($unscheduled_programming->activity_id, $ids_actividades_pabellon)) {
+            $rrhh->assigned_hour_activities_pabellon += $unscheduled_programming->assigned_hour;
           }
-          if (in_array($medical_programming->activity_id, $ids_actividades_consulta_medica)) {
-            $rrhh->assigned_hour_activities_cons_medica += $medical_programming->assigned_hour;
+          if (in_array($unscheduled_programming->activity_id, $ids_actividades_consulta_medica)) {
+            $rrhh->assigned_hour_activities_cons_medica += $unscheduled_programming->assigned_hour;
           }
 
           //se obtienen otros subtotales
-          $rrhh->assigned_hour += $medical_programming->assigned_hour;
-          $rrhh->color = $medical_programming->Specialty->color;
-          $rrhh->specialty_id = $medical_programming->Specialty->id;
+          $rrhh->assigned_hour += $unscheduled_programming->assigned_hour;
+          $rrhh->color = $unscheduled_programming->Specialty->color;
+          $rrhh->specialty_id = $unscheduled_programming->Specialty->id;
 
           //obtiene info sumatoria de horas por semana
           $array2 = array();
@@ -629,9 +629,9 @@ class CalendarProgrammingController extends Controller
 
 
           // según profesional, se obtiene objeto de rrhh, y su calendario programado
-          $array[$this->formatear_cadena($medical_programming->Specialty->specialty_name)][$rrhh->rut]['rrhh'] = $rrhh;
-          $array[$this->formatear_cadena($medical_programming->Specialty->specialty_name)][$rrhh->rut]['calendar_programming'] = $CalendarProgrammings->where('rut', $rrhh->rut);
-          $array[$this->formatear_cadena($medical_programming->Specialty->specialty_name)][$rrhh->rut]['array'] = $array2;
+          $array[$this->formatear_cadena($unscheduled_programming->Specialty->specialty_name)][$rrhh->rut]['rrhh'] = $rrhh;
+          $array[$this->formatear_cadena($unscheduled_programming->Specialty->specialty_name)][$rrhh->rut]['calendar_programming'] = $CalendarProgrammings->where('rut', $rrhh->rut);
+          $array[$this->formatear_cadena($unscheduled_programming->Specialty->specialty_name)][$rrhh->rut]['array'] = $array2;
         }
       }
     }

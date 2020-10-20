@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\EHR\HETG;
 
-use App\EHR\HETG\MedicalProgramming;
+use App\EHR\HETG\UnscheduledProgramming;
 use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\Contract;
 use App\EHR\HETG\Specialty;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\EHR\HETG\TheoreticalProgramming;
 
-class MedicalProgrammingController extends Controller
+class UnscheduledProgrammingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,8 +23,8 @@ class MedicalProgrammingController extends Controller
      */
     public function index()
     {
-        $programming = MedicalProgramming::All();
-        return view('ehr.hetg.medical_programming.index',compact('programming'));
+        $programming = UnscheduledProgramming::All();
+        return view('ehr.hetg.unscheduled_programming.index',compact('programming'));
     }
 
     /**
@@ -38,7 +38,7 @@ class MedicalProgrammingController extends Controller
       $contracts = Contract::all();
       $specialties = Specialty::orderBy('specialty_name','ASC')->get();
       $activities = Activity::orderBy('id','ASC')->get();
-      return view('ehr.hetg.medical_programming.create',compact('rrhh','contracts','specialties','activities'));
+      return view('ehr.hetg.unscheduled_programming.create',compact('rrhh','contracts','specialties','activities'));
     }
 
     /**
@@ -72,14 +72,14 @@ class MedicalProgrammingController extends Controller
       $cantidad_ingresada += $start->diffInMinutes($end)/60;
     }
     //obtiene horas no programables
-    $medical_programmings = MedicalProgramming::where('year',$request->year)
+    $unscheduled_programmings = UnscheduledProgramming::where('year',$request->year)
                                               ->where('rut',$request->rut)
                                               ->where('contract_id', $request->contract_id)
                                               ->where('specialty_id', $request->specialty_id)
                                               ->where('profession_id', $request->profession_id)
                                               ->get();
-    foreach ($medical_programmings as $key => $medical_programming) {
-       $cantidad_ingresada += $medical_programming->assigned_hour;
+    foreach ($unscheduled_programmings as $key => $unscheduled_programming) {
+       $cantidad_ingresada += $unscheduled_programming->assigned_hour;
     }
 
     $cantidad_adicional = $request->assigned_hour;
@@ -90,12 +90,12 @@ class MedicalProgrammingController extends Controller
     }
 
     // dd($request->All());
-      $medica_programming = new MedicalProgramming($request->All());
+      $medica_programming = new UnscheduledProgramming($request->All());
       //$medica_programming->user_id = Auth::id();
       $medica_programming->save();
 
       session()->flash('info', 'La programación ha sido creada.');
-      // return redirect()->route('ehr.hetg.medical_programming.index');
+      // return redirect()->route('ehr.hetg.unscheduled_programming.index');
       return redirect()->back();
     }
 
@@ -116,13 +116,13 @@ class MedicalProgrammingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(MedicalProgramming $medicalProgramming)
+    public function edit(UnscheduledProgramming $unscheduledProgramming)
     {
       $rrhh = Rrhh::orderBy('name','ASC')->get();
       $contracts = Contract::all();
       $specialties = Specialty::orderBy('specialty_name','ASC')->get();
       $activities = Activity::orderBy('id','ASC')->get();
-      return view('ehr.hetg.medical_programming.edit', compact('medicalProgramming','rrhh','contracts','specialties','activities'));
+      return view('ehr.hetg.unscheduled_programming.edit', compact('unscheduledProgramming','rrhh','contracts','specialties','activities'));
     }
 
     /**
@@ -132,14 +132,14 @@ class MedicalProgrammingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, MedicalProgramming $medicalProgramming)
+    public function update(Request $request, UnscheduledProgramming $unscheduledProgramming)
     {
-      $medicalProgramming->fill($request->all());
-      //$medicalProgramming->user_id = Auth::id();
-      $medicalProgramming->save();
+      $unscheduledProgramming->fill($request->all());
+      //$unscheduledProgramming->user_id = Auth::id();
+      $unscheduledProgramming->save();
 
       session()->flash('info', 'La programación ha sido editada.');
-      // return redirect()->route('ehr.hetg.medical_programming.index');
+      // return redirect()->route('ehr.hetg.unscheduled_programming.index');
       return redirect()->back();
     }
 
@@ -149,11 +149,11 @@ class MedicalProgrammingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(MedicalProgramming $medicalProgramming)
+    public function destroy(UnscheduledProgramming $unscheduledProgramming)
     {
-      $medicalProgramming->delete();
+      $unscheduledProgramming->delete();
       session()->flash('success', 'La programación ha sido eliminada');
-      // return redirect()->route('ehr.hetg.medical_programming.index');
+      // return redirect()->route('ehr.hetg.unscheduled_programming.index');
       return redirect()->back();
     }
 }

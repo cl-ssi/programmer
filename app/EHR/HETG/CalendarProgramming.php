@@ -24,8 +24,8 @@ class CalendarProgramming extends Model implements Auditable
         return $this->belongsTo('App\EHR\HETG\OperatingRoom');
     }
 
-    // public function medicalProgramming() {
-    //     return $this->belongsTo('App\EHR\HETG\MedicalProgramming');
+    // public function unscheduledProgramming() {
+    //     return $this->belongsTo('App\EHR\HETG\UnscheduledProgramming');
     // }
 
     public function rrhh()

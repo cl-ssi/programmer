@@ -65,7 +65,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::prefix('executed_activities')->as('executed_activities.')->group(function(){
             Route::get('/','EHR\HETG\ExecutedActivityController@index')->name('index');
         });
-        Route::resource('medical_programming','EHR\HETG\MedicalProgrammingController');
+        Route::resource('unscheduled_programming','EHR\HETG\UnscheduledProgrammingController');
 
 
         Route::match(['get', 'post'],'calendar_programming/saveMyEvent','EHR\HETG\CalendarProgrammingController@saveMyEvent')->name('calendar_programming.saveMyEvent');
