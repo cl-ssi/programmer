@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(HmSpecialtiesTableSeeder::class);
         $this->call(HmSpecialtyActivitiesTableSeeder::class);
         $this->call(HmProfessionsTableSeeder::class);
-        $this->call(HmProfessionActivitiesTableSeeder::class);
+        // $this->call(HmProfessionActivitiesTableSeeder::class);
         $this->call(HmOperatingRoomsTableSeeder::class);
         $this->call(HmContractsTableSeeder::class);
         // $this->call(HmUnscheduledProgrammingTableSeeder::class);
