@@ -34,12 +34,15 @@ class TheoreticalProgrammingController extends Controller
         //primer form
       if ($request->get('date')) {
         $date = $request->get('date');
-        $year = $request->get('year');
+        // $year = $request->get('year');
+        $year = date('Y', strtotime($date));
+        // dd($year);
         $rut = $request->get('rut');
       }
       elseif ($request->get('date2')) {
         $date = $request->get('date2');
-        $year = $request->get('year');
+        // $year = $request->get('year');
+        $year = date('Y', strtotime($date));
         $rut= $request->get('rut');
       }
       else{
@@ -82,25 +85,33 @@ class TheoreticalProgrammingController extends Controller
                     ->orderby('name','ASC')->get();
     }
 
+    //valida información
+    // dd($rrhhs->count());
+    if($rrhhs->count() == 0) {
+        session()->flash('warning', 'No es posible programar el año ' . $year . '. No existe información para programar.');
+        return redirect()->back();
+    }
+
     //información para días contrato
     $contracts = Contract::where('rut',$rut)->where('year',$year)->get();
 
     //obtiene contrato_id para obtener información
     $contract_id=null;
-    if ($request->get('contract_id') != null && $request->get('contract_id') != "--") {
-        foreach ($contracts as $key => $contract) {
-            if ($contract->id == $request->get('contract_id')) {
-                $contract_id = $request->get('contract_id');
-            }
-        }
-        if ($contract_id == null) {
-            $contract_id = $contracts->first()->id;
-        }
-    }else{
-        if ($contracts->count()>0) {
-            $contract_id = $contracts->first()->id;
-        }
-    }
+    // if ($request->get('contract_id') != null && $request->get('contract_id') != "--") {
+    //     foreach ($contracts as $key => $contract) {
+    //         if ($contract->id == $request->get('contract_id')) {
+    //             $contract_id = $request->get('contract_id');
+    //         }
+    //     }
+    //     if ($contract_id == null) {
+    //         $contract_id = $contracts->first()->id;
+    //     }
+    // }else{
+    //     if ($contracts->count()>0) {
+    //         $contract_id = $contracts->first()->id;
+    //     }
+    // }
+    $contract_id = $request->get('contract_id');
 
     //obtiene fechas límite
     $monday = Carbon::parse($date)->startOfWeek();
@@ -145,7 +156,7 @@ class TheoreticalProgrammingController extends Controller
                     $collection1->push($value);
                 }
                 $specialties = $collection1;
-                $request->merge(['specialty_id' => $collection1->first()->id]);
+                // $request->merge(['specialty_id' => $collection1->first()->id]);
             }else{
 
                 //si es admin, se devuelve todo, si no, se devuelve lo configurado
@@ -563,6 +574,7 @@ class TheoreticalProgrammingController extends Controller
                 }
                 //se inserta desde esta semana hacia adelante
                 else {
+                    // Storage::put('errores.txt',$year . " " . date('Y', strtotime($first_date)));
                     while (date('Y', strtotime($first_date)) == $year) {
                         $theoreticalProgramming = new TheoreticalProgramming();
                         $theoreticalProgramming->rut = $request->rut;

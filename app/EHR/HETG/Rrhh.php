@@ -53,8 +53,8 @@ class Rrhh extends Model implements Auditable
 
     public function getShortNameAttribute()
     {
-        $arr = explode(' ',trim($this->name));
-        return $arr[0]. " {$this->fathers_family}";
+        $arr = explode(" ",$this->name);
+        return $arr[0]. " " . "{$this->fathers_family}";
     }
 
     protected $primaryKey = 'rut';

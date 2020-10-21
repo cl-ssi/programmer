@@ -73,7 +73,7 @@ bottom: 5px;
   <input type="hidden" id="tipo" name="tipo" value="{{$request->tipo}}"/>
   <input type="hidden" id="date" name="date"/>
   <div class="row">
-    <fieldset class="form-group col">
+    {{-- <fieldset class="form-group col">
         <label for="for_unit_code">Año</label>
         <select name="year" id="for_year" class="form-control" required="" onchange="this.form.submit()">
           <option value="2020" {{ 2020 == $request->year ? 'selected' : '' }}>2020</option>
@@ -83,7 +83,16 @@ bottom: 5px;
           <option value="2024" {{ 2024 == $request->year ? 'selected' : '' }}>2024</option>
           <option value="2025" {{ 2025 == $request->year ? 'selected' : '' }}>2025</option>
         </select>
-    </fieldset>
+    </fieldset> --}}
+
+    {{-- {{dd($request->date)}} --}}
+    @if ($request->date2 != null)
+        <input type="hidden" id="for_year" name="year" value="{{date('Y', strtotime($request->date2))}}">
+    @else
+        <input type="hidden" id="for_year" name="year" value="{{ $request->date != null ? date('Y', strtotime($request->date)) : now()->year }}">
+    @endif
+
+
 
     <fieldset class="form-group col">
         <label for="for_rut">Especialista</label>
@@ -101,7 +110,7 @@ bottom: 5px;
         <select name="contract_id" id="for_contract_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
             <option value="">--</option>
             @foreach($contracts as $contract)
-              <option value="{{$contract->id}}" {{ $contract->id == $request->contract_id ? 'selected' : '' }}>{{$contract->law}}</option>
+              <option value="{{$contract->id}}" {{ $contract->id == $request->contract_id ? 'selected' : '' }}>{{$contract->law}} - {{$contract->weekly_hours}}hrs</option>
             @endforeach
         </select>
     </fieldset>
@@ -114,6 +123,7 @@ bottom: 5px;
                 <option>--</option>
               @foreach($specialties as $specialty)
                 <option value="{{$specialty->id}}" {{ $specialty->id == $request->specialty_id ? 'selected' : '' }}>{{$specialty->specialty_name}}</option>
+                {{-- <option value="{{$specialty->id}}" >{{$specialty->specialty_name}}</option> --}}
               @endforeach
             </select>
         </fieldset>
@@ -856,12 +866,21 @@ bottom: 5px;
 
       let activity_id = event.id.toString();
       var rut = {{$request->rut}};
-      var year = {{$request->year}};
+      // var year = {{$request->year}};
+      @if ($request->date2 != null)
+          var year = {{$request->date2}};
+      @else
+          @if ($request->date != null)
+              var year = {{date('Y', strtotime($request->date))}};
+          @else
+              var year = {{now()->year}};
+          @endif
+      @endif
       var contract_id = $("#for_contract_id"). val();
       var specialty_id = $("#for_specialty_id"). val();
       var profession_id = $("#for_profession_id"). val();
 
-      // console.log(rut,activity_id,contract_id,specialty_id,profession_id, start_date, end_date, year, tipo_ingreso, tipo_evento);
+      console.log(rut,activity_id,contract_id,specialty_id,profession_id, start_date, end_date, year, tipo_ingreso, tipo_evento);
 
       $.ajax({
           url: "{{ route('ehr.hetg.theoretical_programming.saveMyEvent') }}",
@@ -884,7 +903,16 @@ bottom: 5px;
       // console.log(start_date_start + " " + end_date_start);
       let activity_id = event.id.toString();
       var rut = {{$request->rut}};
-      var year = {{$request->year}};
+      // var year = {{$request->year}};
+      @if ($request->date2 != null)
+          var year = {{$request->date2}};
+      @else
+          @if ($request->date != null)
+              var year = {{date('Y', strtotime($request->date))}};
+          @else
+              var year = {{now()->year}};
+          @endif
+      @endif
       var contract_id = $("#for_contract_id"). val();
       var specialty_id = $("#for_specialty_id"). val();
       var profession_id = $("#for_profession_id"). val();
@@ -907,7 +935,16 @@ bottom: 5px;
 
         let activity_id = event.id.toString();
         var rut = {{$request->rut}};
-        var year = {{$request->year}};
+        // var year = {{$request->year}};
+        @if ($request->date2 != null)
+            var year = {{$request->date2}};
+        @else
+            @if ($request->date != null)
+                var year = {{date('Y', strtotime($request->date))}};
+            @else
+                var year = {{now()->year}};
+            @endif
+        @endif
         var contract_id = $("#for_contract_id"). val();
         var specialty_id = $("#for_specialty_id"). val();
         var profession_id = $("#for_profession_id"). val();
@@ -929,7 +966,16 @@ bottom: 5px;
 
         let activity_id = event.id.toString();
         var rut = {{$request->rut}};
-        var year = {{$request->year}};
+        // var year = {{$request->year}};
+        @if ($request->date2 != null)
+            var year = {{$request->date2}};
+        @else
+            @if ($request->date != null)
+                var year = {{date('Y', strtotime($request->date))}};
+            @else
+                var year = {{now()->year}};
+            @endif
+        @endif
         var contract_id = $("#for_contract_id"). val();
         var specialty_id = $("#for_specialty_id"). val();
         var profession_id = $("#for_profession_id"). val();
