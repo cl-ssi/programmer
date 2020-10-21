@@ -42,6 +42,7 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->unsignedInteger('rut')->nullable();
             $table->unsignedInteger('specialty_id')->nullable();
             $table->unsignedInteger('profession_id')->nullable();
+            $table->unsignedInteger('activity_id')->nullable();
             $table->unsignedInteger('operating_room_id')->nullable();
             $table->datetime('start_date');
             $table->datetime('end_date');
@@ -51,6 +52,7 @@ class CreateHmOperatingRoomsTable extends Migration
             $table->foreign('rut')->references('rut')->on('hm_rrhh')->onDelete('cascade');
             $table->foreign('specialty_id')->references('id')->on('hm_specialties')->onDelete('cascade');
             $table->foreign('profession_id')->references('id')->on('hm_professions')->onDelete('cascade');
+            $table->foreign('activity_id')->references('id')->on('hm_activities')->onDelete('cascade');
             $table->foreign('operating_room_id')->references('id')->on('hm_operating_rooms')->onDelete('cascade');
 
             $table->timestamps();

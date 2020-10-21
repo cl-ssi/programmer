@@ -15,7 +15,7 @@ class CalendarProgramming extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'rut', 'specialty_id', 'profession_id', 'operating_room_id', 'start_date', 'end_date'
+        'id', 'rut', 'specialty_id', 'profession_id', 'activity_id', 'operating_room_id', 'start_date', 'end_date'
         //, 'user_id'
     ];
 
