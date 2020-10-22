@@ -43,6 +43,11 @@ class CalendarProgramming extends Model implements Auditable
         return $this->belongsTo('App\EHR\HETG\Profession');
     }
 
+    public function activity()
+    {
+        return $this->belongsTo('App\EHR\HETG\Activity');
+    }
+
     public function user()
     {
         return $this->belongsTo('App\User');

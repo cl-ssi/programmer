@@ -703,7 +703,7 @@ bottom: 5px;
         // if (info.event.id) {
             var event = calendar.getEventById(info.event.id);
 
-            if(confirm("¿Desea eliminar la hora?")){
+            if(confirm(info.event.title + "\n" + formatDateWithHour(info.event.start) + " - " + formatDateWithHour(info.event.end) + "\n" + "\n" + "¿Desea eliminar la hora?")){
                 var inicio = info.event.start;
                 var termino = info.event.end;
                 var diff =(termino.getTime() - inicio.getTime()) / 1000;
