@@ -11,6 +11,7 @@ use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\Contract;
 use App\EHR\HETG\UnscheduledProgramming;
 use App\EHR\HETG\TheoreticalProgramming;
+use App\EHR\HETG\UserSpecialty;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -71,6 +72,7 @@ class TheoreticalProgrammingController extends Controller
     //             // })
     //             ->orderby('name','ASC')->get();
 
+    // dd(UserSpecialty::all()->first());
 
     //si es admin, se devuelve todo, si no, se devuelve lo configurado
     if (Auth::user()->hasPermissionTo('administrador')) {
@@ -84,6 +86,7 @@ class TheoreticalProgrammingController extends Controller
                     ->where('rut',Auth::user()->id)
                     ->orderby('name','ASC')->get();
     }
+    // dd($rrhhs);
 
     //valida información
     // dd($rrhhs->count());
@@ -231,7 +234,7 @@ class TheoreticalProgrammingController extends Controller
                     $collection1->push($value);
                 }
                 $professions = $collection1;
-                $request->merge(['profession_id' => $collection1->first()->id]);
+                // $request->merge(['profession_id' => $collection1->first()->id]);
             }else{
                 if (Auth::user()->hasPermissionTo('administrador')) {
                     $professions = Profession::orderBy('profession_name','ASC')->get();
@@ -533,7 +536,7 @@ class TheoreticalProgrammingController extends Controller
             $year = $request->year;
             $first_date = new Carbon($request->start_date);
             $last_date = new Carbon($request->end_date);
-            
+
             //registro permisos administrativos
             if ($request->tipo_evento != "teorico") {
                 $theoreticalProgramming = new TheoreticalProgramming();
