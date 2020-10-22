@@ -88,7 +88,7 @@ class TheoreticalProgrammingController extends Controller
     //valida información
     // dd($rrhhs->count());
     if($rrhhs->count() == 0) {
-        session()->flash('warning', 'No es posible programar el año ' . $year . '. No existe información para programar.');
+        session()->flash('danger', 'No es posible programar el año ' . $year . '. No existe información para programar.');
         return redirect()->back();
     }
 

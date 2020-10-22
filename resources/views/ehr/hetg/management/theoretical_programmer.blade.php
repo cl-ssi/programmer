@@ -108,7 +108,7 @@ bottom: 5px;
         <label for="for_contract_id">Contrato</label>
         {{-- <select name="contract_id" id="for_contract_id" class="form-control" required="" onchange="this.form.submit()"> --}}
         <select name="contract_id" id="for_contract_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5" onchange="this.form.submit()">
-            <option value="">--</option>
+            {{-- <option >--</option> --}}
             @foreach($contracts as $contract)
               <option value="{{$contract->id}}" {{ $contract->id == $request->contract_id ? 'selected' : '' }}>{{$contract->law}} - {{$contract->weekly_hours}}hrs</option>
             @endforeach
