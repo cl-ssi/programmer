@@ -867,8 +867,9 @@ bottom: 5px;
       let activity_id = event.id.toString();
       var rut = {{$request->rut}};
       // var year = {{$request->year}};
+
       @if ($request->date2 != null)
-          var year = {{$request->date2}};
+          var year = {{date('Y', strtotime($request->date2))}};
       @else
           @if ($request->date != null)
               var year = {{date('Y', strtotime($request->date))}};
@@ -905,7 +906,7 @@ bottom: 5px;
       var rut = {{$request->rut}};
       // var year = {{$request->year}};
       @if ($request->date2 != null)
-          var year = {{$request->date2}};
+          var year = {{date('Y', strtotime($request->date2))}};
       @else
           @if ($request->date != null)
               var year = {{date('Y', strtotime($request->date))}};
@@ -937,7 +938,7 @@ bottom: 5px;
         var rut = {{$request->rut}};
         // var year = {{$request->year}};
         @if ($request->date2 != null)
-            var year = {{$request->date2}};
+            var year = {{date('Y', strtotime($request->date2))}};
         @else
             @if ($request->date != null)
                 var year = {{date('Y', strtotime($request->date))}};
@@ -968,7 +969,7 @@ bottom: 5px;
         var rut = {{$request->rut}};
         // var year = {{$request->year}};
         @if ($request->date2 != null)
-            var year = {{$request->date2}};
+            var year = {{date('Y', strtotime($request->date2))}};
         @else
             @if ($request->date != null)
                 var year = {{date('Y', strtotime($request->date))}};

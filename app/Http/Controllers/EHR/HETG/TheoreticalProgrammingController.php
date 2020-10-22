@@ -88,7 +88,7 @@ class TheoreticalProgrammingController extends Controller
     //valida información
     // dd($rrhhs->count());
     if($rrhhs->count() == 0) {
-        session()->flash('danger', 'No es posible programar el año ' . $year . '. No existe información para programar.');
+        session()->flash('danger', 'No es posible programar semana seleccionada. No existe información para programar.');
         return redirect()->back();
     }
 
@@ -533,7 +533,7 @@ class TheoreticalProgrammingController extends Controller
             $year = $request->year;
             $first_date = new Carbon($request->start_date);
             $last_date = new Carbon($request->end_date);
-
+            
             //registro permisos administrativos
             if ($request->tipo_evento != "teorico") {
                 $theoreticalProgramming = new TheoreticalProgramming();
