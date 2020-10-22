@@ -79,11 +79,16 @@
 
 </form>
 
-@include('partials.audit', ['audits' => $specialty->audits])
+@canany(['administrador'])
+    <br /><hr />
+    <div style="height: 300px; overflow-y: scroll;">
+        @include('partials.audit', ['audits' => $specialty->audits])
 
-@foreach ($specialty->activities as $key => $activity)
-    @include('partials.audit_loop', ['audits' => $activity->audits])
-@endforeach
+        @foreach ($specialty->activities as $key => $activity)
+            @include('partials.audit_loop', ['audits' => $activity->audits])
+        @endforeach
+    </div>
+@endcanany
 
 @endsection
 

@@ -46,7 +46,12 @@
 
 </form>
 
-@include('partials.audit', ['audits' => $operatingRoom->audits] )
+@canany(['administrador'])
+    <br /><hr />
+    <div style="height: 300px; overflow-y: scroll;">
+        @include('partials.audit', ['audits' => $operatingRoom->audits] )
+    </div>
+@endcanany
 
 @endsection
 

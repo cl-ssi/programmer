@@ -27,7 +27,12 @@
 
 </form>
 
-@include('partials.audit', ['audits' => $cutoffdate->audits] )
+@canany(['administrador'])
+    <br /><hr />
+    <div style="height: 300px; overflow-y: scroll;">
+        @include('partials.audit', ['audits' => $cutoffdate->audits] )
+    </div>
+@endcanany
 
 @endsection
 
