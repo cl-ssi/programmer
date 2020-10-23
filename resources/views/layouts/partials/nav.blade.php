@@ -63,17 +63,17 @@
                         @canany(['programador'])
                         <li class="navbar-nav dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas
+                                <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Funcionarios
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 
                                 <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.index') }}">
-                                    <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas de Pabellón
+                                    <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Pabellones
                                 </a>
 
-                                <!--  <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.indexbox') }}">
-                                    <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Horas de Box
-                                </a> -->
+                                <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.indexbox') }}">
+                                    <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Box's
+                                </a>
                             </div>
 
                         </li>

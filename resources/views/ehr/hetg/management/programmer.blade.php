@@ -202,6 +202,39 @@ bottom: 5px;
 
   </div>
 
+    @canany(['administrador'])
+        <br /><hr />
+        <div style="height: 300px; overflow-y: scroll;">
+            <h4 class="mt-3">Historial de cambios</h4>
+
+            {{-- programaciones --}}
+            @foreach ($calendarProgrammings as $key => $calendarProgramming)
+                @if ($calendarProgramming->specialty_id!=null)
+                    <table class="table table-sm small text-muted mt-3">
+                        <thead><tr class="table-primary"><th>{{$calendarProgramming->specialty->specialty_name}} - {{$calendarProgramming->rrhh->getShortNameAttribute()}}</th></tr></thead>
+                    </table>
+                @else
+                    <table class="table table-sm small text-muted mt-3">
+                        <thead><tr class="table-primary"><th>{{$calendarProgramming->profession->profession_name}} - {{$calendarProgramming->rrhh->getShortNameAttribute()}}</th></tr></thead>
+                    </table>
+                @endif
+
+                @include('partials.audit_loop', ['audits' => $calendarProgramming->audits] )
+            @endforeach
+
+            {{-- programaciones eliminados --}}
+            @foreach ($calendarProgrammingsDeleted as $key => $calendarProgrammingDeleted)
+                @if ($calendarProgrammingDeleted->activity)
+                    <table class="table table-sm small text-muted mt-3">
+                        <thead><tr class="table-danger"><th>{{$calendarProgrammingDeleted->activity->activity_name}} - {{$calendarProgramming->rrhh->getShortNameAttribute()}}</th></tr></thead>
+                    </table>
+                @endif
+                @include('partials.audit_loop', ['audits' => $calendarProgrammingDeleted->audits] )
+            @endforeach
+
+        </div>
+    @endcanany
+
     <div id="page-loader" style="display: none">
       <span class="preloader-interior"></span>
     </div>

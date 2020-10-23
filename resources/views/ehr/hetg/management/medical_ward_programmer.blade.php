@@ -138,8 +138,37 @@ bottom: 5px;
 
   </div>
 
+    @canany(['administrador'])
+      <br /><hr />
+      <div style="height: 300px; overflow-y: scroll;">
+          <h4 class="mt-3">Historial de cambios</h4>
+
+          {{-- programaciones --}}
+          @foreach ($operatingRoomProgrammings as $key => $operatingRoomProgramming)
+              @if ($operatingRoomProgramming->specialty_id!=null)
+                  <table class="table table-sm small text-muted mt-3">
+                      <thead><tr class="table-primary"><th>{{$operatingRoomProgramming->specialty->specialty_name}}</th></tr></thead>
+                  </table>
+              @else
+                  <table class="table table-sm small text-muted mt-3">
+                      <thead><tr class="table-primary"><th>{{$operatingRoomProgramming->profession->profession_name}}</th></tr></thead>
+                  </table>
+              @endif
+
+              @include('partials.audit_loop', ['audits' => $operatingRoomProgramming->audits] )
+          @endforeach
+
+      </div>
+    @endcanany
+
     <div id="page-loader" style="display: none">
       <span class="preloader-interior"></span>
+    </div>
+
+    <div id="dialog-confirm" title="Mensaje del sistema">
+      <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+          Debe definir si la modificación se debe realizar solo esta semana o todas las semanas que quedan.
+      </p>
     </div>
 
   @endsection
@@ -161,6 +190,9 @@ bottom: 5px;
   <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 
   {{-- <script src='{{asset('js/jquery-ui.min.js')}}'></script> --}}
+
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
   <style>
   #external-events {
@@ -254,11 +286,34 @@ bottom: 5px;
 
         //se setea evento de 60 mins
         info.event.setEnd(add_minutes(fecha_inicio,60));
-        if (confirm('¿Desea insertar solo en esta semana?')) {
-            saveMyData(info.event, 1);
-        } else {
-            saveMyData(info.event, 2);
-        }
+        // if (confirm('¿Desea insertar solo en esta semana?')) {
+        //     saveMyData(info.event, 1);
+        // } else {
+        //     saveMyData(info.event, 2);
+        // }
+
+        $(function() {
+            $( "#dialog-confirm" ).dialog({
+              resizable: false,
+              height: "auto",
+              width: 400,
+              modal: true,
+              buttons: {
+                "Esta semana": function() {
+                    saveMyData(info.event, 1);
+                    $(this).dialog('close');
+                },
+                "Todas las semanas": function() {
+                  saveMyData(info.event, 2);
+                  $(this).dialog('close');
+                }
+            },
+            close: function(event, ui){
+
+            }
+
+            });
+        });
 
       },
 
@@ -274,11 +329,35 @@ bottom: 5px;
 
       eventDrop: function(info) {
 
-        if (confirm('¿Desea modificar solo este evento?')) {
-            updateMyData(info.event, 1);
-        } else {
-            updateMyData(info.event, 2);
-        }
+        // if (confirm('¿Desea modificar solo este evento?')) {
+        //     updateMyData(info.event, 1);
+        // } else {
+        //     updateMyData(info.event, 2);
+        // }
+
+        $(function() {
+            $( "#dialog-confirm" ).dialog({
+              resizable: false,
+              height: "auto",
+              width: 400,
+              modal: true,
+              buttons: {
+                "Esta semana": function() {
+                    updateMyData(info.event, 1);
+                    $(this).dialog('close');
+                },
+                "Todas las semanas": function() {
+                  updateMyData(info.event, 2);
+                  $(this).dialog('close');
+                }
+            },
+            close: function(event, ui){
+
+            }
+
+            });
+        });
+
       },
 
       eventDragStop: function(info) {
@@ -301,20 +380,45 @@ bottom: 5px;
         // if (info.event.id) {
             var event = calendar.getEventById(info.event.id);
 
-            if(confirm("¿Desea eliminar la hora?")){
+            if(confirm(info.event.title + "\n" + formatDateWithHour(info.event.start) + " - " + formatDateWithHour(info.event.end) + "\n" + "\n" + "¿Desea eliminar la hora?")){
                 var inicio = info.event.start;
                 var termino = info.event.end;
                 var diff =(termino.getTime() - inicio.getTime()) / 1000;
                 diff /= 60;
                 diff_ = diff/60;
 
-                if (confirm('¿Desea eliminar solo este evento?')) {
-                    info.event.remove();
-                    deleteMyData(info.event, 1);
-                } else {
-                    info.event.remove();
-                    deleteMyData(info.event, 2);
-                }
+                // if (confirm('¿Desea eliminar solo este evento?')) {
+                //     info.event.remove();
+                //     deleteMyData(info.event, 1);
+                // } else {
+                //     info.event.remove();
+                //     deleteMyData(info.event, 2);
+                // }
+
+                $(function() {
+                    $( "#dialog-confirm" ).dialog({
+                      resizable: false,
+                      height: "auto",
+                      width: 400,
+                      modal: true,
+                      buttons: {
+                        "Esta semana": function() {
+                            info.event.remove();
+                            deleteMyData(info.event, 1);
+                            $(this).dialog('close');
+                        },
+                        "Todas las semanas": function() {
+                            info.event.remove();
+                            deleteMyData(info.event, 2);
+                            $(this).dialog('close');
+                        }
+                    },
+                    close: function(event, ui){
+
+                    }
+
+                    });
+                });
             }
         // }
       },
@@ -340,11 +444,35 @@ bottom: 5px;
         diff /= 60;
         diff = (diff/60) - diff_;
 
-        if (confirm('¿Desea modificar solo este evento?')) {
-            updateMyData(info.event, 1);
-        } else {
-            updateMyData(info.event, 2);
-        }
+        // if (confirm('¿Desea modificar solo este evento?')) {
+        //     updateMyData(info.event, 1);
+        // } else {
+        //     updateMyData(info.event, 2);
+        // }
+
+        $(function() {
+            $( "#dialog-confirm" ).dialog({
+              resizable: false,
+              height: "auto",
+              width: 400,
+              modal: true,
+              buttons: {
+                "Esta semana": function() {
+                    updateMyData(info.event, 1);
+                    $(this).dialog('close');
+                },
+                "Todas las semanas": function() {
+                    updateMyData(info.event, 2);
+                    $(this).dialog('close');
+                }
+            },
+            close: function(event, ui){
+
+            }
+
+            });
+        });
+
         console.log(info.event);
       }
     });

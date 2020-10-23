@@ -151,12 +151,30 @@ class CalendarProgrammingController extends Controller
     //obtiene horas programadas de la semana
     $monday = Carbon::parse($date)->startOfWeek();
     $sunday = Carbon::parse($date)->endOfWeek();
-    $calendarProgrammings = CalendarProgramming::whereBetween('start_date', [$monday, $sunday])->whereNotNull('operating_room_id')
-      ->when($rut != 0, function ($query) use ($rut) {
-        return $query->where('rut', $rut);
-      })->get();
+    $calendarProgrammings = CalendarProgramming::whereBetween('start_date', [$monday, $sunday])
+                                               ->whereNotNull('operating_room_id')
+                                               ->when($rut != 0, function ($query) use ($rut) {
+                                                  return $query->where('rut', $rut);
+                                                })
+                                                ->get();
 
-    foreach ($calendarProgrammings as $key => $calendarProgramming) {
+    foreach ($calendarProgrammings
+    as $key => $calendarProgramming) {
+      $start  = new Carbon($calendarProgramming->start_date);
+      $end    = new Carbon($calendarProgramming->end_date);
+      $calendarProgramming->duration_calendar_programming = $start->diffInMinutes($end) / 60;
+    }
+
+    //se obtienen elementos eliminados para auditoria
+    $calendarProgrammingsDeleted = CalendarProgramming::whereBetween('start_date', [$monday, $sunday])
+                                               ->whereNotNull('operating_room_id')
+                                               ->when($rut != 0, function ($query) use ($rut) {
+                                                  return $query->where('rut', $rut);
+                                                })
+                                                ->onlyTrashed()
+                                                ->get();
+
+    foreach ($calendarProgrammingsDeleted as $key => $calendarProgramming) {
       $start  = new Carbon($calendarProgramming->start_date);
       $end    = new Carbon($calendarProgramming->end_date);
       $calendarProgramming->duration_calendar_programming = $start->diffInMinutes($end) / 60;
@@ -183,7 +201,7 @@ class CalendarProgrammingController extends Controller
                                                         // dd($theoreticalProgrammings);
 
     //dd($rrhh->first()->contracts->first()->unscheduled_programmings->whereIn('activity_id',$ids_actividades)->WhereIn('specialty_id',$ids_specialities));
-    return view('ehr.hetg.management.programmer', compact('request', 'array', 'operatingRoomsTotal', 'operatingRooms', 'calendarProgrammings',
+    return view('ehr.hetg.management.programmer', compact('request', 'array', 'operatingRoomsTotal', 'operatingRooms', 'calendarProgrammings','calendarProgrammingsDeleted',
                                                           'contract_days', 'date', 'theoreticalProgrammings', 'rrhhs', 'OperatingRoomProgrammings'));
   }
 
@@ -234,10 +252,10 @@ class CalendarProgrammingController extends Controller
       //obtiene bolsas de horas (TEÓRICAS) según fecha de corte
       $cutoffdate = CutOffDate::orderBy('date', 'desc')->first();
 
-      if ($cutoffdate == null) {
-        session()->flash('danger', 'Para acceder al programador de horas, debe existir una fecha de corte.');
-        return redirect()->back();
-      }
+      // if ($cutoffdate == null) {
+      //   session()->flash('danger', 'Para acceder al programador de funcionarios, debe existir una fecha de corte.');
+      //   return redirect()->back();
+      // }
 
       $monday = Carbon::parse($cutoffdate->date)->startOfWeek();
       $sunday = Carbon::parse($cutoffdate->date)->endOfWeek();
