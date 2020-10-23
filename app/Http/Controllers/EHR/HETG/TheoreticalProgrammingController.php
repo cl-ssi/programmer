@@ -279,6 +279,7 @@ class TheoreticalProgrammingController extends Controller
         $OperatingRoomProgrammings = OperatingRoomProgramming::where('profession_id',$var)
                                                             ->whereBetween('start_date',[$monday,$sunday])
                                                             ->get();
+                                                            // dd($OperatingRoomProgrammings);
     }
 
     //obtiene horas teóricas

@@ -107,14 +107,24 @@ bottom: 5px;
 
     <div id='external-events'>
       <div id='external-events-list'>
-
+          <small>Especialidades</small><hr />
           @foreach ($specialties as $key => $specialty)
               <div class='fc-event' style="background-color: #{{$specialty->color}};" data-color='#{{$specialty->color}}'
                     data-event='{"title":"{{$specialty->specialty_name}}",
                                  "id":"{{$specialty->id}}",
-                                 "description":"{{$specialty->specialty_name}}",
+                                 "description":"1",
                                  "color":"#{{$specialty->color}}"}'>
                   <small>{{$specialty->specialty_name}}</span></small>
+              </div>
+          @endforeach
+          <small>Profesiones</small><hr />
+          @foreach ($professions as $key => $profession)
+              <div class='fc-event' style="background-color: #{{$profession->color}};" data-color='#{{$profession->color}}'
+                    data-event='{"title":"{{$profession->profession_name}}",
+                                 "id":"{{$profession->id}}",
+                                 "description":"2",
+                                 "color":"#{{$profession->color}}"}'>
+                  <small>{{$profession->profession_name}}</span></small>
               </div>
           @endforeach
 
@@ -218,10 +228,18 @@ bottom: 5px;
 
       events: [
           @foreach ($operatingRoomProgrammings as $key => $operatingRoomProgramming)
-            { id: '{{$operatingRoomProgramming->specialty_id}}', title: '{{$operatingRoomProgramming->specialty->specialty_name}}',
-              start: '{{$operatingRoomProgramming->start_date}}', end: '{{$operatingRoomProgramming->end_date}}',
-              description: 'teoricos', color:'#{{$operatingRoomProgramming->specialty->color}}'
-            },
+            @if($operatingRoomProgramming->specialty_id != null)
+                { id: '{{$operatingRoomProgramming->specialty_id}}', title: '{{$operatingRoomProgramming->specialty->specialty_name}}',
+                  start: '{{$operatingRoomProgramming->start_date}}', end: '{{$operatingRoomProgramming->end_date}}',
+                  description: '1', color:'#{{$operatingRoomProgramming->specialty->color}}'
+                },
+            @else
+                { id: '{{$operatingRoomProgramming->profession_id}}', title: '{{$operatingRoomProgramming->profession->profession_name}}',
+                  start: '{{$operatingRoomProgramming->start_date}}', end: '{{$operatingRoomProgramming->end_date}}',
+                  description: '2', color:'#{{$operatingRoomProgramming->profession->color}}'
+                },
+            @endif
+
           @endforeach
       ],
 
@@ -338,15 +356,24 @@ bottom: 5px;
       let end_date = formatDateWithHour(event.end);
 
       let operating_room_id = {{$request->operating_room}};
-      let specialty_id = event.id.toString();
       var year = {{$request->year}};
+
+      var tipo_evento = event.extendedProps.description;
+      var specialty_id;
+      if (tipo_evento == 1) {
+          specialty_id = event.id.toString();
+      }
+      var profession_id;
+      if (tipo_evento == 2) {
+          profession_id = event.id.toString();
+      }
 
       // alert(operating_room_id + ' ' + specialty_id+ ' ' +start_date+ ' ' + end_date+ ' ' + year+ ' ' + tipo_ingreso);
 
       $.ajax({
           url: "{{ route('ehr.hetg.operating_room_programming.saveMyEvent') }}",
           type: 'post',
-          data:{operating_room_id:operating_room_id, specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo_ingreso:tipo_ingreso},
+          data:{operating_room_id:operating_room_id, specialty_id:specialty_id, profession_id:profession_id, start_date:start_date, end_date:end_date, year:year, tipo_ingreso:tipo_ingreso},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -362,13 +389,22 @@ bottom: 5px;
 
       // console.log(start_date_start + " " + end_date_start);
       let operating_room_id = {{$request->operating_room}};
-      let specialty_id = event.id.toString();
       var year = {{$request->year}};
+
+      var tipo_evento = event.extendedProps.description;
+      var specialty_id;
+      if (tipo_evento == 1) {
+          specialty_id = event.id.toString();
+      }
+      var profession_id;
+      if (tipo_evento == 2) {
+          profession_id = event.id.toString();
+      }
 
       $.ajax({
           url: "{{ route('ehr.hetg.operating_room_programming.updateMyEvent') }}",
           type: 'post',
-          data:{operating_room_id:operating_room_id, specialty_id:specialty_id,start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date, year:year, tipo:tipo},
+          data:{operating_room_id:operating_room_id, specialty_id:specialty_id, profession_id:profession_id, start_date_start:start_date_start, start_date:start_date,end_date_start:end_date_start, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -380,13 +416,22 @@ bottom: 5px;
         let end_date = formatDateWithHour(event.end);
 
         let operating_room_id = {{$request->operating_room}};
-        let specialty_id = event.id.toString();
         var year = {{$request->year}};
+
+        var tipo_evento = event.extendedProps.description;
+        var specialty_id;
+        if (tipo_evento == 1) {
+            specialty_id = event.id.toString();
+        }
+        var profession_id;
+        if (tipo_evento == 2) {
+            profession_id = event.id.toString();
+        }
 
       $.ajax({
           url: "{{ route('ehr.hetg.operating_room_programming.deleteMyEvent') }}",
           type: 'post',
-          data:{operating_room_id:operating_room_id, specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
+          data:{operating_room_id:operating_room_id, specialty_id:specialty_id, profession_id:profession_id, start_date:start_date, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },
@@ -398,13 +443,22 @@ bottom: 5px;
         let end_date = formatDateWithHour(event.end);
 
         let operating_room_id = {{$request->operating_room}};
-        let specialty_id = event.id.toString();
         var year = {{$request->year}};
+
+        var tipo_evento = event.extendedProps.description;
+        var specialty_id;
+        if (tipo_evento == 1) {
+            specialty_id = event.id.toString();
+        }
+        var profession_id;
+        if (tipo_evento == 2) {
+            profession_id = event.id.toString();
+        }
 
       $.ajax({
           url: "{{ route('ehr.hetg.operating_room_programming.deleteMyEventForce') }}",
           type: 'post',
-          data:{operating_room_id:operating_room_id, specialty_id:specialty_id,start_date:start_date, end_date:end_date, year:year, tipo:tipo},
+          data:{operating_room_id:operating_room_id, specialty_id:specialty_id, profession_id:profession_id, start_date:start_date, end_date:end_date, year:year, tipo:tipo},
           headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}"
           },

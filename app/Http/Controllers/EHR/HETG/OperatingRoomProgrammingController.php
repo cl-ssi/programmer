@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\EHR\HETG\OperatingRoomProgramming;
 use App\EHR\HETG\OperatingRoom;
 use App\EHR\HETG\Specialty;
+use App\EHR\HETG\Profession;
 
 use App\User;
 use Carbon\Carbon;
@@ -63,12 +64,13 @@ class OperatingRoomProgrammingController extends Controller
 
       //se obtienen especialidades registradas en mantenedor
       $specialties = Specialty::whereIn('id',$users->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
-      // dd($specialties);
+      $professions = Profession::whereIn('id',$users->getProfessionsArray())->orderBy('profession_name','ASC')->get();
+      // dd($professions);
 
       $monday = Carbon::parse($date)->startOfWeek();
       $sunday = Carbon::parse($date)->endOfWeek();
 
-        return view('ehr.hetg.management.medical_ward_programmer', compact('request','operatingRooms','specialties','date','operatingRoomProgrammings'));
+        return view('ehr.hetg.management.medical_ward_programmer', compact('request','operatingRooms','specialties','professions','date','operatingRoomProgrammings'));
     }
 
     /**
@@ -146,6 +148,7 @@ class OperatingRoomProgrammingController extends Controller
             $operatingRoomProgramming = new OperatingRoomProgramming();
             $operatingRoomProgramming->operating_room_id = $request->operating_room_id;
             $operatingRoomProgramming->specialty_id = $request->specialty_id;
+            $operatingRoomProgramming->profession_id = $request->profession_id;
             $operatingRoomProgramming->start_date = $first_date;
             $operatingRoomProgramming->end_date = $last_date;
             $operatingRoomProgramming->year = $year;
@@ -158,6 +161,7 @@ class OperatingRoomProgrammingController extends Controller
                 $operatingRoomProgramming = new OperatingRoomProgramming();
                 $operatingRoomProgramming->operating_room_id = $request->operating_room_id;
                 $operatingRoomProgramming->specialty_id = $request->specialty_id;
+                $operatingRoomProgramming->profession_id = $request->profession_id;
                 $operatingRoomProgramming->start_date = $first_date;
                 $operatingRoomProgramming->end_date = $last_date;
                 $operatingRoomProgramming->year = $year;
@@ -185,6 +189,7 @@ class OperatingRoomProgrammingController extends Controller
           if ($request->tipo == 1) {
               $operatingRoomProgramming = OperatingRoomProgramming::where('operating_room_id',$request->operating_room_id)
                                                               ->where('specialty_id',$request->specialty_id)
+                                                              ->where('profession_id',$request->profession_id)
                                                               ->where('start_date',$start_date_start)
                                                               ->where('end_date',$end_date_start)->first();
               $operatingRoomProgramming->start_date = $start_date;
@@ -196,6 +201,7 @@ class OperatingRoomProgrammingController extends Controller
               while (date('Y', strtotime($start_date)) == $year) {
                   $operatingRoomProgramming = OperatingRoomProgramming::where('operating_room_id',$request->operating_room_id)
                                                                   ->where('specialty_id',$request->specialty_id)
+                                                                  ->where('profession_id',$request->profession_id)
                                                                   ->where('start_date',$start_date_start)
                                                                   ->where('end_date',$end_date_start)->first();
                   $operatingRoomProgramming->start_date = $start_date;
@@ -226,6 +232,7 @@ class OperatingRoomProgrammingController extends Controller
         if ($request->tipo == 1) {
             $operatingRoomProgramming = OperatingRoomProgramming::where('operating_room_id',$request->operating_room_id)
                                                             ->where('specialty_id',$request->specialty_id)
+                                                            ->where('profession_id',$request->profession_id)
                                                             ->where('start_date',$first_date)
                                                             ->where('end_date',$last_date);
             $operatingRoomProgramming->delete();
@@ -235,6 +242,7 @@ class OperatingRoomProgrammingController extends Controller
             while (date('Y', strtotime($first_date)) == $year) {
                 $operatingRoomProgramming = OperatingRoomProgramming::where('operating_room_id',$request->operating_room_id)
                                                                 ->where('specialty_id',$request->specialty_id)
+                                                                ->where('profession_id',$request->profession_id)
                                                                 ->where('start_date',$first_date)
                                                                 ->where('end_date',$last_date);
                 $operatingRoomProgramming->delete();
@@ -253,6 +261,7 @@ class OperatingRoomProgrammingController extends Controller
       while (date('Y', strtotime($first_date)) == $year) {
           $operatingRoomProgramming = OperatingRoomProgramming::where('operating_room_id',$request->operating_room_id)
                                                           ->where('specialty_id',$request->specialty_id)
+                                                          ->where('profession_id',$request->profession_id)
                                                           ->where('start_date',$first_date)
                                                           ->where('end_date',$last_date);
           $operatingRoomProgramming->forceDelete();

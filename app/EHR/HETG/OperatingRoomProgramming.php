@@ -23,6 +23,10 @@ class OperatingRoomProgramming extends Model implements Auditable
         return $this->belongsTo('App\EHR\HETG\Specialty');
     }
 
+    public function profession() {
+        return $this->belongsTo('App\EHR\HETG\Profession');
+    }
+
     public function operatingRoom() {
         return $this->belongsTo('App\EHR\HETG\OperatingRoom');
     }
