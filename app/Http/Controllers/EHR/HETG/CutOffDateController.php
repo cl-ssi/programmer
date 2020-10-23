@@ -131,48 +131,48 @@ class CutOffDateController extends Controller
         //programables - PROGRAMACION MÉDICA
         $array_programacion_medica = array();
         foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
-            $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['assigned_hour'] = 0;
-            $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = 0;
-            $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = 0;
         }
         foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
-            $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['assigned_hour'] += $theoricalProgramming->duration_theorical_programming;
-            $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = $theoricalProgramming->performance;//$theoricalProgramming->specialty->activities->where('id',$theoricalProgramming->activity->id)->first()->pivot->performance;
-            $array_programacion_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = $theoreticalProgrammings->whereNotNull('specialty_id')->where('activity_id',$theoricalProgramming->activity_id)->toArray();
         }
 
         //NO programables - PROGRAMACION MÉDICA
         foreach ($unscheduledProgrammings->whereNotNull('specialty_id') as $key => $unscheduledProgramming) {
-            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['assigned_hour'] = 0;
-            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['rdto_hour'] = 0;
-            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['unscheduledProgramming_id'] = 0;
         }
         foreach ($unscheduledProgrammings->whereNotNull('specialty_id') as $key => $unscheduledProgramming) {
-            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['assigned_hour'] += $unscheduledProgramming->assigned_hour;
-            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['rdto_hour'] = $unscheduledProgramming->hour_performance;//$unscheduledProgramming->specialty->activities->where('id',$unscheduledProgramming->activity->id)->first()->pivot->performance;
-            $array_programacion_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->specialty->id_specialty . ' - ' . $unscheduledProgramming->specialty->specialty_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['unscheduledProgramming_id'] = $unscheduledProgrammings->whereNotNull('specialty_id')->where('activity_id',$unscheduledProgramming->activity_id)->toArray();
         }
@@ -184,47 +184,47 @@ class CutOffDateController extends Controller
         //programables - PROGRAMACION NO MÉDICA
         $array_programacion_no_medica = array();
         foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
-            $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_no_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['assigned_hour'] = 0;
-            $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_no_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = 0;
-            $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_no_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = 0;
         }
         foreach ($theoreticalProgrammings->whereNotNull('profession_id') as $key => $theoricalProgramming) {
-            $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_no_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['assigned_hour'] += $theoricalProgramming->duration_theorical_programming;
-            $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_no_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['rdto_hour'] = $theoricalProgramming->performance;//$theoricalProgramming->profession->activities->where('id',$theoricalProgramming->activity->id)->first()->pivot->performance;
-            $array_programacion_no_medica[$theoricalProgramming->rut][$theoricalProgramming->contract->contract_id]
+            $array_programacion_no_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->profession->id_profession . ' - ' . $theoricalProgramming->profession->profession_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = $theoreticalProgrammings->whereNotNull('profession_id')->where('activity_id',$theoricalProgramming->activity_id)->toArray();
         }
         //NO programables - PROGRAMACION NO MÉDICA
         foreach ($unscheduledProgrammings->whereNotNull('profession_id') as $key => $unscheduledProgramming) {
-            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_no_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['assigned_hour'] = 0;
-            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_no_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['rdto_hour'] = 0;
-            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_no_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['unscheduledProgramming_id'] = 0;
         }
         foreach ($unscheduledProgrammings->whereNotNull('profession_id') as $key => $unscheduledProgramming) {
-            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_no_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['assigned_hour'] += $unscheduledProgramming->assigned_hour;
-            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_no_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['rdto_hour'] = $unscheduledProgramming->hour_performance;//$unscheduledProgramming->profession->activities->where('id',$unscheduledProgramming->activity->id)->first()->pivot->performance;
-            $array_programacion_no_medica[$unscheduledProgramming->rut][$unscheduledProgramming->contract->contract_id]
+            $array_programacion_no_medica[$unscheduledProgramming->rut . " - " . $unscheduledProgramming->rrhh->getShortNameAttribute()][$unscheduledProgramming->contract->contract_id]
                                       [$unscheduledProgramming->profession->id_profession . ' - ' . $unscheduledProgramming->profession->profession_name]
                                       [$unscheduledProgramming->activity->id_activity . ' - ' . $unscheduledProgramming->activity->activity_name]['unscheduledProgramming_id'] = $unscheduledProgrammings->whereNotNull('profession_id')->where('activity_id',$unscheduledProgramming->activity_id)->toArray();
         }

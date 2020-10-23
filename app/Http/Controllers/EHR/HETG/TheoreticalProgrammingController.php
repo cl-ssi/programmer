@@ -12,6 +12,7 @@ use App\EHR\HETG\Contract;
 use App\EHR\HETG\UnscheduledProgramming;
 use App\EHR\HETG\TheoreticalProgramming;
 use App\EHR\HETG\UserSpecialty;
+use App\EHR\HETG\UserProfession;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -72,13 +73,22 @@ class TheoreticalProgrammingController extends Controller
     //             // })
     //             ->orderby('name','ASC')->get();
 
-    // dd(UserSpecialty::all()->first());
+    // dd(UserSpecialty::select('user_id')->groupBy('user_id')->get()->toArray());
 
     //si es admin, se devuelve todo, si no, se devuelve lo configurado
     if (Auth::user()->hasPermissionTo('administrador')) {
         $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
                         return $query->where('year',$year);
-                    })->orderby('name','ASC')->get();
+                    })
+                    //if - se devuelven solo usuarios que tengan asignada especialidad
+                    ->when($request->get('tipo') == 1, function ($query) {
+                        $query->whereIn('rut',UserSpecialty::select('user_id')->groupBy('user_id')->get()->toArray());
+                    })
+                    //if - se devuelven solo usuarios que tengan asignada profesión
+                    ->when($request->get('tipo') == 2, function ($query) {
+                        $query->whereIn('rut',UserProfession::select('user_id')->groupBy('user_id')->get()->toArray());
+                    })
+                    ->orderby('name','ASC')->get();
     }else{
         $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
                         return $query->where('year',$year);

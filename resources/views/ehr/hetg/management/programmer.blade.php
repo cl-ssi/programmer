@@ -466,7 +466,6 @@ bottom: 5px;
 
     //######### desplazamiento de eventos
     eventDragStart: function(info) {
-
         // Elimina eventos
         var events = calendar.getEvents();
         events.forEach(function(element){
@@ -759,7 +758,6 @@ bottom: 5px;
 
     // al iniciar presionar en eventos externos carga theoretical programmer calendar
     $(".fc-event").mousedown(function(event) {
-
         // Elimina eventos
         var events = calendar.getEvents();
         events.forEach(function(element){
@@ -773,7 +771,7 @@ bottom: 5px;
         //eventos teóricos
         var rut = $(this).attr('data-id');
         @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
-          if({{$theoreticalProgramming->rut}} == rut){
+          if('{{$theoreticalProgramming->rut . "_" . $theoreticalProgramming->activity_id}}' == rut){
               var event={id:99999, title: 'teorico', rendering: 'background', //overlap: false,
                         start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
                 console.log(event);
