@@ -28,19 +28,19 @@ class UserController extends Controller
         $users = User::orderBy('name', 'asc')->get();
         // dd($users->first()->specialties);
 
-        if ($request) {
+        // if ($request) {
+        //
+        //     $query = trim($request->get('search'));
+        //
+        //     $users = User::where('name', 'LIKE', '%' . $query . '%')
+        //             ->orderBy('name', 'asc')
+        //             ->get();
+        //
+        //     return view('users.index', ['users' => $users, 'search' => $query]);
+        //
+        // }
 
-            $query = trim($request->get('search'));
-
-            $users = User::where('name', 'LIKE', '%' . $query . '%')
-                    ->orderBy('name', 'asc')
-                    ->get();
-
-            return view('users.index', ['users' => $users, 'search' => $query]);
-
-        }
-
-        return view('users.index', compact('users', 'request', 'query'));
+        return view('users.index', compact('users', 'request'));
     }
 
     /**

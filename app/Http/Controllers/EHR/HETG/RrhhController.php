@@ -17,7 +17,7 @@ class RrhhController extends Controller
      */
     public function index()
     {
-        $rrhh = Rrhh::All();
+        $rrhh = Rrhh::orderBy('name','ASC')->get();
         return view('ehr.hetg.rrhh.index', compact('rrhh'));
     }
 

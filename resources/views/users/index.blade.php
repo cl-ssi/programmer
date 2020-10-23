@@ -19,7 +19,7 @@
             </a>
         </div>
         @endcan
-        <div class="col-12 col-md-5 mb-3">
+        {{-- <div class="col-12 col-md-5 mb-3">
             <label for="" class="sr-only"></label>
             <input class="form-control" type="text" name="search" value="" placeholder="Nombre y/o apellido">
         </div>
@@ -27,20 +27,20 @@
         <div class="col-12 col-md-2 mb-3">
             <label for="" class="sr-only"></label>
             <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-search"></i> Buscar</button>
-        </div>
+        </div> --}}
     </div>
 
 </form>
 
 
 
-<h5>
+{{-- <h5>
         @if($search)
         <div class="alert alert-primary" role="alert">
             Los resultados para tu búsqueda "{{ $search }}" son:
         </div>
         @endif
-</h5>
+</h5> --}}
 
 <div class="table-responsive">
     <table class="table table-sm">
