@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\EHR\HETG;
 
 use App\EHR\HETG\Rrhh;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -38,11 +39,27 @@ class RrhhController extends Controller
      */
     public function store(Request $request)
     {
+      //se crea usuario si se solicita
+      if ($request->user_create) {
+          if (User::where('id',$request->rut)->count() == 0) {
+              $user = new User($request->All());
+              $user->id = $request->rut;
+              $user->name = $request->name . " " . $request->fathers_family . " " . $request->mothers_family;
+              $user->password = bcrypt($request->fathers_family);;
+              $user->save();
+              session()->flash('info', 'El recurso humano y el usuario han sido creados.');
+          }else{
+              session()->flash('info', 'El recurso humano ha sido creado. Ya existe el usuario para este RRHH.');
+          }
+      }
+      else{
+          session()->flash('info', 'El recurso humano ha sido creado.');
+      }
+
+      //se crea recurso humano
       $rrhh = new Rrhh($request->All());
-      //$rrhh->user_id = Auth::id();
       $rrhh->save();
 
-      session()->flash('info', 'El recurso humano ha sido creado.');
       return redirect()->route('ehr.hetg.rrhh.index');
     }
 
@@ -65,7 +82,8 @@ class RrhhController extends Controller
      */
     public function edit(Rrhh $rrhh)
     {
-        return view('ehr.hetg.rrhh.edit', compact('rrhh'));
+        $user = User::where('id',$rrhh->rut)->count();
+        return view('ehr.hetg.rrhh.edit', compact('rrhh','user'));
     }
 
     /**
@@ -77,11 +95,30 @@ class RrhhController extends Controller
      */
     public function update(Request $request, Rrhh $rrhh)
     {
+        //se crea usuario si se solicita
+        if ($request->user_edited) {
+            if (User::where('id',$request->rut)->count() == 0) {
+                $user = new User($request->All());
+                $user->id = $request->rut;
+                $user->name = $request->name . " " . $request->fathers_family . " " . $request->mothers_family;
+                $user->password = bcrypt($request->fathers_family);;
+                $user->save();
+                session()->flash('info', 'El recurso humano ha sido editado y el usuario ha sido creado.');
+            }else{
+                $user = User::where('id',$request->rut)->first();
+                $user->fill($request->all());
+                $user->name = $request->name . " " . $request->fathers_family . " " . $request->mothers_family;
+                $user->save();
+                session()->flash('info', 'El recurso humano y el usuario han sido editados.');
+            }
+        }else{
+            session()->flash('info', 'El recurso humano ha sido editado.');
+        }
+
+        //se crea rrhh
         $rrhh->fill($request->all());
-        //$rrhh->user_id = Auth::id();
         $rrhh->save();
 
-        session()->flash('info', 'El recurso humano ha sido editado.');
         return redirect()->route('ehr.hetg.rrhh.index');
     }
 
