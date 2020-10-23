@@ -197,6 +197,7 @@ bottom: 5px;
       eventLimit: true, // allow "more" link when too many events
       displayEventEnd: true,
       allDaySlot: false,
+      scrollTime: '08:00',
       firstDay: 1,
       defaultDate: '{{$date}}',
       locale: 'es', // the initial locale

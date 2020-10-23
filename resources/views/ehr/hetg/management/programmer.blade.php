@@ -772,10 +772,17 @@ bottom: 5px;
         var rut = $(this).attr('data-id');
         @foreach ($theoreticalProgrammings as $key => $theoreticalProgramming)
           if('{{$theoreticalProgramming->rut . "_" . $theoreticalProgramming->activity_id}}' == rut){
-              var event={id:99999, title: 'teorico', rendering: 'background', //overlap: false,
-                        start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
-                console.log(event);
-              calendar.addEvent(event);
+              @foreach ($OperatingRoomProgrammings as $key => $OperatingRoomProgramming)
+                @if(date('d', strtotime($OperatingRoomProgramming->start_date)) == date('d', strtotime($theoreticalProgramming->start_date)) &&
+                    $theoreticalProgramming->specialty_id == $OperatingRoomProgramming->specialty_id)
+                    var event={id:99999, title: 'teorico', rendering: 'background', //overlap: false,
+                               resourceId: '{{$OperatingRoomProgramming->operating_room_id}}',
+                               start: '{{$theoreticalProgramming->start_date}}', end: '{{$theoreticalProgramming->end_date}}'};
+                      console.log(event);
+                    calendar.addEvent(event);
+                @endif
+              @endforeach
+
           }
         @endforeach
 

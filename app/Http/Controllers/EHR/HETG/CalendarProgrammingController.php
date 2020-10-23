@@ -7,6 +7,7 @@ use App\EHR\HETG\Activity;
 use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\CalendarProgramming;
 use App\EHR\HETG\TheoreticalProgramming;
+use App\EHR\HETG\OperatingRoomProgramming;
 use App\EHR\HETG\CutOffDate;
 use App\EHR\HETG\UnscheduledProgramming;
 use App\EHR\HETG\OperatingRoom;
@@ -175,8 +176,15 @@ class CalendarProgrammingController extends Controller
       return $query; //->where('year',$year);
     })->orderby('name', 'ASC')->get();
 
+    //obtiene operating operation_rooms
+    $OperatingRoomProgrammings = OperatingRoomProgramming::whereBetween('start_date',[$monday,$sunday])
+                                                        ->get();
+                                                        // dd($OperatingRoomProgrammings);
+                                                        // dd($theoreticalProgrammings);
+
     //dd($rrhh->first()->contracts->first()->unscheduled_programmings->whereIn('activity_id',$ids_actividades)->WhereIn('specialty_id',$ids_specialities));
-    return view('ehr.hetg.management.programmer', compact('request', 'array', 'operatingRoomsTotal', 'operatingRooms', 'calendarProgrammings', 'contract_days', 'date', 'theoreticalProgrammings', 'rrhhs'));
+    return view('ehr.hetg.management.programmer', compact('request', 'array', 'operatingRoomsTotal', 'operatingRooms', 'calendarProgrammings',
+                                                          'contract_days', 'date', 'theoreticalProgrammings', 'rrhhs', 'OperatingRoomProgrammings'));
   }
 
   public function indexbox(Request $request)
