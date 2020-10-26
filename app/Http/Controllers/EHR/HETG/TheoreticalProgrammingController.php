@@ -158,12 +158,13 @@ class TheoreticalProgrammingController extends Controller
         if ($rut != null) {
             if ($TheoreticalProgramming!=null) {
                 $collection1 = Specialty::where('id',$TheoreticalProgramming->specialty_id)->get();
-                //si es admin, se devuelve todo, si no, se devuelve lo configurado
-                if (Auth::user()->hasPermissionTo('administrador')) {
-                    $collection2 = Specialty::where('id','!=',$TheoreticalProgramming->specialty_id)->orderBy('specialty_name','ASC')->get();
-                }else{
-                    $collection2 = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
-                }
+                // //si es admin, se devuelve todo, si no, se devuelve lo configurado
+                // if (Auth::user()->hasPermissionTo('administrador')) {
+                //     $collection2 = Specialty::where('id','!=',$TheoreticalProgramming->specialty_id)->orderBy('specialty_name','ASC')->get();
+                // }else{
+                //     $collection2 = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+                // }
+                $collection2 = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
 
                 foreach ($collection2 as $key => $value) {
                     $collection1->push($value);
@@ -172,22 +173,24 @@ class TheoreticalProgrammingController extends Controller
                 // $request->merge(['specialty_id' => $collection1->first()->id]);
             }else{
 
-                //si es admin, se devuelve todo, si no, se devuelve lo configurado
-                if (Auth::user()->hasPermissionTo('administrador')) {
-                    $specialties = Specialty::orderBy('specialty_name','ASC')->get();
-                }else{
-
-                    $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
-                }
+                // //si es admin, se devuelve todo, si no, se devuelve lo configurado
+                // if (Auth::user()->hasPermissionTo('administrador')) {
+                //     $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+                // }else{
+                //
+                //     $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+                // }
+                $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
 
             }
         }else{
-            //si es admin, se devuelve todo, si no, se devuelve lo configurado
-            if (Auth::user()->hasPermissionTo('administrador')) {
-                $specialties = Specialty::orderBy('specialty_name','ASC')->get();
-            }else{
-                $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
-            }
+            // //si es admin, se devuelve todo, si no, se devuelve lo configurado
+            // if (Auth::user()->hasPermissionTo('administrador')) {
+            //     $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+            // }else{
+            //     $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+            // }
+            $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
         }
 
         $var = $request->get('specialty_id');
@@ -234,11 +237,12 @@ class TheoreticalProgrammingController extends Controller
         if ($rut != null) {
             if ($TheoreticalProgramming!=null) {
                 $collection1 = Profession::where('id',$TheoreticalProgramming->profession_id)->get();
-                if (Auth::user()->hasPermissionTo('administrador')) {
-                    $collection2 = Profession::where('id','!=',$TheoreticalProgramming->profession_id)->orderBy('profession_name','ASC')->get();
-                }else{
-                    $collection2 = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
-                }
+                // if (Auth::user()->hasPermissionTo('administrador')) {
+                //     $collection2 = Profession::where('id','!=',$TheoreticalProgramming->profession_id)->orderBy('profession_name','ASC')->get();
+                // }else{
+                //     $collection2 = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
+                // }
+                $collection2 = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
 
                 foreach ($collection2 as $key => $value) {
                     $collection1->push($value);
@@ -246,18 +250,20 @@ class TheoreticalProgrammingController extends Controller
                 $professions = $collection1;
                 // $request->merge(['profession_id' => $collection1->first()->id]);
             }else{
-                if (Auth::user()->hasPermissionTo('administrador')) {
-                    $professions = Profession::orderBy('profession_name','ASC')->get();
-                }else{
-                    $professions = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
-                }
-            }
-        }else{
-            if (Auth::user()->hasPermissionTo('administrador')) {
-                $professions = Profession::orderBy('profession_name','ASC')->get();
-            }else{
+                // if (Auth::user()->hasPermissionTo('administrador')) {
+                //     $professions = Profession::orderBy('profession_name','ASC')->get();
+                // }else{
+                //     $professions = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
+                // }
                 $professions = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
             }
+        }else{
+            // if (Auth::user()->hasPermissionTo('administrador')) {
+            //     $professions = Profession::orderBy('profession_name','ASC')->get();
+            // }else{
+            //     $professions = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
+            // }
+            $professions = Profession::whereIn('id',Auth::user()->getProfessionsArray())->orderBy('profession_name','ASC')->get();
         }
 
         $var = $request->get('profession_id');
