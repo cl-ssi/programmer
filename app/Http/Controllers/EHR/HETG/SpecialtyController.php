@@ -18,9 +18,10 @@ class SpecialtyController extends Controller
      */
     public function index()
     {
-      $specialties = Specialty::whereHas('userSpecialties', function ($query)  {
-                                      return $query->where('user_id',Auth::id());
-                                  })->orderBy('specialty_name','ASC')->get();
+      // $specialties = Specialty::whereHas('userSpecialties', function ($query)  {
+      //                                 return $query->where('user_id',Auth::id());
+      //                             })->orderBy('specialty_name','ASC')->get();
+      $specialties = Specialty::orderBy('specialty_name','ASC')->get();
       return view('ehr.hetg.specialties.index', compact('specialties'));
     }
 

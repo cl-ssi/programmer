@@ -143,9 +143,7 @@ bottom: 5px;
           @foreach ($specialty as $key2 => $doc)
               <small>{{$key2}}</small>
               @foreach ($doc as $key3 => $activity)
-
                   @if($activity->specialty_id!=null)
-                      {{-- {{dd($activity->rut, $activity->activity_id)}} --}}
                       <div data-id="{{$activity->rut . "_" . $activity->activity_id}}" class='fc-event' style="background-color: #{{$activity->color}};" data-color='#{{$activity->color}}' data-event='{"title":"{{$activity->activity->activity_name}}",
                                                                                                                                    "color": "#{{$activity->color}}",
                                                                                                                                    "id":"{{$activity->rut . "_" . $activity->activity_id}}",
@@ -160,7 +158,6 @@ bottom: 5px;
                           <small>{{$activity->activity->activity_name}}: <span id="{{$activity->rut . "_" . $activity->activity_id}}"></span> ({{$activity->assigned_hour}})</small>
                       </div>
                   @endif
-
               @endforeach
           @endforeach
         @endforeach

@@ -158,13 +158,13 @@ class TheoreticalProgrammingController extends Controller
         if ($rut != null) {
             if ($TheoreticalProgramming!=null) {
                 $collection1 = Specialty::where('id',$TheoreticalProgramming->specialty_id)->get();
-                // //si es admin, se devuelve todo, si no, se devuelve lo configurado
-                // if (Auth::user()->hasPermissionTo('administrador')) {
-                //     $collection2 = Specialty::where('id','!=',$TheoreticalProgramming->specialty_id)->orderBy('specialty_name','ASC')->get();
-                // }else{
-                //     $collection2 = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
-                // }
-                $collection2 = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+                //si es admin, se devuelve todo, si no, se devuelve lo configurado
+                if (Auth::user()->hasPermissionTo('administrador')) {
+                    $collection2 = Specialty::where('id','!=',$TheoreticalProgramming->specialty_id)->orderBy('specialty_name','ASC')->get();
+                }else{
+                    $collection2 = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+                }
+                // $collection2 = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
 
                 foreach ($collection2 as $key => $value) {
                     $collection1->push($value);
@@ -173,24 +173,24 @@ class TheoreticalProgrammingController extends Controller
                 // $request->merge(['specialty_id' => $collection1->first()->id]);
             }else{
 
-                // //si es admin, se devuelve todo, si no, se devuelve lo configurado
-                // if (Auth::user()->hasPermissionTo('administrador')) {
-                //     $specialties = Specialty::orderBy('specialty_name','ASC')->get();
-                // }else{
-                //
-                //     $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
-                // }
-                $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+                //si es admin, se devuelve todo, si no, se devuelve lo configurado
+                if (Auth::user()->hasPermissionTo('administrador')) {
+                    $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+                }else{
+
+                    $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+                }
+                // $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
 
             }
         }else{
-            // //si es admin, se devuelve todo, si no, se devuelve lo configurado
-            // if (Auth::user()->hasPermissionTo('administrador')) {
-            //     $specialties = Specialty::orderBy('specialty_name','ASC')->get();
-            // }else{
-            //     $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
-            // }
-            $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+            //si es admin, se devuelve todo, si no, se devuelve lo configurado
+            if (Auth::user()->hasPermissionTo('administrador')) {
+                $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+            }else{
+                $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
+            }
+            // $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->orderBy('specialty_name','ASC')->get();
         }
 
         $var = $request->get('specialty_id');
