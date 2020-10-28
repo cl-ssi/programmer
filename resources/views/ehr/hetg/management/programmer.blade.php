@@ -223,7 +223,7 @@ bottom: 5px;
             @foreach ($calendarProgrammingsDeleted as $key => $calendarProgrammingDeleted)
                 @if ($calendarProgrammingDeleted->activity)
                     <table class="table table-sm small text-muted mt-3">
-                        <thead><tr class="table-danger"><th>{{$calendarProgrammingDeleted->activity->activity_name}} - {{$calendarProgramming->rrhh->getShortNameAttribute()}}</th></tr></thead>
+                        <thead><tr class="table-danger"><th>{{$calendarProgrammingDeleted->activity->activity_name}} - {{$calendarProgrammingDeleted->rrhh->getShortNameAttribute()}}</th></tr></thead>
                     </table>
                 @endif
                 @include('partials.audit_loop', ['audits' => $calendarProgrammingDeleted->audits] )

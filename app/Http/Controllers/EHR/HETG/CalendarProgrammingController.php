@@ -93,6 +93,9 @@ class CalendarProgrammingController extends Controller
       ->whereHas('activity', function ($query) {
         return $query->where('mother_activity_id', 1); //actividad de pabellón
       })
+      ->whereHas('specialty', function ($query) {
+        return $query->where('id', Auth::user()->getSpecialtiesArray()); //actividad de pabellón
+      })
       ->get();
 
       // dd($theoreticalProgrammings);
@@ -156,7 +159,14 @@ class CalendarProgrammingController extends Controller
                                                ->when($rut != 0, function ($query) use ($rut) {
                                                   return $query->where('rut', $rut);
                                                 })
+                                                ->whereHas('specialty', function ($query) {
+                                                  return $query->where('id', Auth::user()->getSpecialtiesArray()); //actividad de pabellón
+                                                })
                                                 ->get();
+                                                // dd($calendarProgrammings);
+    // if ($calendarProgrammings == null) {
+    //     $calendarProgrammings = array();
+    // }
 
     foreach ($calendarProgrammings
     as $key => $calendarProgramming) {
@@ -170,6 +180,9 @@ class CalendarProgrammingController extends Controller
                                                ->whereNotNull('operating_room_id')
                                                ->when($rut != 0, function ($query) use ($rut) {
                                                   return $query->where('rut', $rut);
+                                                })
+                                                ->whereHas('specialty', function ($query) {
+                                                  return $query->where('id', Auth::user()->getSpecialtiesArray()); //actividad de pabellón
                                                 })
                                                 ->onlyTrashed()
                                                 ->get();
