@@ -48,11 +48,15 @@
     <input type="hidden" id="date" name="date" value="{{$date}}"/>
     <input type="hidden" id="tipo" name="tipo" value="{{$request->tipo}}"/>
 
-    @if($contracts->count() > 0)
+    {{-- @if($contracts->count() > 0)
+        1
         <input type="hidden" id="contract_id" name="contract_id" value="{{$contracts->first()->id}}"/>
     @else
+        2
         <input type="hidden" id="contract_id" name="contract_id" value="{{$request->contract_id}}"/>
-    @endif
+    @endif --}}
+    <input type="hidden" id="contract_id" name="contract_id" value="{{$request->contract_id}}"/>
+
     <input type="hidden" id="specialty_id" name="specialty_id" value="{{$request->specialty_id}}"/>
     <input type="hidden" id="profession_id" name="profession_id" value="{{$request->profession_id}}"/>
 

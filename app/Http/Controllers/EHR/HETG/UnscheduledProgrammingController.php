@@ -52,7 +52,6 @@ class UnscheduledProgrammingController extends Controller
 
     //obtiene contrato
     $contracts = Contract::where('id',$request->contract_id)->get();
-
     //obtiene horas teóricas
     $monday = Carbon::parse($request->date)->startOfWeek();
     $sunday = Carbon::parse($request->date)->endOfWeek();
