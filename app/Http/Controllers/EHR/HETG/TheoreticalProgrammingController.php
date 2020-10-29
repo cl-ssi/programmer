@@ -752,4 +752,53 @@ class TheoreticalProgrammingController extends Controller
       $texto = str_replace('}', '', str_replace('{', '', str_replace(',', '', str_replace('.', '', str_replace(')', '', str_replace('(', '', str_replace(' ', '_', $texto)))))));
       return $texto;
     }
+
+    // function cmp_by_optionNumber($a, $b) {
+    //   return $a['cant'] <=> $b['cant'];
+    // }
+
+    public function programed_professionals(){
+
+        $rrhhs = Rrhh::orderby('name','ASC')->get();
+
+        $array = array();
+        foreach ($rrhhs as $key => $rrhh) {
+
+            $user = User::where('id',$rrhh->rut)->first();
+            $profesions = null;
+
+            if ($user) {
+                if ($user->specialties) {
+                    foreach ($user->specialties as $key => $specialty) {
+                        $profesions = $profesions . $specialty->specialty_name . ",";
+                        if ($key == 2) {
+                            break;
+                        }
+                    }
+                }
+
+                if ($user->professions) {
+                    foreach ($user->professions as $key => $profession) {
+                        $profesions = $profesions . $profession->profession_name . ",";
+                        if ($key == 2) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (TheoreticalProgramming::where('rut',$rrhh->rut)->count()>0) {
+                $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'Sí';
+            }else{
+                $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'No';
+            }
+
+
+        }
+
+        // dd(usort($array, "cmp_by_optionNumber"));
+        // dd($array, usort($array,'cant'));
+
+        return view('ehr.hetg.management.programed_professionals',compact('array'));
+    }
 }
