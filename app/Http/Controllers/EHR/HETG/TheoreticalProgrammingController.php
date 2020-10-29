@@ -759,9 +759,20 @@ class TheoreticalProgrammingController extends Controller
 
     public function programed_professionals(){
 
-        $rrhhs = Rrhh::orderby('name','ASC')->get();
+        //obtiene usuaros con especialidad
+        $users = User::select('id')->whereHas('userSpecialties', function ($query) {
+                        return $query;
+                    })->get();
 
+        //busca usuarios en rrhh
+        // $rrhhs = Rrhh::orderby('name','ASC')->get();
+        $rrhhs = Rrhh::whereIn('rut',$users)->orderby('name','ASC')->get();
+
+        //ciclo
         $array = array();
+        $total = 0;
+        $total_with_theorical = 0;
+        $total_withnot_theorical = 0;
         foreach ($rrhhs as $key => $rrhh) {
 
             $user = User::where('id',$rrhh->rut)->first();
@@ -789,16 +800,19 @@ class TheoreticalProgrammingController extends Controller
 
             if (TheoreticalProgramming::where('rut',$rrhh->rut)->count()>0) {
                 $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'Sí';
+                $total_with_theorical += 1;
             }else{
                 $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'No';
+                $total_withnot_theorical += 1;
             }
 
-
+            $total += 1;
         }
 
         // dd(usort($array, "cmp_by_optionNumber"));
         // dd($array, usort($array,'cant'));
+        // dd($total);
 
-        return view('ehr.hetg.management.programed_professionals',compact('array'));
+        return view('ehr.hetg.management.reports.programed_professionals',compact('array','total','total_with_theorical','total_withnot_theorical'));
     }
 }

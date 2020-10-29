@@ -7,7 +7,24 @@
 <h3 class="mb-3">Reporte de programación</h3>
 
 {{-- <table class="table table-sm table-borderer"> --}}
-<table class="table table-sm table-bordered small text-uppercase" id="tabla_casos">
+<table class="table table-sm table-bordered small text-uppercase" style="width:50%;">
+    <tbody>
+        <tr>
+            <td>Total</td>
+            <td><b>{{$total}}</b></td>
+        </tr>
+        <tr>
+            <td>Con teórico</td>
+            <td><b>{{$total_with_theorical}}</b></td>
+        </tr>
+        <tr>
+            <td>Sin teórico</td>
+            <td><b>{{$total_withnot_theorical}}</b></td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-sm table-bordered small text-uppercase">
     <thead>
         <tr>
             <th>Profesional</th>
