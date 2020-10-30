@@ -110,6 +110,20 @@ class TheoreticalProgrammingController extends Controller
 
     //obtiene contrato_id para obtener información
     $contract_id=null;
+    $flag = 0;
+    foreach ($contracts as $key => $contract) {
+        if($contract->id == $request->get('contract_id')){
+            $flag = 1;
+        }
+    }
+    if ($flag == 1) {
+        $contract_id = $request->get('contract_id');
+    }else{
+        if ($contracts->count() > 0) {
+            $contract_id = $contracts->first()->id;
+        }
+    }
+
     // if ($request->get('contract_id') != null && $request->get('contract_id') != "--") {
     //     foreach ($contracts as $key => $contract) {
     //         if ($contract->id == $request->get('contract_id')) {
@@ -124,7 +138,6 @@ class TheoreticalProgrammingController extends Controller
     //         $contract_id = $contracts->first()->id;
     //     }
     // }
-    $contract_id = $request->get('contract_id');
 
     //obtiene fechas límite
     $monday = Carbon::parse($date)->startOfWeek();
