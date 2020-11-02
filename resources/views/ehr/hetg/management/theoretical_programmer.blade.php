@@ -503,11 +503,12 @@ bottom: 5px;
                         "Todas las semanas": function() {
                           saveMyData(info.event, 2, tipo_evento);
                           $(this).dialog('close');
-                        },
-                        "Semana x1/2": function() {
-                          saveMyData(info.event, 3, tipo_evento);
-                          $(this).dialog('close');
                         }
+                        // ,
+                        // "Semana x1/2": function() {
+                        //   saveMyData(info.event, 3, tipo_evento);
+                        //   $(this).dialog('close');
+                        // }
                     },
                     close: function(event, ui){
                         @foreach ($activities as $key => $activity)
@@ -640,11 +641,12 @@ bottom: 5px;
                     "Todas las semanas": function() {
                       updateMyData(info.event, 2);
                       $(this).dialog('close');
-                    },
-                    "Semana x1/2": function() {
-                      updateMyData(info.event, 3);
-                      $(this).dialog('close');
                     }
+                    // ,
+                    // "Semana x1/2": function() {
+                    //   updateMyData(info.event, 3);
+                    //   $(this).dialog('close');
+                    // }
                 }
                 });
             });
@@ -748,12 +750,13 @@ bottom: 5px;
                                 info.event.remove();
                                 deleteMyData(info.event, 2);
                               $(this).dialog('close');
-                            },
-                            "Semana x1/2": function() {
-                              info.event.remove();
-                              deleteMyData(info.event, 3);
-                              $(this).dialog('close');
                             }
+                            // ,
+                            // "Semana x1/2": function() {
+                            //   info.event.remove();
+                            //   deleteMyData(info.event, 3);
+                            //   $(this).dialog('close');
+                            // }
                         },
                         close: function(event, ui){
 
@@ -849,11 +852,12 @@ bottom: 5px;
                     "Todas las semanas": function() {
                         updateMyData(info.event, 2);
                       $(this).dialog('close');
-                    },
-                    "Semana x1/2": function() {
-                      updateMyData(info.event, 3);
-                      $(this).dialog('close');
                     }
+                    // ,
+                    // "Semana x1/2": function() {
+                    //   updateMyData(info.event, 3);
+                    //   $(this).dialog('close');
+                    // }
                 },
                 close: function(event, ui){
 
