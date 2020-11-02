@@ -606,7 +606,7 @@ class TheoreticalProgrammingController extends Controller
                     $theoreticalProgramming->save();
                 }
                 //se inserta desde esta semana hacia adelante
-                else {
+                elseif($request->tipo_ingreso == 2) {
                     // Storage::put('errores.txt',$year . " " . date('Y', strtotime($first_date)));
                     while (date('Y', strtotime($first_date)) == $year) {
                         $theoreticalProgramming = new TheoreticalProgramming();
@@ -625,6 +625,26 @@ class TheoreticalProgrammingController extends Controller
                         $first_date = $first_date->addWeek(1);
                         $last_date = $last_date->addWeek(1);
                     }
+                }
+                //semana por medio
+                elseif($request->tipo_ingreso == 3) {
+                  while (date('Y', strtotime($first_date)) == $year) {
+                      $theoreticalProgramming = new TheoreticalProgramming();
+                      $theoreticalProgramming->rut = $request->rut;
+                      $theoreticalProgramming->contract_id = $request->contract_id;
+                      $theoreticalProgramming->specialty_id = $request->specialty_id;
+                      $theoreticalProgramming->profession_id = $request->profession_id;
+                      $theoreticalProgramming->activity_id = $request->activity_id;
+                      $theoreticalProgramming->start_date = $first_date;
+                      $theoreticalProgramming->end_date = $last_date;
+                      $theoreticalProgramming->performance = $performance;
+                      $theoreticalProgramming->year = $year;
+                      // $theoreticalProgramming->user_id = Auth::id();
+                      $theoreticalProgramming->save();
+
+                      $first_date = $first_date->addWeek(2);
+                      $last_date = $last_date->addWeek(2);
+                  }
                 }
             }
         } catch (\Exception $e) {
@@ -668,7 +688,31 @@ class TheoreticalProgrammingController extends Controller
 
           }
           //se modifican todos los eventos hacia adelante
-          else{
+          elseif($request->tipo == 2){
+              while (date('Y', strtotime($start_date)) == $year) {
+                  $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                                  ->where('activity_id',$request->activity_id)
+                                                                  ->where('contract_id',$request->contract_id)
+                                                                  ->where('specialty_id',$request->specialty_id)
+                                                                  ->where('profession_id',$request->profession_id)
+                                                                  ->where('start_date',$start_date_start)
+                                                                  ->where('end_date',$end_date_start)->first();
+                  if ($theoreticalProgramming != null) {
+                    $theoreticalProgramming->start_date = $start_date;
+                    $theoreticalProgramming->end_date = $end_date;
+                    $theoreticalProgramming->performance = $performance;
+                    $theoreticalProgramming->save();
+                  }
+
+
+                  $start_date = $start_date->addWeek(1);
+                  $end_date = $end_date->addWeek(1);
+                  $start_date_start = $start_date_start->addWeek(1);
+                  $end_date_start = $end_date_start->addWeek(1);
+              }
+          }
+          //se modifican eventos semana por medio
+          elseif($request->tipo == 3){
               while (date('Y', strtotime($start_date)) == $year) {
                   $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
                                                                   ->where('activity_id',$request->activity_id)
@@ -682,10 +726,10 @@ class TheoreticalProgrammingController extends Controller
                   $theoreticalProgramming->performance = $performance;
                   $theoreticalProgramming->save();
 
-                  $start_date = $start_date->addWeek(1);
-                  $end_date = $end_date->addWeek(1);
-                  $start_date_start = $start_date_start->addWeek(1);
-                  $end_date_start = $end_date_start->addWeek(1);
+                  $start_date = $start_date->addWeek(2);
+                  $end_date = $end_date->addWeek(2);
+                  $start_date_start = $start_date_start->addWeek(2);
+                  $end_date_start = $end_date_start->addWeek(2);
               }
           }
 
@@ -716,7 +760,25 @@ class TheoreticalProgrammingController extends Controller
                   $theoreticalProgramming->delete();
               }
               //se elimina desde el evento actual
-              else{
+              elseif($request->tipo == 2){
+                  while (date('Y', strtotime($first_date)) == $year) {
+                      $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                                      ->where('activity_id',$request->activity_id)
+                                                                      ->where('contract_id',$request->contract_id)
+                                                                      ->where('specialty_id',$request->specialty_id)
+                                                                      ->where('profession_id',$request->profession_id)
+                                                                      ->where('start_date',$first_date)
+                                                                      ->where('end_date',$last_date)->first();
+                      if ($theoreticalProgramming != null) {
+                        $theoreticalProgramming->delete();
+                      }
+
+                      $first_date = $first_date->addWeek(1);
+                      $last_date = $last_date->addWeek(1);
+                  }
+              }
+              //se elimina semana por medio
+              elseif($request->tipo == 3){
                   while (date('Y', strtotime($first_date)) == $year) {
                       $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
                                                                       ->where('activity_id',$request->activity_id)
@@ -727,8 +789,8 @@ class TheoreticalProgrammingController extends Controller
                                                                       ->where('end_date',$last_date)->first();
                       $theoreticalProgramming->delete();
 
-                      $first_date = $first_date->addWeek(1);
-                      $last_date = $last_date->addWeek(1);
+                      $first_date = $first_date->addWeek(2);
+                      $last_date = $last_date->addWeek(2);
                   }
               }
 
