@@ -626,7 +626,7 @@ class TheoreticalProgrammingController extends Controller
                         $last_date = $last_date->addWeek(1);
                     }
                 }
-                //semana por medio
+                //semana volante
                 elseif($request->tipo_ingreso == 3) {
                   while (date('Y', strtotime($first_date)) == $year) {
                       $theoreticalProgramming = new TheoreticalProgramming();
@@ -642,8 +642,8 @@ class TheoreticalProgrammingController extends Controller
                       // $theoreticalProgramming->user_id = Auth::id();
                       $theoreticalProgramming->save();
 
-                      $first_date = $first_date->addWeek(2);
-                      $last_date = $last_date->addWeek(2);
+                      $first_date = $first_date->addWeek(7);
+                      $last_date = $last_date->addWeek(7);
                   }
                 }
             }
@@ -721,15 +721,17 @@ class TheoreticalProgrammingController extends Controller
                                                                   ->where('profession_id',$request->profession_id)
                                                                   ->where('start_date',$start_date_start)
                                                                   ->where('end_date',$end_date_start)->first();
-                  $theoreticalProgramming->start_date = $start_date;
-                  $theoreticalProgramming->end_date = $end_date;
-                  $theoreticalProgramming->performance = $performance;
-                  $theoreticalProgramming->save();
+                  if ($theoreticalProgramming != null) {
+                    $theoreticalProgramming->start_date = $start_date;
+                    $theoreticalProgramming->end_date = $end_date;
+                    $theoreticalProgramming->performance = $performance;
+                    $theoreticalProgramming->save();
+                  }
 
-                  $start_date = $start_date->addWeek(2);
-                  $end_date = $end_date->addWeek(2);
-                  $start_date_start = $start_date_start->addWeek(2);
-                  $end_date_start = $end_date_start->addWeek(2);
+                  $start_date = $start_date->addWeek(7);
+                  $end_date = $end_date->addWeek(7);
+                  $start_date_start = $start_date_start->addWeek(7);
+                  $end_date_start = $end_date_start->addWeek(7);
               }
           }
 
@@ -787,10 +789,12 @@ class TheoreticalProgrammingController extends Controller
                                                                       ->where('profession_id',$request->profession_id)
                                                                       ->where('start_date',$first_date)
                                                                       ->where('end_date',$last_date)->first();
-                      $theoreticalProgramming->delete();
+                      if ($theoreticalProgramming != null) {
+                        $theoreticalProgramming->delete();
+                      }
 
-                      $first_date = $first_date->addWeek(2);
-                      $last_date = $last_date->addWeek(2);
+                      $first_date = $first_date->addWeek(7);
+                      $last_date = $last_date->addWeek(7);
                   }
               }
 
