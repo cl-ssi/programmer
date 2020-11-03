@@ -902,16 +902,14 @@ class TheoreticalProgrammingController extends Controller
         $array = array();
         foreach ($specialties as $key => $specialty) {
 
-            // if ($specialty->id == 49) {
-            //     dd(UserSpecialty::select('user_id')->where('specialty_id',$specialty->id)->get());
-            //     dd(TheoreticalProgramming::whereIn('rut',UserSpecialty::select('user_id')->where('specialty_id',$specialty->id)->get())->select('rut')->distinct('rut')->get());
-            // }
-
             $array[$specialty->specialty_name]['total'] = UserSpecialty::where('specialty_id',$specialty->id)->count();
-            $array[$specialty->specialty_name]['con_teorico'] = TheoreticalProgramming::whereIn('rut',UserSpecialty::select('user_id')->where('specialty_id',$specialty->id)->get())->select('rut')->distinct('rut')->get()->count();
+            $array[$specialty->specialty_name]['con_teorico'] = TheoreticalProgramming::whereIn('rut',UserSpecialty::select('user_id')->where('specialty_id',$specialty->id)->get())
+                                                                                      ->where('specialty_id',$specialty->id)
+                                                                                      ->select('rut')
+                                                                                      ->distinct('rut')
+                                                                                      ->get()
+                                                                                      ->count();
         }
-
-        // dd($array);
 
         return view('ehr.hetg.management.reports.programed_specialties',compact('array'));
     }

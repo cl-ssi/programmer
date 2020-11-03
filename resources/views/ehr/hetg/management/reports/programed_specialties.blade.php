@@ -15,11 +15,15 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($array as $key => $rrhh)
-            <tr>
+        @foreach ($array as $key => $row)
+            @if ($row['con_teorico'] != 0)
+                <tr style="background-color:#D3F8F8">
+            @else
+                <tr>
+            @endif
                 <td>{{$key}}</td>
-                <td>{{$rrhh['total']}}</td>
-                <td>{{$rrhh['con_teorico']}}</td>
+                <td>{{$row['total']}}</td>
+                <td>{{$row['con_teorico']}}</td>
             </tr>
         @endforeach
     </tbody>
