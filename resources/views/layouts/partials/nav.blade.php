@@ -122,6 +122,10 @@
                                     <i class="fas fa-calendar-alt fa-fw"></i> Reporte funcionarios programados
                                 </a>
 
+                                {{-- <a class="dropdown-item" href="{{ route('ehr.hetg.theoretical_programming.programed_specialties') }}">
+                                    <i class="fas fa-calendar-alt fa-fw"></i> Reporte especialidades programadas
+                                </a> --}}
+
                             </div>
                         </li>
                         @endcanany

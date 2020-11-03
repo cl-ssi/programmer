@@ -4,7 +4,7 @@
 
 @section('content')
 
-<h3 class="mb-3">Reporte de programación</h3>
+<h3 class="mb-3">Reporte de profesionales programados</h3>
 
 {{-- <table class="table table-sm table-borderer"> --}}
 <table class="table table-sm table-bordered small text-uppercase" style="width:50%;">
