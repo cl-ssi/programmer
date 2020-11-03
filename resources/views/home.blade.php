@@ -18,6 +18,9 @@
                 </div>
 
             </div>
+            
+            <br />
+            Sistema desarrollado con el aporte técnico/clínico del Doctor Juan Francisco Gutiérrez Villalobos Jefe CAE del HETG
 
             <br />
             <div class="card">
