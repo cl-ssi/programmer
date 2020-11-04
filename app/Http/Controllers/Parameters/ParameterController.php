@@ -18,4 +18,9 @@ class ParameterController extends Controller
         return view('parameters.index');
     }
 
+    public function manuales()
+    {
+        return view('parameters.index');
+    }
+
 }

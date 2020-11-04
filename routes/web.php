@@ -151,6 +151,7 @@ Route::prefix('users')->name('users.')->middleware('auth')->group(function () {
 
 Route::prefix('parameters')->as('parameters.')->middleware('auth')->group(function(){
     Route::get('/', 'Parameters\ParameterController@index')->name('index');
+    Route::match(['get', 'post'],'/manuales','Parameters\ParameterController@manuales')->name('manuales');
     Route::resource('permissions','Parameters\PermissionController');
 });
 

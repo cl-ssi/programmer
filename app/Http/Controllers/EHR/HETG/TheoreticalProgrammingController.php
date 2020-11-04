@@ -642,8 +642,8 @@ class TheoreticalProgrammingController extends Controller
                       // $theoreticalProgramming->user_id = Auth::id();
                       $theoreticalProgramming->save();
 
-                      $first_date = $first_date->addWeek(7);
-                      $last_date = $last_date->addWeek(7);
+                      $first_date = $first_date->addWeek(6);
+                      $last_date = $last_date->addWeek(6);
                   }
                 }
             }
@@ -728,10 +728,10 @@ class TheoreticalProgrammingController extends Controller
                     $theoreticalProgramming->save();
                   }
 
-                  $start_date = $start_date->addWeek(7);
-                  $end_date = $end_date->addWeek(7);
-                  $start_date_start = $start_date_start->addWeek(7);
-                  $end_date_start = $end_date_start->addWeek(7);
+                  $start_date = $start_date->addWeek(6);
+                  $end_date = $end_date->addWeek(6);
+                  $start_date_start = $start_date_start->addWeek(6);
+                  $end_date_start = $end_date_start->addWeek(6);
               }
           }
 
@@ -793,8 +793,8 @@ class TheoreticalProgrammingController extends Controller
                         $theoreticalProgramming->delete();
                       }
 
-                      $first_date = $first_date->addWeek(7);
-                      $last_date = $last_date->addWeek(7);
+                      $first_date = $first_date->addWeek(6);
+                      $last_date = $last_date->addWeek(6);
                   }
               }
 

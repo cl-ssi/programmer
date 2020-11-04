@@ -211,6 +211,10 @@
                                 @endcan
 
                                 <a class="nav-link" href="{{ route('password.edit') }}">
+                                    <i class="fas fa-key fa-fw"></i> Manuales
+                                </a>
+
+                                <a class="nav-link" href="{{ route('password.edit') }}">
                                     <i class="fas fa-key fa-fw"></i> Cambiar Clave
                                 </a>
 
