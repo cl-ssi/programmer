@@ -18,7 +18,7 @@
                 </div>
 
             </div>
-            
+
             <br />
             Sistema desarrollado con el aporte técnico/clínico del Doctor Juan Francisco Gutiérrez Villalobos Jefe CAE
 
@@ -28,7 +28,7 @@
 
                 <div class="card-body">
                     <div class="alert alert-warning" role="alert">
-                      <b>03/11/2020 - Semana volante</b>: Al arrastrar, modificar o eliminar un evento en programación teórica, se realiza la misma operación cada 7 semanas.
+                      <b>03/11/2020 - Semana volante</b>: Al arrastrar, modificar o eliminar un evento en programación teórica, se realiza la misma operación cada 6 semanas.
                     </div>
                 </div>
             </div>
