@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+// use Spatie\Permission\Traits\HasRoles;
+// use Spatie\Permission\Models\Role;
 
 use App\EHR\HETG\OperatingRoomProgramming;
 
@@ -839,9 +841,16 @@ class TheoreticalProgrammingController extends Controller
     public function programed_professionals(){
 
         //obtiene usuaros con especialidad
+        // dd(Auth::hasRole('profesional'));
         $users = User::select('id')->whereHas('userSpecialties', function ($query) {
-                        return $query;
-                    })->get();
+                                        return $query->where('principal',1);
+                                    })
+                    ->whereHas(
+                    'roles', function($q){
+                        $q->where('name', 'profesional');
+                    })
+                    ->get();
+                    // dd($users);
 
         //busca usuarios en rrhh
         // $rrhhs = Rrhh::orderby('name','ASC')->get();
@@ -902,8 +911,17 @@ class TheoreticalProgrammingController extends Controller
         $array = array();
         foreach ($specialties as $key => $specialty) {
 
-            $array[$specialty->specialty_name]['total'] = UserSpecialty::where('specialty_id',$specialty->id)->count();
-            $array[$specialty->specialty_name]['con_teorico'] = TheoreticalProgramming::whereIn('rut',UserSpecialty::select('user_id')->where('specialty_id',$specialty->id)->get())
+            $array[$specialty->specialty_name]['total'] = UserSpecialty::where('principal',1)->where('specialty_id',$specialty->id)->count();
+            $array[$specialty->specialty_name]['con_teorico'] = TheoreticalProgramming::whereIn('rut',UserSpecialty::select('user_id')
+                                                                                                                   ->where('specialty_id',$specialty->id)
+                                                                                                                   ->where('principal',1)
+                                                                                                                   // ->whereHas('users', function($q){
+                                                                                                                   //     // $q->whereHas('roles', function($q){
+                                                                                                                   //     //             $q->where('name', 'profesional');
+                                                                                                                   //     //         });
+                                                                                                                   //     return $q;
+                                                                                                                   // })
+                                                                                                                   ->get())
                                                                                       ->where('specialty_id',$specialty->id)
                                                                                       ->select('rut')
                                                                                       ->distinct('rut')

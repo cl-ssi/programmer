@@ -32,6 +32,8 @@ class User extends Authenticatable
     //relaciones
     public function userSpecialties() {
         return $this->hasMany('App\EHR\HETG\UserSpecialty');
+        // return $this->belongsToMany('App\EHR\HETG\UserSpecialty', 'hm_user_specialties')
+        //     ->wherePivot('deleted_at', null);
     }
 
     public function userProfessions() {

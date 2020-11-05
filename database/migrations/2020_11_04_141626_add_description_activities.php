@@ -26,7 +26,7 @@ class AddDescriptionActivities extends Migration
   public function down()
   {
       Schema::table('hm_activities', function (Blueprint $table) {
-          $table->LONGTEXT('description');
+          $table->dropColumn('description');
       });
   }
 }

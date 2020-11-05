@@ -15,7 +15,7 @@ class UserProfession extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'user_id', 'profession_id'
+        'user_id', 'profession_id', 'principal'
     ];
 
     public function users()

@@ -15,11 +15,12 @@ class UserSpecialty extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'user_id', 'specialty_id'
+        'user_id', 'specialty_id', 'principal'
     ];
 
     public function users() {
-        return $this->hasMany('App\User');
+        // return $this->hasMany('App\User');
+        return $this->belongsTo('App\User','user_id');
     }
 
     public function specialties() {
