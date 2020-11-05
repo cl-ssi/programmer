@@ -46,6 +46,11 @@
         </fieldset>
 
         <fieldset class="form-group col">
+            <label for="for_description">Descripción</label>
+            <input type="text" class="form-control" id="for_description" placeholder="" name="description" required value="{{$activity->description}}">
+        </fieldset>
+
+        <fieldset class="form-group col">
           <label for="for_performance">Rendimiento</label>
           <select name="performance" id="for_performance" class="form-control activity">
             <option value="1" {{ $activity->performance == 1 ? 'selected' : '' }}>R</option>

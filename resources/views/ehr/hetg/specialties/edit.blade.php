@@ -36,6 +36,10 @@
         </fieldset>
     </div>
 
+    <!-- <p id="bookingTd" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+      Tooltip on top
+    </p> -->
+
     <hr>
       <fieldset class="form-group col-12 col-md-6">
         <h3><label for="">Actividades Médicas</label></h3>
@@ -45,14 +49,14 @@
           @foreach($activities as $activity)
 
                   <tr>
-                    <td>
+                    <td class="bookingTd" data-toggle="tooltip" data-placement="top" title="{{ $activity->description }}">
                         @if($specialty->activities->where('id',$activity->id)->count() > 0)
                             <input class="form-check" type="checkbox" checked name="activity_id[]" value="{{ $activity->id }}">
                         @else
                             <input class="form-check" type="checkbox" name="activity_id[]" value="{{ $activity->id }}">
                         @endif
                     </td>
-                    <td>
+                    <td class="bookingTd" data-toggle="tooltip" data-placement="top" title="{{ $activity->description }}">
                       <label class="form-check-label">
                         {{ $activity->activity_name }}
                       </label>
@@ -102,5 +106,15 @@
         // 'jscolor' instance can be used as a string
         document.getElementById('rect').style.backgroundColor = '#' + jscolor
     }
+
+    $( document ).ready(function() {
+      $(".bookingTd").tooltip(function(){
+        new Tooltip($(this), {
+          placement: 'top',
+        });
+      });
+
+    });
+
   </script>
 @endsection

@@ -62,6 +62,7 @@
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="{{ asset('js/jquery/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ asset('js/popper/popper.min.js') }}" ></script>
     <script src="{{ asset('js/bootstrap/bootstrap.bundle.min.js') }}"></script>
     {{-- <script src="{{ asset('js/principal.js') }}"></script> --}}
     @yield('custom_js')

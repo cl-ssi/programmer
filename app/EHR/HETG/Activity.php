@@ -15,7 +15,7 @@ class Activity extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'id_activity', 'mother_activity_id', 'activity_type_id', 'activity_name', 'performance'
+        'id', 'id_activity', 'mother_activity_id', 'activity_type_id', 'activity_name', 'description', 'performance'
         //, 'user_id'
     ];
 
