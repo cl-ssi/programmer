@@ -66,6 +66,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
         $user = new User();
         $user->id = $request->input('id');
         $user->dv = $request->input('dv');
@@ -196,12 +197,24 @@ class UserController extends Controller
             foreach ($request->input('specialties') as $key => $value) {
                 $userSpecialty = UserSpecialty::where('specialty_id',$value)
                                               ->where('user_id', $user->id)
-                                              ->get();
-                if ($userSpecialty->count() == 0) {
+                                              ->first();
+
+                if ($userSpecialty == null) {
                     $userSpecialty = new UserSpecialty();
                     $userSpecialty->specialty_id = $value;
                     $userSpecialty->user_id = $user->id;
+                    if ($value == $request->principal_specialty) {
+                      $userSpecialty->principal = 1;
+                    }else{
+                      $userSpecialty->principal = 0;
+                    }
                     $userSpecialty->save();
+                }else{
+                  if ($value == $request->principal_specialty) {
+                    $userSpecialty->where('specialty_id',$value)->update(['principal' => 1]);
+                  }else{
+                    $userSpecialty->where('specialty_id',$value)->update(['principal' => 0]);
+                  }
                 }
             }
         }
@@ -216,12 +229,23 @@ class UserController extends Controller
             foreach ($request->input('professions') as $key => $value) {
                 $userProfession = UserProfession::where('profession_id',$value)
                                                 ->where('user_id', $user->id)
-                                                ->get();
-                if ($userProfession->count() == 0) {
+                                                ->first();
+                if ($userProfession == null) {
                     $userProfession = new UserProfession();
                     $userProfession->profession_id = $value;
                     $userProfession->user_id = $user->id;
+                    if ($value == $request->principal_profession) {
+                      $userProfession->principal = 1;
+                    }else{
+                      $userProfession->principal = 0;
+                    }
                     $userProfession->save();
+                }else{
+                  if ($value == $request->principal_specialty) {
+                    $userProfession->where('profession_id',$value)->update(['principal' => 1]);
+                  }else{
+                    $userProfession->where('profession_id',$value)->update(['principal' => 0]);
+                  }
                 }
             }
         }

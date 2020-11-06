@@ -82,18 +82,39 @@
       <div class="row">
         <div class="col-sm">
             <h4>Especialidades</h4>
-            <select class="selectpicker" name="specialties[]" multiple>
+            <select id="specialties" class="selectpicker" name="specialties[]" multiple>
                 @foreach($specialties as $specialty)
                     <option value="{{ $specialty->id }}" {{ ($user->specialties->contains('id', $specialty->id))?'selected':'' }}>{{ $specialty->specialty_name }}</option>
                 @endforeach
             </select>
         </div>
+
+        <div class="col-sm">
+            <h4>Especialidad Principal</h4>
+            <select id="principal_specialty" name="principal_specialty">
+
+            </select>
+        </div>
+
+
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
         <div class="col-sm">
             <h4>Profesiones</h4>
-            <select class="selectpicker" name="professions[]" multiple>
+            <select id="professions" class="selectpicker" name="professions[]" multiple>
                 @foreach($professions as $profession)
                     <option value="{{ $profession->id }}" {{ ($user->professions->contains('id', $profession->id))?'selected':'' }}>{{ $profession->profession_name }}</option>
                 @endforeach
+            </select>
+        </div>
+
+        <div class="col-sm">
+            <h4>Profesión Principal</h4>
+            <select id="principal_profession" name="principal_profession">
+
             </select>
         </div>
       </div>
@@ -129,5 +150,73 @@
 
 <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('js/defaults-es_CL.min.js') }}"></script>
+
+<script>
+
+$(document).ready(function(){
+
+  //especialidades
+
+  //cuando carga la hoja
+  @foreach($user->userSpecialties as $userSpecialty)
+    @if($userSpecialty->principal == 1)
+      $('#principal_specialty').append('<option selected value="'+{{$userSpecialty->specialty->id}}+'">'+'{{$userSpecialty->specialty->specialty_name}}'+'</option>');
+    @else
+      $('#principal_specialty').append('<option value="'+{{$userSpecialty->specialty->id}}+'">'+'{{$userSpecialty->specialty->specialty_name}}'+'</option>');
+    @endif
+  @endforeach
+
+  //al modificar especialidades
+  $('#specialties').on('change', function() {
+    $('#principal_specialty').empty();
+    $.each($("#specialties option:selected"), function(){
+        optionText = $(this).text();
+        optionValue = $(this).val();
+        $('#principal_specialty').append('<option value="'+optionValue+'">'+optionText+'</option>');
+    });
+
+    //selecciona la opción principal
+    @if($user->userSpecialties->count() > 0)
+      @foreach($user->userSpecialties as $userSpecialty)
+        if({{$userSpecialty->principal}} == 1){
+          $("#principal_specialty option[value='{{$userSpecialty->specialty->id}}']").attr("selected", true);
+        }
+      @endforeach
+    @endif
+  });
+
+
+  //profesiones
+
+  @foreach($user->userProfessions as $userProfession)
+    @if($userProfession->principal == 1)
+      $('#principal_profession').append('<option selected value="'+{{$userProfession->profession->id}}+'">'+'{{$userProfession->profession->profession_name}}'+'</option>');
+    @else
+      $('#principal_profession').append('<option value="'+{{$userProfession->profession->id}}+'">'+'{{$userProfession->profession->profession_name}}'+'</option>');
+    @endif
+  @endforeach
+
+  //al modificar especialidades
+  $('#professions').on('change', function() {
+    $('#principal_profession').empty();
+    $.each($("#professions option:selected"), function(){
+        optionText = $(this).text();
+        optionValue = $(this).val();
+        $('#principal_profession').append('<option value="'+optionValue+'">'+optionText+'</option>');
+    });
+
+    //selecciona la opción principal
+    @if($user->userProfessions->count() > 0)
+      @foreach($user->userProfessions as $userProfession)
+        if({{$userProfession->principal}} == 1){
+          $("#principal_profession option[value='{{$userProfession->profession->id}}']").attr("selected", true);
+        }
+      @endforeach
+    @endif
+  });
+
+});
+
+</script>
 
 @endsection

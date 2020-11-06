@@ -33,6 +33,11 @@ class UserProfession extends Model implements Auditable
         return $this->belongsTo('App\EHR\HETG\Profession');
     }
 
+    public function profession()
+    {
+        return $this->belongsTo('App\EHR\HETG\Profession');
+    }
+
     use SoftDeletes;
     /**
      * The attributes that should be mutated to dates.

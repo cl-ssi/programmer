@@ -27,9 +27,9 @@ class UserSpecialty extends Model implements Auditable
         return $this->hasMany('App\EHR\HETG\Specialty');
     }
 
-    // public function specialty() {
-    //     return $this->belongsTo('App\EHR\HETG\Specialty');
-    // }
+    public function specialty() {
+        return $this->belongsTo('App\EHR\HETG\Specialty');
+    }
 
     use SoftDeletes;
     /**
