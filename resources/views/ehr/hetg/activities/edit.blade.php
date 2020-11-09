@@ -47,7 +47,7 @@
 
         <fieldset class="form-group col">
             <label for="for_description">Descripción</label>
-            <input type="text" class="form-control" id="for_description" placeholder="" name="description" required value="{{$activity->description}}">
+            <input type="text" class="form-control" id="for_description" placeholder="" name="description" value="{{$activity->description}}">
         </fieldset>
 
         <fieldset class="form-group col">
@@ -55,6 +55,14 @@
           <select name="performance" id="for_performance" class="form-control activity">
             <option value="1" {{ $activity->performance == 1 ? 'selected' : '' }}>R</option>
             <option value="0" {{ $activity->performance == 0 ? 'selected' : '' }}>NR</option>
+          </select>
+        </fieldset>
+
+        <fieldset class="form-group col">
+          <label for="for_performance">Programable</label>
+          <select name="programmable" id="for_programmable" class="form-control activity">
+            <option value="1" {{ $activity->programmable == 1 ? 'selected' : '' }}>Sí</option>
+            <option value="0" {{ $activity->programmable == 0 ? 'selected' : '' }}>No</option>
           </select>
         </fieldset>
 

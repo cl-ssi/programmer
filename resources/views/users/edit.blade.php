@@ -81,6 +81,30 @@
     <div class="container">
       <div class="row">
         <div class="col-sm">
+            <h4>Servicios</h4>
+            <select id="services" class="selectpicker" name="services[]" multiple>
+                @foreach($services as $service)
+                    <option value="{{ $service->id }}" {{ ($user->services->contains('id', $service->id))?'selected':'' }}>{{ $service->service_name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-sm">
+            <h4>Servicio Principal</h4>
+            <select id="principal_service" name="principal_service">
+
+            </select>
+        </div>
+
+
+      </div>
+    </div>
+
+    <br>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
             <h4>Especialidades</h4>
             <select id="specialties" class="selectpicker" name="specialties[]" multiple>
                 @foreach($specialties as $specialty)
@@ -99,6 +123,8 @@
 
       </div>
     </div>
+
+    <br>
 
     <div class="container">
       <div class="row">
@@ -154,6 +180,37 @@
 <script>
 
 $(document).ready(function(){
+
+  //especialidades
+
+  //cuando carga la hoja
+  @foreach($user->userServices as $userService)
+    @if($userService->principal == 1)
+      $('#principal_service').append('<option selected value="'+{{$userService->service->id}}+'">'+'{{$userService->service->service_name}}'+'</option>');
+    @else
+      $('#principal_service').append('<option value="'+{{$userService->service->id}}+'">'+'{{$userService->service->service_name}}'+'</option>');
+    @endif
+  @endforeach
+
+  //al modificar especialidades
+  $('#services').on('change', function() {
+    $('#principal_service').empty();
+    $.each($("#services option:selected"), function(){
+        optionText = $(this).text();
+        optionValue = $(this).val();
+        $('#principal_service').append('<option value="'+optionValue+'">'+optionText+'</option>');
+    });
+
+    //selecciona la opción principal
+    @if($user->userServices->count() > 0)
+      @foreach($user->userServices as $userService)
+        if({{$userService->principal}} == 1){
+          $("#principal_service option[value='{{$userService->service->id}}']").attr("selected", true);
+        }
+      @endforeach
+    @endif
+  });
+
 
   //especialidades
 

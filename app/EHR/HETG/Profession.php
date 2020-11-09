@@ -47,6 +47,13 @@ class Profession extends Model implements Auditable
                     ->withPivot('performance');
     }
 
+    public function operating_rooms()
+    {
+        return $this->belongsToMany('App\EHR\HETG\OperatingRoom','hm_operating_room_professions')
+                    ->wherePivot('deleted_at', null);
+                    // ->withPivot('performance');
+    }
+
     use SoftDeletes;
     /**
      * The attributes that should be mutated to dates.

@@ -18,6 +18,7 @@
             <th>Tipo de actividad</th>
             <th>Especialidad</th>
             <th>Rendimiento</th>
+            <th>Programable</th>
             <th></th>
         </tr>
     </thead>
@@ -29,6 +30,7 @@
             <td>@if($activity->activityType){{ $activity->activityType->name }}@endif</td>
             <td>{{ $activity->activity_name }}</td>
             <td>@if($activity->performance) R @else NR @endif</td>
+            <td>@if($activity->programmable) Sí @else No @endif</td>
             <td>
       				<a href="{{ route('ehr.hetg.activities.edit', $activity) }}"
       					class="btn btn-sm btn-outline-secondary">

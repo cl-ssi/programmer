@@ -55,7 +55,15 @@
           <label for="for_performance">Rendimiento</label>
           <select name="performance" id="for_performance" class="form-control activity">
             <option value="1">R</option>
-            <option value="0">NR</option
+            <option value="0">NR</option>
+          </select>
+        </fieldset>
+
+        <fieldset class="form-group col">
+          <label for="for_performance">Programable</label>
+          <select name="programmable" id="for_programmable" class="form-control activity">
+            <option value="1">Sí</option>
+            <option value="0">No</option>
           </select>
         </fieldset>
     </div>

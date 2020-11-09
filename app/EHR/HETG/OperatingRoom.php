@@ -32,6 +32,20 @@ class OperatingRoom extends Model implements Auditable
         return $this->belongsToMany('App\User');
     }
 
+    public function specialties()
+    {
+        return $this->belongsToMany('App\EHR\HETG\Specialty', 'hm_operating_room_specialties')
+                    ->wherePivot('deleted_at', null);
+                    // ->withPivot('performance');
+    }
+
+    public function professions()
+    {
+        return $this->belongsToMany('App\EHR\HETG\Profession', 'hm_operating_room_professions')
+                    ->wherePivot('deleted_at', null);
+                    // ->withPivot('performance');
+    }
+
     use SoftDeletes;
     /**
      * The attributes that should be mutated to dates.

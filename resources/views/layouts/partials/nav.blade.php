@@ -160,6 +160,10 @@
                                     <i class="fas fa-file-contract fa-fw"></i> Actividades
                                 </a>
 
+                                <a class="dropdown-item" href="{{ route('ehr.hetg.services.index') }}">
+                                    <i class="fas fa-file-contract fa-fw"></i> Servicios
+                                </a>
+
                                 <a class="dropdown-item" href="{{ route('ehr.hetg.specialties.index') }}">
                                     <i class="fas fa-file-contract fa-fw"></i> Especialidades (Rdtos sugeridos)
                                 </a>

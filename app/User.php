@@ -40,6 +40,10 @@ class User extends Authenticatable
         return $this->hasMany('App\EHR\HETG\UserProfession');
     }
 
+    public function userServices() {
+        return $this->hasMany('App\EHR\HETG\UserService');
+    }
+
     // public function specialties() {
     //     return $this->hasMany('App\EHR\HETG\Specialty');
     // }
@@ -55,6 +59,11 @@ class User extends Authenticatable
 
     public function professions() {
         return $this->belongsToMany('App\EHR\HETG\Profession', 'hm_user_professions')
+            ->wherePivot('deleted_at', null);
+    }
+
+    public function services() {
+        return $this->belongsToMany('App\EHR\HETG\Service', 'hm_user_services')
             ->wherePivot('deleted_at', null);
     }
 

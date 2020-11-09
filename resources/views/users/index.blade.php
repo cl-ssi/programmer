@@ -49,6 +49,7 @@
                 <th>Rut</th>
                 <th>Nombre</th>
                 <th>Rol</th>
+                <th>Servicio</th>
                 <th>Prof/Espec</th>
                 <th>Email</th>
             </tr>
@@ -61,6 +62,14 @@
                 <td nowrap>
                     @foreach ($user->roles as $key => $role)
                         {{$role->name}},
+                    @endforeach
+                </td>
+                <td nowrap>
+                    @foreach ($user->services as $key => $service)
+                        {{$service->service_name}},
+                        @if ($key == 2)
+                            @break
+                        @endif
                     @endforeach
                 </td>
                 <td nowrap>

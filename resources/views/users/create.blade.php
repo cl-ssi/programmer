@@ -82,28 +82,77 @@
     </div>
 
     <br />
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+            <h4>Servicios</h4>
+            <select id="services" class="selectpicker" name="services[]" multiple>
+                @foreach($services as $service)
+                    <option value="{{ $service->id }}">{{ $service->service_name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-sm">
+            <h4>Servicio Principal</h4>
+            <select id="principal_service" name="principal_service">
+
+            </select>
+        </div>
+
+
+      </div>
+    </div>
+
+    <br>
+
     <div class="container">
       <div class="row">
         <div class="col-sm">
             <h4>Especialidades</h4>
-            <select class="selectpicker" name="specialties[]" multiple>
+            <select id="specialties" class="selectpicker" name="specialties[]" multiple>
                 @foreach($specialties as $specialty)
-                    <option value="{{ $specialty->id }}">{{ $specialty->specialty_name }}</option>
+                    <option value="{{ $specialty->id }}" >{{ $specialty->specialty_name }}</option>
                 @endforeach
             </select>
         </div>
+
+        <div class="col-sm">
+            <h4>Especialidad Principal</h4>
+            <select id="principal_specialty" name="principal_specialty">
+
+            </select>
+        </div>
+
+
+      </div>
+    </div>
+
+    <br>
+
+    <div class="container">
+      <div class="row">
         <div class="col-sm">
             <h4>Profesiones</h4>
-            <select class="selectpicker" name="professions[]" multiple>
+            <select id="professions" class="selectpicker" name="professions[]" multiple>
                 @foreach($professions as $profession)
                     <option value="{{ $profession->id }}">{{ $profession->profession_name }}</option>
                 @endforeach
+            </select>
+        </div>
+
+        <div class="col-sm">
+            <h4>Profesión Principal</h4>
+            <select id="principal_profession" name="principal_profession">
+
             </select>
         </div>
       </div>
     </div>
 
     <br />
+
     <div class="container">
       <div class="row">
         <div class="col-sm">
@@ -136,13 +185,47 @@
 
 <script src='{{asset("js/jquery.rut.chileno.js")}}'></script>
 <script type="text/javascript">
-    jQuery(document).ready(function($) {
-        //obtiene digito verificador
-        $('input[name=run]').keyup(function(e) {
-            var str = $("#for_run").val();
-            $('#for_dv').val($.rut.dv(str));
-        });
+
+$(document).ready(function(){
+
+  //especialidades
+  //al modificar especialidades
+  $('#services').on('change', function() {
+    $('#principal_service').empty();
+    $.each($("#services option:selected"), function(){
+        optionText = $(this).text();
+        optionValue = $(this).val();
+        $('#principal_service').append('<option value="'+optionValue+'">'+optionText+'</option>');
     });
+  });
+
+
+  //especialidades
+  //al modificar especialidades
+  $('#specialties').on('change', function() {
+    $('#principal_specialty').empty();
+    $.each($("#specialties option:selected"), function(){
+        optionText = $(this).text();
+        optionValue = $(this).val();
+        $('#principal_specialty').append('<option value="'+optionValue+'">'+optionText+'</option>');
+    });
+
+  });
+
+
+  //profesiones
+  //al modificar especialidades
+  $('#professions').on('change', function() {
+    $('#principal_profession').empty();
+    $.each($("#professions option:selected"), function(){
+        optionText = $(this).text();
+        optionValue = $(this).val();
+        $('#principal_profession').append('<option value="'+optionValue+'">'+optionText+'</option>');
+    });
+  });
+
+});
+
 </script>
 <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('js/defaults-es_CL.min.js') }}"></script>

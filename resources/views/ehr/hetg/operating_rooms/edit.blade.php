@@ -42,6 +42,35 @@
         </fieldset>
     </div>
 
+    <div class="row">
+
+        <fieldset class="form-group col">
+            <label for="for_name">Especialidades</label><br>
+            <select class="selectpicker" name="specialties[]" multiple>
+                @foreach ($specialties as $key => $specialty)
+                  @if($operatingRoom->specialties != null)
+                    <option value="{{$specialty->id}}" {{ ($operatingRoom->specialties->contains('id', $specialty->id))?'selected':'' }}>{{$specialty->specialty_name}}</option>
+                  @else
+                    <option value="{{$specialty->id}}" >{{$specialty->specialty_name}}</option>
+                  @endif
+                @endforeach
+            </select>
+        </fieldset>
+
+        <fieldset class="form-group col">
+            <label for="for_name">Profesiones</label><br>
+            <select class="selectpicker" name="professions[]" multiple>
+                @foreach ($professions as $key => $profession)
+                  @if($operatingRoom->professions != null)
+                    <option value="{{$profession->id}}" {{ ($operatingRoom->professions->contains('id', $profession->id))?'selected':'' }}>{{$profession->profession_name}}</option>
+                  @else
+                    <option value="{{$profession->id}}" >{{$profession->profession_name}}</option>
+                  @endif
+                @endforeach
+            </select>
+        </fieldset>
+    </div>
+
     <button type="submit" class="btn btn-primary">Guardar</button>
 
 </form>
@@ -56,6 +85,10 @@
 @endsection
 
 @section('custom_js')
+
+<link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
+<script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
+
   <script>
     $( document ).ready(function() {
       document.getElementById("for_name").focus();

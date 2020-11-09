@@ -9,12 +9,16 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\Contract;
+// use App\EHR\HETG\Specialty;
 use App\EHR\HETG\ExecutedActivity;
 use App\EHR\HETG\OperatingRoom;
 use App\EHR\HETG\UnscheduledProgramming;
 // use App\EHR\HETG\TheoreticalProgramming;
 use App\EHR\HETG\CalendarProgramming;
 use App\EHR\HETG\Specialty;
+use App\EHR\HETG\OperatingRoomSpecialty;
+use App\EHR\HETG\Profession;
+use App\EHR\HETG\OperatingRoomProfession;
 use Illuminate\Support\Facades\Auth;
 
 class OperatingRoomController extends Controller
@@ -634,7 +638,9 @@ class OperatingRoomController extends Controller
      */
     public function edit(OperatingRoom $operatingRoom)
     {
-        return view('ehr.hetg.operating_rooms.edit', compact('operatingRoom'));
+        $specialties = Specialty::orderBy('specialty_name','ASC')->get();
+        $professions = Profession::orderBy('profession_name','ASC')->get();
+        return view('ehr.hetg.operating_rooms.edit', compact('operatingRoom','specialties', 'professions'));
     }
 
     /**
@@ -647,8 +653,73 @@ class OperatingRoomController extends Controller
     public function update(Request $request, OperatingRoom $operatingRoom)
     {
         $operatingRoom->fill($request->all());
-        $operatingRoom->user_id = Auth::id();
+        // $operatingRoom->user_id = Auth::id();
         $operatingRoom->save();
+
+        // //asigna especialidades
+        // if ($request->input('specialties')!=null) {
+        //     foreach ($request->input('specialties') as $key => $value) {
+        //         $OperatingRoomSpecialty = OperatingRoomSpecialty::where('specialty_id',$value)
+        //                                                         ->where('operating_room_id', $operatingRoom->id)
+        //                                                         ->get();
+        //         if ($OperatingRoomSpecialty->count() == 0) {
+        //             $OperatingRoomSpecialty = new OperatingRoomSpecialty();
+        //             $OperatingRoomSpecialty->specialty_id = $value;
+        //             $OperatingRoomSpecialty->operating_room_id = $operatingRoom->id;
+        //             $OperatingRoomSpecialty->save();
+        //         }
+        //     }
+        // }
+
+        //asigna especialidades
+        if ($request->input('specialties') == null) {
+          $OperatingRoomSpecialty = OperatingRoomSpecialty::where('operating_room_id', $operatingRoom->id)->delete();
+        }
+
+        if($request->input('specialties')!=null){
+
+            //elimina lo no seleccionado
+            $OperatingRoomSpecialties = OperatingRoomSpecialty::where('operating_room_id', $operatingRoom->id)->whereNotIn('specialty_id',$request->input('specialties'))->delete();
+
+            //agrega las nuevas especialidades
+            foreach ($request->input('specialties') as $key => $value) {
+                $OperatingRoomSpecialty = OperatingRoomSpecialty::where('specialty_id',$value)
+                                                                ->where('operating_room_id', $operatingRoom->id)
+                                                                ->first();
+
+                if ($OperatingRoomSpecialty == null) {
+                    $OperatingRoomSpecialty = new OperatingRoomSpecialty();
+                    $OperatingRoomSpecialty->specialty_id = $value;
+                    $OperatingRoomSpecialty->operating_room_id = $operatingRoom->id;
+                    $OperatingRoomSpecialty->save();
+                }
+            }
+        }
+
+        //asigna profesiones
+        if ($request->input('professions') == null) {
+          $OperatingRoomProfessions = OperatingRoomProfession::where('operating_room_id', $operatingRoom->id)->delete();
+        }
+
+        if($request->input('professions')!=null){
+
+            //elimina lo no seleccionado
+            $OperatingRoomProfessions = OperatingRoomProfession::where('operating_room_id', $operatingRoom->id)->whereNotIn('profession_id',$request->input('professions'))->delete();
+
+            //agrega las nuevas especialidades
+            foreach ($request->input('professions') as $key => $value) {
+                $OperatingRoomProfession = OperatingRoomProfession::where('profession_id',$value)
+                                                                ->where('operating_room_id', $operatingRoom->id)
+                                                                ->first();
+
+                if ($OperatingRoomProfession == null) {
+                    $OperatingRoomProfession = new OperatingRoomProfession();
+                    $OperatingRoomProfession->profession_id = $value;
+                    $OperatingRoomProfession->operating_room_id = $operatingRoom->id;
+                    $OperatingRoomProfession->save();
+                }
+            }
+        }
 
         session()->flash('info', 'El pabellón ha sido editado.');
         return redirect()->route('ehr.hetg.operating_rooms.index');
