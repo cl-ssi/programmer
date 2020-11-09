@@ -4,6 +4,8 @@ namespace App\Http\Controllers\EHR\HETG;
 
 use App\EHR\HETG\MotherActivity;
 use App\EHR\HETG\Activity;
+use App\EHR\HETG\Specialty;
+use App\EHR\HETG\Profession;
 use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\CalendarProgramming;
 use App\EHR\HETG\TheoreticalProgramming;
@@ -87,6 +89,9 @@ class CalendarProgrammingController extends Controller
     $monday = Carbon::parse($date)->startOfWeek();
     $sunday = Carbon::parse($date)->endOfWeek();
 
+    // $specialties = Specialty::whereIn('id',Auth::user()->getSpecialtiesArray())->get();
+    // $professions = Profession::whereIn('id',Auth::user()->getProfessionsArray())->get();
+
     //obtiene datos programables del período
     $theoreticalProgrammings = TheoreticalProgramming::whereBetween('start_date', [$monday, $sunday])
       ->whereNull('contract_day_type')
@@ -94,7 +99,7 @@ class CalendarProgrammingController extends Controller
         return $query->where('mother_activity_id', 1); //actividad de pabellón
       })
       ->whereHas('specialty', function ($query) {
-        return $query->where('id', Auth::user()->getSpecialtiesArray()); //actividad de pabellón
+        return $query->whereIn('id', Auth::user()->getSpecialtiesArray()); //actividad de pabellón
       })
       ->get();
 
@@ -160,7 +165,7 @@ class CalendarProgrammingController extends Controller
                                                   return $query->where('rut', $rut);
                                                 })
                                                 ->whereHas('specialty', function ($query) {
-                                                  return $query->where('id', Auth::user()->getSpecialtiesArray()); //actividad de pabellón
+                                                  return $query->whereIn('id', Auth::user()->getSpecialtiesArray()); //actividad de pabellón
                                                 })
                                                 ->get();
                                                 // dd($calendarProgrammings);
@@ -182,7 +187,7 @@ class CalendarProgrammingController extends Controller
                                                   return $query->where('rut', $rut);
                                                 })
                                                 ->whereHas('specialty', function ($query) {
-                                                  return $query->where('id', Auth::user()->getSpecialtiesArray()); //actividad de pabellón
+                                                  return $query->whereIn('id', Auth::user()->getSpecialtiesArray()); //actividad de pabellón
                                                 })
                                                 ->onlyTrashed()
                                                 ->get();
