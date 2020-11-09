@@ -353,7 +353,7 @@ bottom: 5px;
       header: {
         left: '',//prev,next today
         center: 'title',
-        right: 'resourceTimeGridDay,resourceTimeGridTwoDay,timeGridWeek,dayGridMonth'
+        right: 'resourceTimeGridDay,resourceTimeGridTwoDay'//,timeGridWeek,dayGridMonth'
       },
       titleFormat: { // will produce something like "Tuesday, September 18, 2018"
             month: 'long',
