@@ -18,7 +18,7 @@ class Contract extends Model implements Auditable
         'id', 'rut', 'year', 'law', 'contract_id',  'weekly_hours', 'shift_system',
         'obs', 'legal_holidays', 'compensatory_rest', 'administrative_permit',
         'training_days', 'breastfeeding_time', 'weekly_collation',
-        'contract_start_date', 'contract_end_date', 'unit', 'unit_code'
+        'contract_start_date', 'contract_end_date', 'unit', 'unit_code','service_id'
         //, 'user_id'
     ];
 
@@ -36,6 +36,10 @@ class Contract extends Model implements Auditable
 
     public function logs() {
         return $this->morphMany('App\EHR\HETG\Log','model')->where('diferences','<>',"[]");
+    }
+
+    public function service() {
+        return $this->belongsTo('App\EHR\HETG\Service');
     }
 
     use SoftDeletes;

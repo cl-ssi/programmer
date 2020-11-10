@@ -113,7 +113,7 @@
             <input type="date" class="form-control" id="for_contract_end_date" name="contract_end_date" required  value="{{$contract->contract_end_date}}">
         </fieldset>
 
-        <fieldset class="form-group col">
+        <!-- <fieldset class="form-group col">
             <label for="for_unit">Servicio / Unidad</label>
             <input type="text" class="form-control" id="for_unit" name="unit" value="{{$contract->unit}}">
         </fieldset>
@@ -121,7 +121,17 @@
         <fieldset class="form-group col">
             <label for="for_unit_code">Cod. Unidad</label>
             <input type="text" class="form-control" id="for_unit_code" name="unit_code" value="{{$contract->unit_code}}">
+        </fieldset> -->
+
+        <fieldset class="form-group col">
+            <label for="for_unit_code">Servicio</label>
+            <select name="service_id" id="for_service_id" class="form-control" required="">
+              @foreach($services as $service)
+                <option value="{{$service->id}}" {{ $service->id == $contract->service_id ? 'selected' : '' }}>{{$service->service_name}}</option>
+              @endforeach
+            </select>
         </fieldset>
+        
     </div>
 
     <div class="row">

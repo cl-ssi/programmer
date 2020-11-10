@@ -15,12 +15,16 @@ class Service extends Model implements Auditable
    * @var array
    */
   protected $fillable = [
-      'id', 'service_name', 'color'
+      'id', 'service_code', 'service_name', 'color'
   ];
 
   public function users() {
       return $this->belongsToMany('App\EHR\HETG\User', 'hm_user_services')
           ->wherePivot('deleted_at', null);
+  }
+
+  public function contracts() {
+      return $this->hasMany('App\EHR\HETG\Contract');
   }
 
   use SoftDeletes;

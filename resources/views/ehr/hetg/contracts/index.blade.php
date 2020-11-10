@@ -42,6 +42,7 @@
             <th>Ley</th>
             <th>Correlativo contrato</th>
             <th>Horas Semanales</th>
+            <th>Servicio</th>
             <th></th>
         </tr>
     </thead>
@@ -53,6 +54,7 @@
             <td>{{ $contract->law }}</td>
             <td>{{ $contract->contract_id }}</td>
             <td>{{ $contract->weekly_hours }}</td>
+            <td>{{ $contract->service->service_name }}</td>
             <td>
       				<a href="{{ route('ehr.hetg.contracts.edit', $contract) }}"
       					class="btn btn-sm btn-outline-secondary">

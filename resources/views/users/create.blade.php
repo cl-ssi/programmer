@@ -83,7 +83,7 @@
 
     <br />
 
-    <div class="container">
+    <!-- <div class="container">
       <div class="row">
         <div class="col-sm">
             <h4>Servicios</h4>
@@ -105,7 +105,7 @@
       </div>
     </div>
 
-    <br>
+    <br> -->
 
     <div class="container">
       <div class="row">

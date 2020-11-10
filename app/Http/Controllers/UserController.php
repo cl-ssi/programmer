@@ -133,23 +133,23 @@ class UserController extends Controller
         //     }
         // }
 
-        //asigna especialidades
-        if($request->input('services')!=null){
-
-            //agrega las nuevas especialidades
-            foreach ($request->input('services') as $key => $value) {
-
-              $userService = new UserService();
-              $userService->service_id = $value;
-              $userService->user_id = $user->id;
-              if ($value == $request->principal_specialty) {
-                $userService->principal = 1;
-              }else{
-                $userService->principal = 0;
-              }
-              $userService->save();
-            }
-        }
+        // //asigna especialidades
+        // if($request->input('services')!=null){
+        //
+        //     //agrega las nuevas especialidades
+        //     foreach ($request->input('services') as $key => $value) {
+        //
+        //       $userService = new UserService();
+        //       $userService->service_id = $value;
+        //       $userService->user_id = $user->id;
+        //       if ($value == $request->principal_specialty) {
+        //         $userService->principal = 1;
+        //       }else{
+        //         $userService->principal = 0;
+        //       }
+        //       $userService->save();
+        //     }
+        // }
 
         //asigna especialidades
         if($request->input('specialties')!=null){
@@ -242,37 +242,39 @@ class UserController extends Controller
             is_array($request->input('permissions')) ? $request->input('permissions') : array()
         );
 
-        //asigna servicios
-        if($request->input('services')!=null){
-
-            //elimina lo no seleccionado
-            $userServices = UserService::where('user_id', $user->id)->whereNotIn('service_id',$request->input('services'))->delete();
-
-            //agrega las nuevas especialidades
-            foreach ($request->input('services') as $key => $value) {
-                $userService = UserService::where('service_id',$value)
-                                              ->where('user_id', $user->id)
-                                              ->first();
-
-                if ($userService == null) {
-                    $userService = new UserService();
-                    $userService->service_id = $value;
-                    $userService->user_id = $user->id;
-                    if ($value == $request->principal_service) {
-                      $userService->principal = 1;
-                    }else{
-                      $userService->principal = 0;
-                    }
-                    $userService->save();
-                }else{
-                  if ($value == $request->principal_service) {
-                    $userService->where('service_id',$value)->update(['principal' => 1]);
-                  }else{
-                    $userService->where('service_id',$value)->update(['principal' => 0]);
-                  }
-                }
-            }
-        }
+        // //asigna servicios
+        // if($request->input('services')!=null){
+        //
+        //     //elimina lo no seleccionado
+        //     $userServices = UserService::where('user_id', $user->id)->whereNotIn('service_id',$request->input('services'))->delete();
+        //
+        //     //agrega las nuevas especialidades
+        //     foreach ($request->input('services') as $key => $value) {
+        //         $userService = UserService::where('service_id',$value)
+        //                                       ->where('user_id', $user->id)
+        //                                       ->first();
+        //
+        //         if ($userService == null) {
+        //             $userService = new UserService();
+        //             $userService->service_id = $value;
+        //             $userService->user_id = $user->id;
+        //             if ($value == $request->principal_service) {
+        //               $userService->principal = 1;
+        //             }else{
+        //               $userService->principal = 0;
+        //             }
+        //             $userService->save();
+        //         }else{
+        //           if ($value == $request->principal_service) {
+        //             // $userService->where('service_id',$value)->update(['principal' => 1]);
+        //             $userService->where('service_id',$value)->where('user_id', $user->id)->update(['principal' => 1]);
+        //           }else{
+        //             // $userService->where('service_id',$value)->update(['principal' => 0]);
+        //             $userService->where('service_id',$value)->where('user_id', $user->id)->update(['principal' => 0]);
+        //           }
+        //         }
+        //     }
+        // }
 
         //asigna especialidades
         if($request->input('specialties')!=null){
@@ -298,9 +300,11 @@ class UserController extends Controller
                     $userSpecialty->save();
                 }else{
                   if ($value == $request->principal_specialty) {
-                    $userSpecialty->where('specialty_id',$value)->update(['principal' => 1]);
+                    // $userSpecialty->where('specialty_id',$value)->update(['principal' => 1]);
+                    $userSpecialty->where('specialty_id',$value)->where('user_id', $user->id)->update(['principal' => 1]);
                   }else{
-                    $userSpecialty->where('specialty_id',$value)->update(['principal' => 0]);
+                    // $userSpecialty->where('specialty_id',$value)->update(['principal' => 0]);
+                    $userSpecialty->where('specialty_id',$value)->where('user_id', $user->id)->update(['principal' => 0]);
                   }
                 }
             }
@@ -329,9 +333,11 @@ class UserController extends Controller
                     $userProfession->save();
                 }else{
                   if ($value == $request->principal_specialty) {
-                    $userProfession->where('profession_id',$value)->update(['principal' => 1]);
+                    // $userProfession->where('profession_id',$value)->update(['principal' => 1]);
+                    $userProfession->where('profession_id',$value)->where('user_id', $user->id)->update(['principal' => 1]);
                   }else{
-                    $userProfession->where('profession_id',$value)->update(['principal' => 0]);
+                    // $userProfession->where('profession_id',$value)->update(['principal' => 0]);
+                    $userProfession->where('profession_id',$value)->where('user_id', $user->id)->update(['principal' => 0]);
                   }
                 }
             }

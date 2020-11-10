@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\EHR\HETG;
 
 use App\EHR\HETG\Contract;
+use App\EHR\HETG\Service;
 use App\EHR\HETG\Rrhh;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -34,7 +35,8 @@ class ContractController extends Controller
     public function create()
     {
       $rrhh = Rrhh::orderBy('name','ASC')->get();
-      return view('ehr.hetg.contracts.create', compact('rrhh'));
+      $services = Service::orderBy('service_name','ASC')->get();
+      return view('ehr.hetg.contracts.create', compact('rrhh','services'));
     }
 
     /**
@@ -73,7 +75,8 @@ class ContractController extends Controller
     public function edit(Contract $contract)
     {
       $rrhh = Rrhh::All();
-      return view('ehr.hetg.contracts.edit', compact('contract', 'rrhh'));
+      $services = Service::orderBy('service_name','ASC')->get();
+      return view('ehr.hetg.contracts.edit', compact('contract', 'rrhh', 'services'));
     }
 
     /**

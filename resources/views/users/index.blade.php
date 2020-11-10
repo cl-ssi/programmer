@@ -49,7 +49,7 @@
                 <th>Rut</th>
                 <th>Nombre</th>
                 <th>Rol</th>
-                <th>Servicio</th>
+                <!-- <th>Servicio</th> -->
                 <th>Prof/Espec</th>
                 <th>Email</th>
             </tr>
@@ -64,14 +64,14 @@
                         {{$role->name}},
                     @endforeach
                 </td>
-                <td nowrap>
+                <!-- <td nowrap>
                     @foreach ($user->services as $key => $service)
                         {{$service->service_name}},
                         @if ($key == 2)
                             @break
                         @endif
                     @endforeach
-                </td>
+                </td> -->
                 <td nowrap>
                     @foreach ($user->specialties as $key => $specialty)
                         {{$specialty->specialty_name}},

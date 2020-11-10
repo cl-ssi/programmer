@@ -14,6 +14,7 @@
     <thead>
         <tr>
             <th>Id</th>
+            <th>Código de servicio</th>
             <th>Servicio</th>
             <th></th>
         </tr>
@@ -22,6 +23,7 @@
         @foreach( $services as $service )
         <tr>
             <td>{{ $service->id }}</td>
+            <td>{{ $service->service_code }}</td>
             <td>{{ $service->service_name }}</td>
             <td>
       				<a href="{{ route('ehr.hetg.services.edit', $service) }}"
