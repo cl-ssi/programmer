@@ -834,7 +834,13 @@ class TheoreticalProgrammingController extends Controller
     //   return $a['cant'] <=> $b['cant'];
     // }
 
-    public function programed_professionals(){
+    public function programed_professionals(Request $request){
+
+        //filtro
+        $tipo = 0;
+        if ($request->filter) {
+          $tipo = $request->filter;
+        }
 
         //obtiene usuaros con especialidad
         // dd(Auth::hasRole('profesional'));
@@ -882,22 +888,40 @@ class TheoreticalProgrammingController extends Controller
                 }
             }
 
-            if (TheoreticalProgramming::where('rut',$rrhh->rut)->count()>0) {
-                $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'Sí';
-                $total_with_theorical += 1;
-            }else{
-                $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'No';
-                $total_withnot_theorical += 1;
+            if ($tipo == 0) {
+              if (TheoreticalProgramming::where('rut',$rrhh->rut)->count()>0) {
+                  $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'Sí';
+                  $total_with_theorical += 1;
+              }else{
+                  $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'No';
+                  $total_withnot_theorical += 1;
+              }
+              $total += 1;
             }
 
-            $total += 1;
+            if ($tipo == 1) {
+              if (TheoreticalProgramming::where('rut',$rrhh->rut)->count()>0) {
+                  $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'Sí';
+                  $total_with_theorical += 1;
+              }
+              $total += 1;
+            }
+
+            if ($tipo == 2) {
+              if (TheoreticalProgramming::where('rut',$rrhh->rut)->count() == 0) {
+                  $array[$rrhh->getShortNameAttribute()][$profesions]['cant'] = 'No';
+                  $total_withnot_theorical += 1;
+              }
+              $total += 1;
+            }
+
         }
 
         // dd(usort($array, "cmp_by_optionNumber"));
         // dd($array, usort($array,'cant'));
         // dd($total);
 
-        return view('ehr.hetg.management.reports.programed_professionals',compact('array','total','total_with_theorical','total_withnot_theorical'));
+        return view('ehr.hetg.management.reports.programed_professionals',compact('array','total','total_with_theorical','total_withnot_theorical','request'));
     }
 
     public function programed_specialties(){

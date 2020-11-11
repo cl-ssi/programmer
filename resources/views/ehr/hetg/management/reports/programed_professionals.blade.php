@@ -6,7 +6,23 @@
 
 <h3 class="mb-3">Reporte de Profesionales Programados</h3>
 
-{{-- <table class="table table-sm table-borderer"> --}}
+<table class="table table-sm table-bordered small text-uppercase" style="width:50%;">
+    <tbody>
+        <tr>
+            <td>Filtro</td>
+            <td>
+              <form method="GET" id="form" class="form-horizontal" action="{{ route('ehr.hetg.theoretical_programming.programed_professionals') }}">
+                <select name="filter" onchange="this.form.submit()">
+                  <option value="0" {{ $request->filter == 0 ? 'selected' : '' }}>Todos</option>
+                  <option value="1" {{ $request->filter == 1 ? 'selected' : '' }}>Con teórico</option>
+                  <option value="2" {{ $request->filter == 2 ? 'selected' : '' }}>Sin teórico</option>
+                </select>
+              </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 <table class="table table-sm table-bordered small text-uppercase" style="width:50%;">
     <tbody>
         <tr>
