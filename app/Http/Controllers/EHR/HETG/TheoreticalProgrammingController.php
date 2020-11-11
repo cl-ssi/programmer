@@ -6,6 +6,7 @@ use App\EHR\HETG\MotherActivity;
 use App\EHR\HETG\Activity;
 use App\EHR\HETG\Specialty;
 use App\EHR\HETG\Profession;
+use App\EHR\HETG\Service;
 use App\EHR\HETG\CalendarProgramming;
 use App\EHR\HETG\Rrhh;
 use App\EHR\HETG\Contract;
@@ -351,22 +352,17 @@ class TheoreticalProgrammingController extends Controller
 
     //obtiene administrativos
     $permisos_administrativos = array();
-    foreach ($contracts as $key => $contract) {
-      $permisos_administrativos['legal_holidays'] = $contract = 0;
-      $permisos_administrativos['compensatory_rest'] = $contract = 0;
-      $permisos_administrativos['administrative_permit'] = $contract = 0;
-      $permisos_administrativos['training_days'] = $contract = 0;
-      $permisos_administrativos['breastfeeding_time'] = $contract = 0;
-      $permisos_administrativos['weekly_collation'] = $contract = 0;
+    $contracts_administrative = Contract::find($contract_id);
+    if ($contracts_administrative) {
+      $permisos_administrativos['legal_holidays'] = $contracts_administrative->legal_holidays;
+      $permisos_administrativos['compensatory_rest'] = $contracts_administrative->compensatory_rest;
+      $permisos_administrativos['administrative_permit'] = $contracts_administrative->administrative_permit;
+      $permisos_administrativos['training_days'] = $contracts_administrative->training_days;
+      $permisos_administrativos['breastfeeding_time'] = $contracts_administrative->breastfeeding_time;
+      $permisos_administrativos['weekly_collation'] = $contracts_administrative->weekly_collation;
     }
-    foreach ($contracts as $key => $contract) {
-      $permisos_administrativos['legal_holidays'] += $contract->$contract;
-      $permisos_administrativos['compensatory_rest'] += $contract->compensatory_rest;
-      $permisos_administrativos['administrative_permit'] += $contract->administrative_permit;
-      $permisos_administrativos['training_days'] += $contract->training_days;
-      $permisos_administrativos['breastfeeding_time'] += $contract->breastfeeding_time;
-      $permisos_administrativos['weekly_collation'] += $contract->weekly_collation;
-    }
+
+    // dd($permisos_administrativos);
 
     //se deja el obteo vacio temporalmente
     $permisos_administrativos = array(); //temporalmente hasta que se empiece a utilizar
@@ -930,5 +926,25 @@ class TheoreticalProgrammingController extends Controller
         }
 
         return view('ehr.hetg.management.reports.programed_specialties',compact('array'));
+    }
+
+    public function programed_by_services(){
+
+        $services = Service::orderBy('service_name','DESC')->get();
+
+        $array = array();
+        foreach ($services as $key => $service) {
+          $profesionals = array();
+          $profesionals[$service->service_name] = 0;
+          foreach ($service->contracts as $key => $contract) {
+            if ($contract->theoretical_programmings->count() > 0) {
+              $profesionals[$service->service_name] += 1;
+            }
+          }
+          $array[$service->service_name]['total'] = $service->contracts->groupBy('rut')->count();
+          $array[$service->service_name]['con_teorico'] = $profesionals[$service->service_name];
+        }
+
+        return view('ehr.hetg.management.reports.programed_by_services',compact('array'));
     }
 }

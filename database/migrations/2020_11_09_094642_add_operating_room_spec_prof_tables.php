@@ -39,7 +39,7 @@ class AddOperatingRoomSpecProfTables extends Migration
 
       Schema::create('hm_services', function (Blueprint $table) {
           $table->bigIncrements('id');
-          $table->string('service_name');
+          $table->string('service_name')->nullable();
           $table->string('color')->nullable();
 
           $table->timestamps();
@@ -50,7 +50,7 @@ class AddOperatingRoomSpecProfTables extends Migration
           $table->unsignedBigInteger('service_id');
           $table->unsignedBigInteger('user_id');
           $table->boolean('principal')->default(0);
-          
+
           $table->foreign('service_id')->references('id')->on('hm_services');
           $table->foreign('user_id')->references('id')->on('users');
 

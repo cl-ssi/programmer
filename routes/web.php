@@ -94,6 +94,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::post('theoretical_programming/change_active_week', 'EHR\HETG\TheoreticalProgrammingController@change_active_week')->name('theoretical_programming.change_active_week');
         Route::match(['get', 'post'],'theoretical_programming/programed_professionals','EHR\HETG\TheoreticalProgrammingController@programed_professionals')->name('theoretical_programming.programed_professionals');
         Route::match(['get', 'post'],'theoretical_programming/programed_specialties','EHR\HETG\TheoreticalProgrammingController@programed_specialties')->name('theoretical_programming.programed_specialties');
+        Route::match(['get', 'post'],'theoretical_programming/programed_by_services','EHR\HETG\TheoreticalProgrammingController@programed_by_services')->name('theoretical_programming.programed_by_services');
 
         Route::resource('operating_room_programming','EHR\HETG\OperatingRoomProgrammingController');
         Route::resource('theoretical_programming','EHR\HETG\TheoreticalProgrammingController');

@@ -126,6 +126,10 @@
                                     <i class="fas fa-calendar-alt fa-fw"></i> Reporte especialidades programadas
                                 </a>
 
+                                <a class="dropdown-item" href="{{ route('ehr.hetg.theoretical_programming.programed_by_services') }}">
+                                    <i class="fas fa-calendar-alt fa-fw"></i> Reporte servicios programados
+                                </a>
+
                             </div>
                         </li>
                         @endcanany
