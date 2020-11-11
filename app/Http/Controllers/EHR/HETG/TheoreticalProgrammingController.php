@@ -856,7 +856,10 @@ class TheoreticalProgrammingController extends Controller
 
         //busca usuarios en rrhh
         // $rrhhs = Rrhh::orderby('name','ASC')->get();
-        $rrhhs = Rrhh::whereIn('rut',$users)->orderby('name','ASC')->get();
+        $rrhhs = Rrhh::whereIn('rut',$users)->orderby('name','ASC')->whereHas(
+            'contracts', function($q){
+                $q->where('law', 'LEY 19.664');
+            })->get();
 
         //ciclo
         $array = array();
@@ -864,6 +867,7 @@ class TheoreticalProgrammingController extends Controller
         $total_with_theorical = 0;
         $total_withnot_theorical = 0;
         foreach ($rrhhs as $key => $rrhh) {
+            if($rrhh->contracts)
 
             $user = User::where('id',$rrhh->rut)->first();
             $profesions = null;
