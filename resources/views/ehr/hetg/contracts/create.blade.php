@@ -125,7 +125,7 @@
 
         <fieldset class="form-group col">
             <label for="for_unit_code">Servicio</label>
-            <select name="service_id" id="for_service_id" class="form-control" required="">
+            <select name="service_id" id="for_service_id" class="form-control selectpicker" required="" data-live-search="true" data-size="5">
               @foreach($services as $service)
                 <option value="{{$service->id}}">{{$service->service_name}}</option>
               @endforeach
