@@ -4,7 +4,7 @@
 
 @section('content')
 
-<h3 class="mb-3">Reporte de servicios programadas</h3>
+<h3 class="mb-3">Reporte de Servicios Programados</h3>
 
 <table class="table table-sm table-bordered small text-uppercase">
     <thead>
