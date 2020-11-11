@@ -14,7 +14,7 @@
 
         <fieldset class="form-group col">
             <label for="for_service_code">Código de Servicio</label>
-            <input type="text" class="form-control" id="for_service_code" placeholder="" name="service_code" required>
+            <input type="text" class="form-control" id="for_service_code" placeholder="" name="service_code">
         </fieldset>
 
         <fieldset class="form-group col">
