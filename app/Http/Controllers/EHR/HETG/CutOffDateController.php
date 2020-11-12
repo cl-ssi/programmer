@@ -125,12 +125,11 @@ class CutOffDateController extends Controller
           $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
         }
 
-        // dd($theoreticalProgrammings, $unscheduledProgrammings);
-
 
         //programables - PROGRAMACION MÉDICA
         $array_programacion_medica = array();
         foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
+          if ($theoricalProgramming->contract) {
             $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['assigned_hour'] = 0;
@@ -140,8 +139,10 @@ class CutOffDateController extends Controller
             $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = 0;
+          }
         }
         foreach ($theoreticalProgrammings->whereNotNull('specialty_id') as $key => $theoricalProgramming) {
+          if ($theoricalProgramming->contract) {
             $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['assigned_hour'] += $theoricalProgramming->duration_theorical_programming;
@@ -151,6 +152,7 @@ class CutOffDateController extends Controller
             $array_programacion_medica[$theoricalProgramming->rut . " - " . $theoricalProgramming->rrhh->getShortNameAttribute()][$theoricalProgramming->contract->contract_id]
                                       [$theoricalProgramming->specialty->id_specialty . ' - ' . $theoricalProgramming->specialty->specialty_name]
                                       [$theoricalProgramming->activity->id_activity . ' - ' . $theoricalProgramming->activity->activity_name]['theoricalProgramming_id'] = $theoreticalProgrammings->whereNotNull('specialty_id')->where('activity_id',$theoricalProgramming->activity_id)->toArray();
+          }
         }
 
         //NO programables - PROGRAMACION MÉDICA
