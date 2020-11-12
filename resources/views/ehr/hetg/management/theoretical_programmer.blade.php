@@ -208,7 +208,7 @@ bottom: 5px;
                     </div>
                 @endforeach
 
-                {{-- <small>DÌAS ADMINISTRATIVOS</small> --}}
+                <small>PERMISOS ADMINISTRATIVOS</small>
 
                 @foreach ($permisos_administrativos as $key => $permiso_administrativo)
                     <div class='fc-event' data-event='{"title":"{{$key}}","id":"", "description":"{{$key}}", "color": "#A6C6F1"}'>
@@ -487,8 +487,15 @@ bottom: 5px;
                 //     saveMyData(info.event, 2, tipo_evento);
                 // }
 
-                //se setea evento de 60 mins
-                info.event.setEnd(add_minutes(fecha_inicio,60));
+                //setea duración del evento
+                if (info.event.id == 149 || info.event.id == 150) {
+                  //setea evento de colación (45 mins)
+                  info.event.setEnd(add_minutes(fecha_inicio,45));
+                }else{
+                  //se setea evento de 60 mins
+                  info.event.setEnd(add_minutes(fecha_inicio,60));
+                }
+
                 $(function() {
                     $( "#dialog-confirm" ).dialog({
                       resizable: false,
@@ -512,11 +519,24 @@ bottom: 5px;
                     close: function(event, ui){
                         @foreach ($activities as $key => $activity)
                             if(info.event.id == "{{$activity->id}}"){
-                              document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + 1);
-                              bolsa_{{$activity->id}} = bolsa_{{$activity->id}} + 1;
 
-                              disponible_contrato = disponible_contrato + 1;
-                              document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
+                              //setea duración del evento
+                              if (info.event.id == 149 || info.event.id == 150) {
+                                //setea evento de colación (45 mins)
+                                document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + 0.75);
+                                bolsa_{{$activity->id}} = bolsa_{{$activity->id}} + 0.75;
+
+                                disponible_contrato = disponible_contrato + 0.75;
+                                document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
+                              }else{
+                                //se setea evento de 60 mins
+                                document.getElementById("{{$activity->id}}").innerHTML = (bolsa_{{$activity->id}} + 1);
+                                bolsa_{{$activity->id}} = bolsa_{{$activity->id}} + 1;
+
+                                disponible_contrato = disponible_contrato + 1;
+                                document.getElementById("disponible_contrato").innerHTML = disponible_contrato;
+                              }
+
                             }
                         @endforeach
                     }
@@ -621,6 +641,7 @@ bottom: 5px;
 
         //tipo de evento teorico
         if (tipo_evento == 'teorico') {
+
             // if (confirm('¿Desea modificar solo este evento?')) {
             //     updateMyData(info.event, 1);
             // } else {
@@ -820,6 +841,12 @@ bottom: 5px;
         // alert(tipo_evento);
         //solo se permite modificar el tamaño a los eventos teoricos
         if (tipo_evento == 'teorico') {
+
+            if (info.event.id == 149 || info.event.id == 150) {
+              alert("No es posible modificar el evento Colación");
+              info.revert();
+              return;
+            }
 
             //validación excede total
             var total_contrato_verif = document.getElementById("total_contrato").innerHTML;
