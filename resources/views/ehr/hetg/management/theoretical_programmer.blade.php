@@ -208,12 +208,47 @@ bottom: 5px;
                     </div>
                 @endforeach
 
-                <small>PERMISOS ADMINISTRATIVOS</small>
+                <small>P.ADMINISTRATIVOS</small>
 
                 @foreach ($permisos_administrativos as $key => $permiso_administrativo)
-                    <div class='fc-event' data-event='{"title":"{{$key}}","id":"", "description":"{{$key}}", "color": "#A6C6F1"}'>
-                        <small>{{$key}}: <span id="{{$key}}"></span></small>
-                    </div>
+                         @if($key == "legal_holidays")
+                           <div class='fc-event' style="background-color: #FF0000;" data-color='#FF0000'
+                                data-event='{"title":"Vacaciones","id":"", "description":"{{$key}}", "color": "#FF0000"}'>
+                                <small>Vacaciones: <span id="{{$key}}"></span></small>
+                           </div>
+                         @endif
+                         @if($key == "compensatory_rest")
+                           <div class='fc-event' style="background-color: #FF0000;" data-color='#FF0000'
+                                data-event='{"title":"D.Compensatorio","id":"", "description":"{{$key}}", "color": "#FF0000"}'>
+                                <small>D.Compensatorio: <span id="{{$key}}"></span></small>
+                           </div>
+                         @endif
+                         @if($key == "administrative_permit")
+                           <div class='fc-event' style="background-color: #FF0000;" data-color='#FF0000'
+                                data-event='{"title":"P.Administrativo","id":"", "description":"{{$key}}", "color": "#FF0000"}'>
+                                <small>P.Administrativos: <span id="{{$key}}"></span></small>
+                           </div>
+                         @endif
+                         @if($key == "training_days")
+                           <div class='fc-event' style="background-color: #FF0000;" data-color='#FF0000'
+                                data-event='{"title":"Capacitación","id":"", "description":"{{$key}}", "color": "#FF0000"}'>
+                                <small>Capacitaciones: <span id="{{$key}}"></span></small>
+                           </div>
+                         @endif
+                         @if($key == "breastfeeding_time")
+                           <div class='fc-event' style="background-color: #FF0000;" data-color='#FF0000'
+                                data-event='{"title":"T.Desayuno","id":"", "description":"{{$key}}", "color": "#FF0000"}'>
+                                <small>T.Desayuno: <span id="{{$key}}"></span></small>
+                           </div>
+                         @endif
+                         @if($key == "weekly_collation")
+                         <div class='fc-event' style="background-color: #FF0000;" data-color='#FF0000'
+                              data-event='{"title":"Colación Semanal","id":"", "description":"{{$key}}", "color": "#FF0000"}'>
+                              <small>Colación Semanal: <span id="{{$key}}"></span></small>
+                         </div>
+                         @endif
+
+
                 @endforeach
 
             </div>
@@ -438,13 +473,50 @@ bottom: 5px;
                     description: 'teorico'
                   },
               @endif
-            //administrativos
-              @if($theoricalProgramming->activity_id == null)
-              { id: '{{$theoricalProgramming->activity_id}}', title: '{{$theoricalProgramming->contract_day_type}}',
+
+          @endforeach
+
+          //administrativos
+
+          @foreach ($theoreticalProgrammingsAdministrative as $key => $theoricalProgramming)
+
+            @if($theoricalProgramming->contract_day_type == "legal_holidays")
+              { id: '{{$theoricalProgramming->activity_id}}', title: 'Vacaciones',
                 start: '{{$theoricalProgramming->start_date}}', end: '{{$theoricalProgramming->end_date}}',
-                description: '{{$theoricalProgramming->contract_day_type}}', color: '#A6C6F1'
+                description: '{{$theoricalProgramming->contract_day_type}}', color:'#FF0000'
               },
-              @endif
+            @endif
+            @if($theoricalProgramming->contract_day_type == 'compensatory_rest')
+              { id: '{{$theoricalProgramming->activity_id}}', title: 'D.Compensatorio',
+                start: '{{$theoricalProgramming->start_date}}', end: '{{$theoricalProgramming->end_date}}',
+                description: '{{$theoricalProgramming->contract_day_type}}', color:'#FF0000'
+              },
+            @endif
+            @if($theoricalProgramming->contract_day_type == "administrative_permit")
+              { id: '{{$theoricalProgramming->activity_id}}', title: 'P.Administrativo',
+                start: '{{$theoricalProgramming->start_date}}', end: '{{$theoricalProgramming->end_date}}',
+                description: '{{$theoricalProgramming->contract_day_type}}', color:'#FF0000'
+              },
+            @endif
+            @if($theoricalProgramming->contract_day_type == "training_days")
+              { id: '{{$theoricalProgramming->activity_id}}', title: 'Capacitación',
+                start: '{{$theoricalProgramming->start_date}}', end: '{{$theoricalProgramming->end_date}}',
+                description: '{{$theoricalProgramming->contract_day_type}}', color:'#FF0000'
+              },
+            @endif
+            @if($theoricalProgramming->contract_day_type == "breastfeeding_time")
+              { id: '{{$theoricalProgramming->activity_id}}', title: 'T.Desayuno',
+                start: '{{$theoricalProgramming->start_date}}', end: '{{$theoricalProgramming->end_date}}',
+                description: '{{$theoricalProgramming->contract_day_type}}', color:'#FF0000'
+              },
+            @endif
+            @if($theoricalProgramming->contract_day_type == "weekly_collation")
+              { id: '{{$theoricalProgramming->activity_id}}', title: 'Colación semanal',
+                start: '{{$theoricalProgramming->start_date}}', end: '{{$theoricalProgramming->end_date}}',
+                description: '{{$theoricalProgramming->contract_day_type}}', color:'#FF0000'
+              },
+            @endif
+
 
           @endforeach
 
@@ -466,16 +538,17 @@ bottom: 5px;
         var fecha_inicio = info.event.start;
         var tipo_evento = info.event.extendedProps.description;
 
-        var disponible_contrato_verif = document.getElementById("disponible_contrato").innerHTML;
-        var total_contrato_verif = document.getElementById("total_contrato").innerHTML;
-        if (disponible_contrato_verif == total_contrato_verif) {
-            alert("No se puede agregar, excede horas contratadas.");
-            info.event.remove();
-            return;
-        }
-
         //tipo de evento teorico
         if (tipo_evento == 'teorico') {
+
+            var disponible_contrato_verif = document.getElementById("disponible_contrato").innerHTML;
+            var total_contrato_verif = document.getElementById("total_contrato").innerHTML;
+            if (disponible_contrato_verif == total_contrato_verif) {
+                alert("No se puede agregar, excede horas contratadas.");
+                info.event.remove();
+                return;
+            }
+
             //se verifica que no exceda el máximo
             // if (window["bolsa_" + info.event.id] != '0') {
 
@@ -676,7 +749,7 @@ bottom: 5px;
             var fecha_inicio = info.event.start;
             info.event.setStart(formatDate2(fecha_inicio) + ' ' + formatHour(inicio_start));
             info.event.setEnd(formatDate2(fecha_inicio) + ' ' + formatHour(termino_start));
-            // updateMyData(info.event, 1);
+            updateMyData(info.event, 4);
         }
       },
 

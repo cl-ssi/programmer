@@ -30,6 +30,12 @@
                     <div class="alert alert-warning" role="alert">
                       <b>03/11/2020 - Semana volante</b>: Al arrastrar, modificar o eliminar un evento en programación teórica, se realiza la misma operación cada 6 semanas.
                     </div>
+                    <div class="alert alert-warning" role="alert">
+                      <b>13/11/2020 - Evento de colación</b>: Se agrega evento de colación en programador teórico (considerar solo para contratos de 44 hrs).
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                      <b>16/11/2020 - Días administrativos</b>: Se agregan eventos de días administrativos en programador teórico.
+                    </div>
                 </div>
             </div>
         </div>

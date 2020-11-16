@@ -323,6 +323,26 @@ class TheoreticalProgrammingController extends Controller
       }
       // dd($theoreticalProgrammings);
 
+      //obtiene teóricos administrativos
+      $theoreticalProgrammingsAdministrative = TheoreticalProgramming::where('year',$year)
+                                                    ->where('rut',$rut)
+                                                    ->whereNotNull('contract_day_type')
+                                                    ->where('contract_id', $contract_id)
+                                                    // ->where('specialty_id', $request->get('specialty_id'))
+                                                    ->whereBetween('start_date',[$monday,$sunday])
+                                                    ->get();
+
+                                                    // dd($theoreticalProgrammings);
+
+        //se obtiene fechas de inicio y termino de cada isEventOverDiv
+        foreach ($theoreticalProgrammingsAdministrative as $key => $theoricalProgramming) {
+          $start  = new Carbon($theoricalProgramming->start_date);
+          $end    = new Carbon($theoricalProgramming->end_date);
+          $theoricalProgramming->duration_theorical_programming = $start->diffInMinutes($end)/60;
+        }
+
+        // dd($theoreticalProgrammingsAdministrative);
+
       //obtiene teoricos eliminados
       $theoreticalProgrammingDeleted = TheoreticalProgramming::where('year',$year)
                                                     ->where('rut',$rut)
@@ -353,19 +373,22 @@ class TheoreticalProgrammingController extends Controller
     //obtiene administrativos
     $permisos_administrativos = array();
     $contracts_administrative = Contract::find($contract_id);
-    if ($contracts_administrative) {
-      $permisos_administrativos['legal_holidays'] = $contracts_administrative->legal_holidays;
-      $permisos_administrativos['compensatory_rest'] = $contracts_administrative->compensatory_rest;
-      $permisos_administrativos['administrative_permit'] = $contracts_administrative->administrative_permit;
-      $permisos_administrativos['training_days'] = $contracts_administrative->training_days;
-      $permisos_administrativos['breastfeeding_time'] = $contracts_administrative->breastfeeding_time;
-      $permisos_administrativos['weekly_collation'] = $contracts_administrative->weekly_collation;
+    if ($request->get('specialty_id') != "--") {
+      if ($contracts_administrative) {
+        $permisos_administrativos['legal_holidays'] = $contracts_administrative->legal_holidays;
+        // $permisos_administrativos['compensatory_rest'] = $contracts_administrative->compensatory_rest;
+        $permisos_administrativos['administrative_permit'] = $contracts_administrative->administrative_permit;
+        $permisos_administrativos['training_days'] = $contracts_administrative->training_days;
+        // $permisos_administrativos['breastfeeding_time'] = $contracts_administrative->breastfeeding_time;
+        // $permisos_administrativos['weekly_collation'] = $contracts_administrative->weekly_collation;
+      }
     }
+
 
     // dd($permisos_administrativos);
 
     //se deja el obteo vacio temporalmente
-    $permisos_administrativos = array(); //temporalmente hasta que se empiece a utilizar
+    // $permisos_administrativos = array(); //temporalmente hasta que se empiece a utilizar
 
     // obtiene información de dias administrativos
     $contract_days = TheoreticalProgramming::where('rut',$rut)
@@ -385,7 +408,7 @@ class TheoreticalProgrammingController extends Controller
 
       return view('ehr.hetg.management.theoretical_programmer', compact('request','array','activities','contract_days','date','theoreticalProgrammings','theoreticalProgrammingDeleted',
                                                                         'rrhhs','permisos_administrativos', 'specialties','professions','contracts',
-                                                                        'programming','OperatingRoomProgrammings'));
+                                                                        'programming','OperatingRoomProgrammings','theoreticalProgrammingsAdministrative'));
       // return view('ehr.hetg.management.theoretical_programmer',compact('request','rrhhs','array','theoricalProgrammings','contracts','rut','contract_days'));
     }
 
@@ -569,6 +592,9 @@ class TheoreticalProgrammingController extends Controller
             if ($request->tipo_evento != "teorico") {
                 $theoreticalProgramming = new TheoreticalProgramming();
                 $theoreticalProgramming->rut = $request->rut;
+                $theoreticalProgramming->contract_id = $request->contract_id;
+                $theoreticalProgramming->specialty_id = $request->specialty_id;
+                $theoreticalProgramming->profession_id = $request->profession_id;
                 $theoreticalProgramming->contract_day_type = $request->tipo_evento;
                 $theoreticalProgramming->start_date = $first_date;
                 $theoreticalProgramming->end_date = $last_date;
@@ -661,12 +687,17 @@ class TheoreticalProgrammingController extends Controller
           $end_date_start = new Carbon($request->end_date_start);
 
           //obtiene rendimiento
-          if ($request->specialty_id != null) {
-              $Specialty = Specialty::find($request->specialty_id);
-              $performance = $Specialty->activities->where('id',$request->activity_id)->first()->pivot->performance;
-          }else{
-              $profession = Profession::find($request->profession_id);
-              $performance = $profession->activities->where('id',$request->activity_id)->first()->pivot->performance;
+          $performance = null;
+          //se obtiene esta info para los que no son administrativos
+          if ($request->tipo != 4) {
+            if ($request->specialty_id != null) {
+                $Specialty = Specialty::find($request->specialty_id);
+                $performance = $Specialty->activities->where('id',$request->activity_id)->first()->pivot->performance;
+            }else{
+                $profession = Profession::find($request->profession_id);
+                $performance = $profession->activities->where('id',$request->activity_id)->first()->pivot->performance;
+            }
+
           }
 
           //solo se modifica el evento actual
@@ -732,6 +763,19 @@ class TheoreticalProgrammingController extends Controller
                   $end_date_start = $end_date_start->addWeek(6);
               }
           }
+          //administrativos
+          elseif ($request->tipo == 4) {
+              $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                              ->where('activity_id',$request->activity_id)
+                                                              ->where('contract_id',$request->contract_id)
+                                                              ->where('specialty_id',$request->specialty_id)
+                                                              ->where('profession_id',$request->profession_id)
+                                                              ->where('start_date',$start_date_start)
+                                                              ->where('end_date',$end_date_start)->first();
+              $theoreticalProgramming->start_date = $start_date;
+              $theoreticalProgramming->end_date = $end_date;
+              $theoreticalProgramming->save();
+          }
 
         } catch (\Exception $e) {
 
@@ -777,7 +821,7 @@ class TheoreticalProgrammingController extends Controller
                       $last_date = $last_date->addWeek(1);
                   }
               }
-              //se elimina semana por medio
+              //se elimina semana volante
               elseif($request->tipo == 3){
                   while (date('Y', strtotime($first_date)) == $year) {
                       $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
@@ -794,6 +838,16 @@ class TheoreticalProgrammingController extends Controller
                       $first_date = $first_date->addWeek(6);
                       $last_date = $last_date->addWeek(6);
                   }
+              }
+              //administrativos
+              elseif ($request->tipo == 4) {
+                  $theoreticalProgramming = TheoreticalProgramming::where('rut',$request->rut)
+                                                                  ->where('contract_id',$request->contract_id)
+                                                                  ->where('specialty_id',$request->specialty_id)
+                                                                  ->where('profession_id',$request->profession_id)
+                                                                  ->where('start_date',$first_date)
+                                                                  ->where('end_date',$last_date)->first();
+                  $theoreticalProgramming->delete();
               }
 
         } catch (\Exception $e) {
