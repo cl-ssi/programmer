@@ -711,4 +711,63 @@ class CalendarProgrammingController extends Controller
     //dd($array);
     return view('ehr.hetg.management.calendar_programmer_report', compact('array'));
   }
+
+  public function programed_in_pavilions(Request $request){
+    // $services = Service::orderBy('service_name','DESC')->get();
+    //
+    // $array = array();
+    // foreach ($services as $key => $service) {
+    //   $profesionals = array();
+    //   $profesionals[$service->service_name] = 0;
+    //   foreach ($service->contracts as $key => $contract) {
+    //     if ($contract->theoretical_programmings->count() > 0) {
+    //       $profesionals[$service->service_name] += 1;
+    //     }
+    //   }
+    //   $array[$service->service_name]['total'] = $service->contracts->groupBy('rut')->count();
+    //   $array[$service->service_name]['con_teorico'] = $profesionals[$service->service_name];
+    // }
+
+    //obtiene usuaros con especialidad
+    $users = User::select('id')->whereHas('userSpecialties', function ($query) {
+                                    return $query->where('principal',1);
+                                })
+                ->whereHas(
+                'roles', function($q){
+                    $q->where('name', 'profesional');
+                })
+                ->get();
+                // dd($users);
+
+    //busca usuarios en rrhh
+    $array = array();
+    $rrhhs = Rrhh::whereIn('rut',$users)->orderby('name','ASC')->whereHas(
+        'contracts', function($q){
+            $q->where('law', 'LEY 19.664');
+        })->get();
+
+
+        foreach ($rrhhs as $key => $rrhh) {
+          $now = Carbon::now();
+          $array[$rrhh->getShortNameAttribute()][$now->format('d-m-yy')]=0;
+          $array[$rrhh->getShortNameAttribute()][$now->add(1, 'day')->format('d-m-yy')]= 0;
+          $array[$rrhh->getShortNameAttribute()][$now->add(1, 'day')->format('d-m-yy')]= 0;
+          $array[$rrhh->getShortNameAttribute()][$now->add(1, 'day')->format('d-m-yy')]= 0;
+          $array[$rrhh->getShortNameAttribute()][$now->add(1, 'day')->format('d-m-yy')]= 0;
+          $array[$rrhh->getShortNameAttribute()][$now->add(1, 'day')->format('d-m-yy')]= 0;
+          $array[$rrhh->getShortNameAttribute()][$now->add(1, 'day')->format('d-m-yy')]= 0;
+        }
+
+        foreach ($rrhhs as $key => $rrhh) {
+            if($rrhh->contracts){
+              if ($rrhh->calendarProgrammings->count() > 0){
+                $array[$rrhh->getShortNameAttribute()][Carbon::parse($rrhh->calendarProgrammings->first()->start_date)->format('d-m-yy')] = 1;
+              }
+            }
+        }
+
+        // dd($array);
+
+    return view('ehr.hetg.management.reports.programed_in_pavilions',compact('array'));
+  }
 }

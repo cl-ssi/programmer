@@ -60,7 +60,7 @@
                             </li>
                         @endcanany
 
-                        @canany(['programador'])
+                        <!-- @canany(['programador'])
                         <li class="navbar-nav dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-calendar-alt fa-fw" style='color:blue'></i> Programador de Funcionarios
@@ -77,7 +77,7 @@
                             </div>
 
                         </li>
-                        @endcanany
+                        @endcanany -->
 
                         @canany(['reportes'])
                         <li class="navbar-nav dropdown">
@@ -129,6 +129,10 @@
                                 <a class="dropdown-item" href="{{ route('ehr.hetg.theoretical_programming.programed_by_services') }}">
                                     <i class="fas fa-calendar-alt fa-fw"></i> Reporte servicios programados
                                 </a>
+
+                                <!-- <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.programed_in_pavilions') }}">
+                                    <i class="fas fa-calendar-alt fa-fw"></i> Reporte programados en pabellones
+                                </a> -->
 
                             </div>
                         </li>

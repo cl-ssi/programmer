@@ -73,6 +73,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::match(['get', 'post'],'calendar_programming/updateMyEvent','EHR\HETG\CalendarProgrammingController@updateMyEvent')->name('calendar_programming.updateMyEvent');
         Route::match(['get', 'post'],'calendar_programming/deleteMyEvent','EHR\HETG\CalendarProgrammingController@deleteMyEvent')->name('calendar_programming.deleteMyEvent');
         Route::match(['get', 'post'],'calendar_programming/deleteMyEventForce','EHR\HETG\CalendarProgrammingController@deleteMyEventForce')->name('calendar_programming.deleteMyEventForce');
+        Route::match(['get', 'post'],'calendar_programming/programed_in_pavilions','EHR\HETG\CalendarProgrammingController@programed_in_pavilions')->name('calendar_programming.programed_in_pavilions');
 
         Route::get('data/from/{Date?}','EHR\HETG\CalendarProgrammingController@getDataFromDate')->name('data.from');
         Route::match(['get', 'post'],'calendar_programming/calendar_programmer_report','EHR\HETG\CalendarProgrammingController@calendar_programmer_report')->name('calendar_programming.calendar_programmer_report');
