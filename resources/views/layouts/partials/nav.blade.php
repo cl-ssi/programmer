@@ -155,9 +155,9 @@
                                     <i class="fas fa-file-contract fa-fw"></i> Contratos
                                 </a>
 
-                                <a class="dropdown-item" href="{{ route('ehr.hetg.operating_rooms.index') }}">
+                                <!-- <a class="dropdown-item" href="{{ route('ehr.hetg.operating_rooms.index') }}">
                                     <i class="fas fa-person-booth fa-fw"></i> Pabellones
-                                </a>
+                                </a> -->
 
                                 <!-- <a class="dropdown-item"
                                         href="{{ route('ehr.hetg.mother_activities.index') }}">
