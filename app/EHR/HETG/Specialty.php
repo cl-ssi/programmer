@@ -15,7 +15,7 @@ class Specialty extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'id_specialty', 'specialty_name', 'color'
+        'id', 'id_specialty','id_sigte', 'specialty_name', 'color'
         //, 'user_id'
     ];
 

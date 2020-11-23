@@ -24,7 +24,7 @@ class Speciality extends Model
     public function getActivities()
     {
         //$activities = $this->all();
-        //return $activities->groupBy('medico_especialidad');
+        //return $activities->groupBy('medic_specialty');
 
         $activities = ExecutedActivity::where('specialty_id', $this->id)->get();
         return $activities;

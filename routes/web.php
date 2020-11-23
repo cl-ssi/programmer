@@ -109,6 +109,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
                 Route::match(['get', 'post'],'/weekly','EHR\HETG\OperatingRoomController@reportWeekly')->name('weekly');
                 Route::match(['get', 'post'],'/diary','EHR\HETG\OperatingRoomController@reportDiary')->name('diary');
                 Route::match(['get', 'post'],'/report1','EHR\HETG\OperatingRoomController@report1')->name('report1');
+                Route::match(['get', 'post'],'/reportProgramedVsTeoric','EHR\HETG\OperatingRoomController@reportProgramedVsTeoric')->name('reportProgramedVsTeoric');
                 Route::match(['get', 'post'],'/urgency','EHR\HETG\OperatingRoomController@reportUrgency')->name('urgency');
                 Route::get('/reportminsal', 'ReportController@export')->name('reportminsal');
                 Route::get('/reportcut/{cutoffdate}', 'ReportController@exportcut')->name('reportcut');

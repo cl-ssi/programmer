@@ -4,9 +4,10 @@
 
 @section('content')
 
+<link href="{{ asset('css/bootstrap-select.min.css') }}" rel="stylesheet" type="text/css"/>
 <!-- <h3 class="mb-3">Programación de {{ $profesional->name }} <small>{{ $profesional->rut }}</small> </h3> -->
 
-<div class="row">
+<!-- <div class="row">
 	<div class="col">
 		<form method="post" action="{{ route('ehr.hetg.management.report.by_profesional') }}">
 			@csrf
@@ -15,28 +16,48 @@
 					<span class="input-group-text">Profesional</span>
 				</div>
 
-				<select name="rut" class="form-control selectpicker" for="for_supplier">
-					@foreach($rrhh as $user)
-					<option value="{{ $user->rut }}" {{ ($profesional->rut == $user->rut)?'selected':'' }}>
-						{{ $user->fullName }} ({{ $user->job_title }})
-					</option>
-					@endforeach
-				</select>
+
 
 				<div class="input-group-prepend">
-					<span class="input-group-text">Fecha</span>
+					<span class="input-group-text"></span>
 				</div>
 
-				<input type="week" class="form-control" name="year_week" value="{{ $now->year }}-W{{ ($now->weekOfYear < 10)?'0'.$now->weekOfYear:$now->weekOfYear}}">
+
 
 				<div class="input-group-append">
-					<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+
 				</div>
 
 			</div>
         </form>
 	</div>
+</div> -->
+
+<form method="post" action="{{ route('ehr.hetg.management.report.by_profesional') }}">
+	@csrf
+<div class="row">
+		<fieldset class="form-group col-4">
+			<label for="for_rut">Profesional</label>
+			<select name="rut" class="form-control selectpicker" data-live-search="true" for="for_rut">
+				@foreach($rrhh as $user)
+				<option value="{{ $user->rut }}" {{ ($profesional->rut == $user->rut)?'selected':'' }}>
+					{{ $user->fullName }} ({{ $user->job_title }})
+				</option>
+				@endforeach
+			</select>
+		</fieldset>
+
+		<fieldset class="form-group col-6">
+			<label for="for_rut">Fecha</label>
+			<input type="week" class="form-control" name="year_week" value="{{ $now->year }}-W{{ ($now->weekOfYear < 10)?'0'.$now->weekOfYear:$now->weekOfYear}}">
+		</fieldset>
+
+		<fieldset class="form-group col-2">
+			<br>
+			<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+		</fieldset>
 </div>
+</form>
 
 
 <h3 class="mt-3">Semana del {{ $now->startOfWeek()->format('d-m-Y') }} al
@@ -105,7 +126,7 @@
 	</div>
 
 	<div class="col-8">
-		<h4>Programación</h4>
+		<h4>Programación semanal</h4>
 		<table class="table table-sm table-bordered" >
 			<thead>
 				<tr>
@@ -121,7 +142,7 @@
 						<td>{{ $program->contract->contract_id }}</td>
 						<td>{{ $program->specialty->specialty_name }}</td>
 						<td>{{ $program->activity->activity_name }}</td>
-						<td class="text-center">{{ gmdate("H:i:s", $program->assigned_hour*60*60) }}</td>
+						<td class="text-center">{{ gmdate("H:i:s", $program->duration*60*60) }}</td>
 					</tr>
 				@endforeach
 				@foreach($programacion_otras_actividades as $program)
@@ -129,7 +150,7 @@
 						<td>{{ $program->contract_id }}</td>
 						<td>{{ $program->specialty->specialty_name }}</td>
 						<td>{{ $program->activity->activity_name }}</td>
-						<td class="text-center">{{ gmdate("H:i:s", $program->assigned_hour*60*60) }}</td>
+						<td class="text-center">{{ gmdate("H:i:s", $program->duration*60*60) }}</td>
 					</tr>
 				@endforeach
 			</tbody>
@@ -150,12 +171,12 @@
 			<tbody class="small">
 				@foreach($current_activities as $activity)
 					<tr class="{{ ($activity->habil)?'':'table-warning' }}">
-						<td>{{ $activity->pabellon }}</td>
-						<td>{{ $activity->medico_especialidad_desc }}</td>
-						<td>{{ $activity->categoria_cirugia_desc }}</td>
-						<td class="text-center">{{ $activity->fecha_inicio_intervencion->format('H:i:s') }}</td>
+						<td>{{ $activity->operating_room }}</td>
+						<td>{{ $activity->medic_specialty_desc }}</td>
+						<td>{{ $activity->surgery_category_desc }}</td>
+						<td class="text-center">{{ $activity->intervention_start_date->format('H:i:s') }}</td>
 						<td class="text-center">{{ $activity->ActivityDurationHuman }}</td>
-						<td class="text-center">{{ gmdate("H:i:s", $activity->tiempo_est_interv*60) }}</td>
+						<td class="text-center">{{ gmdate("H:i:s", $activity->estimated_intervention_time*60) }}</td>
 					</tr>
 				@endforeach
 			</tbody>
@@ -169,6 +190,8 @@
 @endsection
 
 @section('custom_js')
+
+<script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 
 <script>
 
@@ -210,8 +233,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			{
 				//title: 'Programado.',
 				tooltip: '{!! $activity->procedimientos !!}',
-				start: '{{ $activity->fecha_inicio_intervencion }}',
-				end: '{{ $activity->fecha_termino_intervencion }}',
+				start: '{{ $activity->intervention_start_date }}',
+				end: '{{ $activity->intervention_end_date }}',
 				color: '{{ ($activity->habil)?'#8fd19e':'#ffe9a6' }}'
 			},
 			@endforeach

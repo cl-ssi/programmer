@@ -21,9 +21,9 @@
         <tr>
             <td>{{ $activity->pabellon }}</td>
             <td>{{ $activity->profesion }}</td>
-            <td>{{ $activity->medico_rut }}</td>
+            <td>{{ $activity->medic_rut }}</td>
             <td>{{ $activity->medico_nombre }}</td>
-            <td>{{ $activity->medico_especialidad_desc }}</td>
+            <td>{{ $activity->medic_specialty_desc }}</td>
             <td>{{ $activity->estado_intervencion_desc }}</td>
         </tr>
         @endforeach

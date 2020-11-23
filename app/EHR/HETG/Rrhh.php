@@ -20,7 +20,7 @@ class Rrhh extends Model implements Auditable
     ];
 
     public function executedActivities() {
-        return $this->hasMany('App\EHR\HETG\ExecutedActivity', 'medico_rut');
+        return $this->hasMany('App\EHR\HETG\ExecutedActivity', 'medic_rut');
     }
 
     public function contracts() {

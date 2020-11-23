@@ -90,11 +90,17 @@
 
                                 <!-- <div class="dropdown-divider"></div> -->
 
-                                <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.calendar_programmer_report') }}">
+                                <!-- <a class="dropdown-item" href="{{ route('ehr.hetg.calendar_programming.calendar_programmer_report') }}">
                                     <i class="fas fa-calendar-alt fa-fw"></i> Reporte de Programación
+                                </a> -->
+
+                                <a class="dropdown-item" href="{{ route('ehr.hetg.management.report.reportProgramedVsTeoric') }}">
+                                    <i class="fas fa-book-medical fa-fw"></i> Programado vs Teórico
                                 </a>
 
-                                {{--<a class="dropdown-item" href="{{ route('ehr.hetg.management.report.specialty') }}">
+                                <hr>
+
+                                <a class="dropdown-item" href="{{ route('ehr.hetg.management.report.specialty') }}">
                                     <i class="fas fa-book-medical fa-fw"></i> Reporte Especialidad
                                 </a>
 
@@ -111,12 +117,14 @@
                                 </a>
 
                                 <a class="dropdown-item" href="{{ route('ehr.hetg.management.report.report1') }}">
-                                    <i class="far fa-calendar-alt fa-fw"></i> Reporte 1
+                                    <i class="far fa-calendar-alt fa-fw"></i> Consolidado producción urgencias
                                 </a>
 
-                                <a class="dropdown-item" href="{{ route('ehr.hetg.management.report.reportminsal') }}">
+                                <!-- <a class="dropdown-item" href="{{ route('ehr.hetg.management.report.reportminsal') }}">
                                     <i class="far fa-calendar-alt fa-fw"></i> Reporte Minsal
-                                </a> --}}
+                                </a> -->
+
+                                <hr>
 
                                 <a class="dropdown-item" href="{{ route('ehr.hetg.theoretical_programming.programed_professionals') }}">
                                     <i class="fas fa-calendar-alt fa-fw"></i> Reporte funcionarios programados

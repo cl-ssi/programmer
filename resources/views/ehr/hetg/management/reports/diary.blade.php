@@ -40,7 +40,7 @@
     @foreach($specialties as $key => $specialty)
     <tr>
       <td>
-        <span class='badge badge-primary' style='background-color: #{{$specialty->color}};'><font color="black">{{$specialty->medico_especialidad_desc}}</font></span>
+        <span class='badge badge-primary' style='background-color: #{{$specialty->color}};'><font color="black">{{$specialty->medic_specialty_desc}}</font></span>
       </td>
       <td>{{$specialty->total_horas}}</td>
 			<td>{{$specialty->prom}}%</td>
@@ -130,16 +130,15 @@ document.addEventListener('DOMContentLoaded', function() {
       @foreach($current_activities as $act)
         { id: '1',
 				  tooltip: '{!! $act->tooltip !!}',
-          resourceId: '{{$act->pabellon}}',
-          title: '{{$act->medico_especialidad_desc}}',
-          start: '{{$act->fecha_inicio_intervencion}}',
-          end: '{{$act->fecha_termino_intervencion}}'
+          resourceId: '{{$act->operating_room}}',
+          title: '{{$act->medic_specialty_desc}}',
+          start: '{{$act->intervention_start_date}}',
+          end: '{{$act->intervention_end_date}}'
           @foreach($specialties as $key => $specialty)
-            @if($act->medico_especialidad_desc == $specialty->medico_especialidad_desc)
+            @if($act->medic_specialty_desc == $specialty->medic_specialty_desc)
               ,color: '#{{$specialty->color}}'
             @endif
           @endforeach
-
         },
       @endforeach
     ]

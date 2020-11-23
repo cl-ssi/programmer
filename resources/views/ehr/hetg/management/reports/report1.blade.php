@@ -4,7 +4,7 @@
 
 @section('content')
 
-<h3 class="mb-3">Reporte de producción urgencias</h3>
+<h3 class="mb-3">Reporte Consolidado producción urgencias</h3>
 
 <div class="row">
 	<div class="col-md-12">
@@ -46,7 +46,7 @@
     @foreach($average_total as $key => $item)
     <tr>
       <td>
-        <span class='badge badge-primary' style='background-color: #{{$item->color}};'><font color="black">{{$item->medico_especialidad_desc}}</font></span>
+        <span class='badge badge-primary' style='background-color: #{{$item->color}};'><font color="black">{{$item->medic_specialty_desc}}</font></span>
       </td>
       <td>{{$item->total_horas}}</td>
 			<td>{{$item->prom}}%</td>
@@ -80,8 +80,8 @@
 			<td>{{$item->anho}}</td>
       <td>{{$item->mes}}</td>
 			<td>{{$item->Semana}}</td>
-			<!-- <td>{{$item->medico_especialidad_desc}}</td> -->
-			<td><span class='badge badge-primary' style='background-color: #{{$item->color}};'><font color="black">{{$item->medico_especialidad_desc}}</font></span></td>
+			<!-- <td>{{$item->medic_specialty_desc}}</td> -->
+			<td><span class='badge badge-primary' style='background-color: #{{$item->color}};'><font color="black">{{$item->medic_specialty_desc}}</font></span></td>
 			<td>{{$item->rut}}</td>
 			<td>{{$item->nombre}}</td>
 			<td>{{$item->total_horas}}</td>

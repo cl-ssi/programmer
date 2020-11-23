@@ -4,7 +4,7 @@
 
 @section('content')
 
-<h3 class="mb-3">Reporte de pabellón por especialidades</h3>
+<h3 class="mb-3">Reporte uso de pabellón por especialidades</h3>
 
 <form class="form-inline" method="post" action="{{ route('ehr.hetg.management.report.specialty') }}">
 	@csrf
@@ -40,7 +40,7 @@
 	<thead>
 		<tr >
 			<th>Especialidad</th>
-			<th>Hrs.Contratadas</th>
+			<!-- <th>Hrs.Contratadas</th> -->
 			<th>Hrs.Programadas</th>
 			<th>Hrs.Ejecutadas</th>
 			<th>Hrs.Habil</th>
@@ -52,11 +52,8 @@
 		@foreach($resumen as $codigo_especialidad => $especialidad)
 			<tr>
 				<td>{{ $especialidad['nombre_especialidad']->specialty_name }}</td>
-				<td class="text-center"><b><font color="#fdd400" style="text-shadow: 0.7px 0.7px 0.7px black;">
-					{{ $especialidad['horas_contratadas'] }}</font></b></td>
 				<td class="text-center">{{ $especialidad['horas_programadas'] }}</td>
-				<td class="text-center"><b><font color="#67b7dc" style="text-shadow: 0.7px 0.7px 0.7px black;">
-					{{ $especialidad['horas_ejecutadas'] }}</font></b></td>
+				<td class="text-center"><b><font color="#67b7dc" style="text-shadow: 0.7px 0.7px 0.7px black;">{{ $especialidad['horas_ejecutadas'] }}</font></b></td>
 				<td class="table-success text-center">{{ $especialidad['horas_habiles'] }}</td>
 				<td class="table-warning text-center">{{ $especialidad['horas_inhabiles'] }}</td>
 				<td><button class="btn btn-info btn-sm" id="btn_{{ $codigo_especialidad }}">Ver detalle</button></td>
@@ -67,13 +64,13 @@
 </table>
 
 
+<div id="move"></div>
 @foreach($horas_ejecutadas as $codigo_especialidad => $medicos)
-
 <table class="table table-sm table-bordered" style="display:none" id="table_{{ $codigo_especialidad }}">
 	<thead>
 		<tr >
 			<th></th>
-			<th>Especialidad</th>
+			<th>Correlativo</th>
 			<th>Nombre</th>
 			<th>Profesión</th>
 			<th>Pabellón</th>
@@ -86,22 +83,23 @@
 		@foreach($medicos as $medico)
 		<tr>
 			<td><i class="fas fa-flag"></i></td>
-			<td>{{ $medico->correlativo }}</td>
+			<td>{{ $medico->correlative }}</td>
 			<td>
-			<form class="form-inline" method="post"
-				action="{{ route('ehr.hetg.management.report.by_profesional') }}">
+			<form class="form-inline" method="post" action="{{ route('ehr.hetg.management.report.by_profesional') }}">
 				@csrf
-				<input type="hidden" value="{{ $medico->medico_rut }}" name="rut">
-				<input type="hidden" value="{{ $now->year }}-W{{ ($now->weekOfYear < 10)?'0'.$now->weekOfYear:$now->weekOfYear}}"
-					name="year_week">
-				<button class="btn btn-link" style="padding: 0px; font-size: smaller">{{ $medico->medico_nombre}}
+				<input type="hidden" value="{{ $medico->medic_rut }}" name="rut">
+				<input type="hidden" value="{{ $now->year }}-W{{ ($now->weekOfYear < 10)?'0'.$now->weekOfYear:$now->weekOfYear}}" name="year_week">
+				<button class="btn btn-link" style="padding: 0px; font-size: smaller">{{ $medico->medic_name}}
 			</form>
 			</td>
-			<td>{{ $medico->profesion }}</td>
-			<td>{{ $medico->pabellon }}</td>
-			<td>{{ $medico->categoria_cirugia_desc }}</td>
-			<td>{{ $medico->tiempo_est_interv }}</td>
+			<td>{{ $medico->profession }}</td>
+			<td>{{ $medico->operating_room }}</td>
+			<td>{{ $medico->surgery_category_desc }}</td>
+			<td>{{ $medico->estimated_intervention_time }}</td>
 			<td>{{ $medico->ActivityDurationHuman }}</td>
+
+
+
 		</tr>
 		@endforeach
 	</tbody>
@@ -119,6 +117,8 @@
 		@foreach($resumen as $cod_especialidad => $especialidad)
 			$("#btn_{{ $cod_especialidad }}").click(function(){
 					$("#table_{{ $cod_especialidad }}").toggle();
+
+					$(window).scrollTop($('#move').offset().top);
 			});
 		@endforeach
     });
@@ -177,7 +177,7 @@ var data = [
 @foreach($resumen as $especialidad)
 {
 	"year": "{{ $especialidad['nombre_especialidad']->specialty_name }}",
-	"Hrs.Contratadas": '{{$especialidad['horas_contratadas']}}',
+	"Hrs.Programadas": '{{$especialidad['horas_programadas']}}',
 	"Hrs.Ejecutadas": ' {{$especialidad['horas_ejecutadas']}}'
 },
 @endforeach
@@ -187,6 +187,8 @@ var data = [
 var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
 categoryAxis.dataFields.category = "year";
 categoryAxis.renderer.minGridDistance = 30;
+categoryAxis.renderer.labels.template.rotation = 45;
+categoryAxis.renderer.labels.template.fontSize = 8;
 
 /* Create value axis */
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
@@ -205,8 +207,8 @@ columnSeries.columns.template.propertyFields.strokeDasharray = "columnDash";
 columnSeries.tooltip.label.textAlign = "middle";
 
 var lineSeries = chart.series.push(new am4charts.LineSeries());
-lineSeries.name = "Hrs.Contratadas";//"Hrs.Ejecutadas";
-lineSeries.dataFields.valueY = "Hrs.Contratadas";//"Hrs.Ejecutadas";
+lineSeries.name = "Hrs.Programadas";//"Hrs.Ejecutadas";
+lineSeries.dataFields.valueY = "Hrs.Programadas";//"Hrs.Ejecutadas";
 lineSeries.dataFields.categoryX = "year";
 
 lineSeries.stroke = am4core.color("#fdd400");

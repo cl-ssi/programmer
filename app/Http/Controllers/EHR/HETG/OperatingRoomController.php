@@ -15,6 +15,7 @@ use App\EHR\HETG\OperatingRoom;
 use App\EHR\HETG\UnscheduledProgramming;
 // use App\EHR\HETG\TheoreticalProgramming;
 use App\EHR\HETG\CalendarProgramming;
+use App\EHR\HETG\TheoreticalProgramming;
 use App\EHR\HETG\Specialty;
 use App\EHR\HETG\OperatingRoomSpecialty;
 use App\EHR\HETG\Profession;
@@ -41,6 +42,7 @@ class OperatingRoomController extends Controller
 
     public function reportSpecialty(Request $request)
     {
+
         /* Ids correspondiente a las especialidades */
         // $ids_especialidades = array(72002,72001,74009,77002,77001);
         // $ids_specialities = array('9','13','15','19','33'); //variable
@@ -68,54 +70,74 @@ class OperatingRoomController extends Controller
             $to   = $now->endOfWeek()->format('2020-03-01 23:59:59');
         }
 
-        //programación pabellón
-        $calendarProgrammings = CalendarProgramming::whereBetween('start_date',[$from,$to])->get();
-        foreach ($calendarProgrammings as $key => $calendarProgramming) {
-          $calendarProgramming->specialty_id = $calendarProgramming->specialty->id_n820;
-        }
+        // //programación pabellón
+        // $calendarProgrammings = CalendarProgramming::whereBetween('start_date',[$from,$to])->get();
+        // foreach ($calendarProgrammings as $key => $calendarProgramming) {
+        //   $calendarProgramming->specialty_id = $calendarProgramming->specialty->id_n820;
+        // }
 
         //obtiene programación médica anual
-        $programacion = UnscheduledProgramming::where('year', '2020')->whereIn('activity_id', $ids_actividades)
-                // ->whereIn('specialty_id', $ids_specialities)
-                ->get();
+        // $programacion = UnscheduledProgramming::where('year', '2020')->whereIn('activity_id', $ids_actividades)
+        //         // ->whereIn('specialty_id', $ids_specialities)
+        //         ->get();
+
+        $theoreticalProgrammings = TheoreticalProgramming::whereIn('activity_id', $ids_actividades)
+                                                          ->whereBetween('start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                                          ->whereNotNull('specialty_id')
+                                                          ->get();
+        foreach ($theoreticalProgrammings as $key => $calendarProgramming) {
+          $start  = new Carbon($calendarProgramming->start_date);
+          $end    = new Carbon($calendarProgramming->end_date);
+          $calendarProgramming->duration =  $start->diffInMinutes($end)/60;
+        }
 
         //se agrega para dejar como id, al n820
-        foreach ($programacion as $key => $progra) {
-          $progra->specialty_id = $progra->specialty->id_n820;
+        foreach ($theoreticalProgrammings as $key => $progra) {
+          if ($progra->specialty!=null) {
+            $progra->specialty_id = $progra->specialty->id_sigte;//substr(str_replace("-","",$progra->specialty->id_sigte), 1);
+          }
         }
-        $programacion_agrupada = $programacion->groupBy('specialty_id');
 
+        $programacion_agrupada = $theoreticalProgrammings->groupBy('specialty_id');
 
         $resumen = [];
         /* Calculo de horas contratadas e inicialización de variables */
         foreach($programacion_agrupada as $codigo_especialidad => $horas_programadas) {
             $resumen[$codigo_especialidad]['nombre_especialidad'] = $horas_programadas->first()->specialty;
-            $resumen[$codigo_especialidad]['horas_contratadas'] = $horas_programadas->sum('assigned_hour');
-            $resumen[$codigo_especialidad]['horas_programadas'] = 0;
+            // $resumen[$codigo_especialidad]['horas_contratadas'] = $horas_programadas->sum('duration');
+            $resumen[$codigo_especialidad]['horas_programadas'] = $horas_programadas->sum('duration');;
             $resumen[$codigo_especialidad]['horas_ejecutadas'] = 0;
             $resumen[$codigo_especialidad]['horas_habiles'] = 0;
             $resumen[$codigo_especialidad]['horas_inhabiles'] = 0;
         }
 
-        foreach ($calendarProgrammings as $key => $calendarProgramming) {
-          $start  = new Carbon($calendarProgramming->start_date);
-          $end    = new Carbon($calendarProgramming->end_date);
-          $resumen[$calendarProgramming->specialty_id]['horas_programadas'] += $start->diffInMinutes($end)/60;
-        }
+        // foreach ($calendarProgrammings as $key => $calendarProgramming) {
+        //   $start  = new Carbon($calendarProgramming->start_date);
+        //   $end    = new Carbon($calendarProgramming->end_date);
+        //   $resumen[$calendarProgramming->specialty_id]['horas_programadas'] += $start->diffInMinutes($end)/60;
+        // }
         // dd($resumen);
 
         //se obtienen id asociados idn820 para obtener de tabla de ejecutados
         $specialties = Specialty::all();//whereIn('id',$ids_specialities)->get();
-        $ids_specialties_n820 = $specialties->pluck('id_n820')->toArray();
-        $actividades_ejecutadas = ExecutedActivity::whereBetween('fecha_inicio_intervencion',[$from,$to])
-                                    ->whereIn('medico_especialidad',$ids_specialties_n820)
+        foreach ($specialties as $key => $specialty) {
+          $specialty->id_sigte = $specialty->id_sigte;//substr(str_replace("-","",$specialty->id_sigte), 1);
+        }
+
+        $ids_specialties_n820 = $specialties->pluck('id_sigte')->toArray();
+
+
+        $actividades_ejecutadas = ExecutedActivity::whereBetween('intervention_start_date',[$from,$to])
+                                    ->where('intervention_status',2)
+                                    ->whereNotNull('intervention_end_date') //debo eliminar
+                                    // ->whereIn('medic_specialty',$ids_specialties_n820)
                                     ->get();
-        // dd($actividades_ejecutadas);
-        $actividades_ejecutadas_agrupadas = $actividades_ejecutadas->groupBy(['medico_especialidad','correlativo','medico_rut']);
-        // dd($actividades_ejecutadas_agrupadas);
+
+        $actividades_ejecutadas_agrupadas = $actividades_ejecutadas->groupBy(['medic_specialty','correlative','medic_rut']);
 
         $horas_ejecutadas = [];
         if($actividades_ejecutadas_agrupadas->count() >= 1) {
+
             /* Inicializar colección */
             $horas_ejecutadas_especialidad = collect();
 
@@ -124,8 +146,7 @@ class OperatingRoomController extends Controller
                 foreach($especialidad as $numero_correlativo => $correlativo) {
                     foreach($correlativo as $rut_medico => $medico) {
                         /* Crear nueva colección solo con los primeros elementos (agrupar)*/
-                        if($medico->first()->fecha_inicio_intervencion->format('H') >= 8
-                            AND $medico->first()->fecha_inicio_intervencion->format('H') <= 16){
+                        if($medico->first()->intervention_start_date->format('H') >= 8 AND $medico->first()->intervention_start_date->format('H') <= 16){
                             $medico->first()->habil = true;
                         }
                         else {
@@ -136,12 +157,6 @@ class OperatingRoomController extends Controller
                 }
             }
 
-            // dd(array_keys($resumen));
-            // dd($horas_ejecutadas);
-            // foreach ($resumen as $key => $value) {
-            //   dd($key);
-            // }
-
             /* Calculo de horas ejecutadas */
             foreach($horas_ejecutadas as $codigo_especialidad => $medicos) {
               // dd($codigo_especialidad);
@@ -150,33 +165,11 @@ class OperatingRoomController extends Controller
                 $resumen[$codigo_especialidad]['horas_habiles'] = number_format($medicos->where('habil', true)->sum('activityDuration')/60/60,1);
                 $resumen[$codigo_especialidad]['horas_inhabiles'] = number_format($medicos->where('habil', false)->sum('activityDuration')/60/60,1);
               }
+
             }
+
         }
 
-        // //obtener programación
-        // $theoreticalProgrammings = TheoreticalProgramming::all();
-        // //se obtiene programación médica para comparar specialidades con actvidades del teórico
-        // $programacion = UnscheduledProgramming::where('year', '2020')->whereIn('activity_id', $ids_actividades)->get();
-        // $programacion_agrupada = $programacion->groupBy('specialty_id');
-        // foreach ($programacion_agrupada as $key => $grupo) {
-        //   foreach ($grupo as $key => $programacion) {
-        //
-        //     //se recorren horarios teóricos
-        //     foreach ($theoreticalProgrammings as $key => $theoreticalProgramming) {
-        //       // dd($theoreticalProgramming->activity_id);
-        //       if ($programacion->activity_id == $theoreticalProgramming->activity_id) {
-        //         //AVISO: en este if, se da una interrogante. Cuales actividades debo considerar para el teórico
-        //         // dd($theoreticalProgramming);
-        //       }
-        //     }
-        //   }
-        // }
-
-
-        // dd($resumen);
-        // echo '<pre>';
-        // print_r($horas_ejecutadas);
-        // die();
         $request->flash();
 
         return view('ehr.hetg.management.reports.specialty',compact('now','resumen','horas_ejecutadas'));
@@ -209,37 +202,48 @@ class OperatingRoomController extends Controller
         $contracts = $profesional->contracts->where('year',$now->startOfWeek()->format('Y'));
 
         /* Programación del profesional del año seleccionado */
-        $programming = $profesional->unscheduled_programmings->where('year',$now->startOfWeek()->format('Y'));
+        // $programming = $profesional->unscheduled_programmings->where('year',$now->startOfWeek()->format('Y'));
+        // $programming = $profesional->theoretialProgrammings->whereBetween('start_date',
+        //                                                       [$now->startOfWeek()->format('Y-m-d H:i:s'),
+        //                                                        $now->endOfWeek()->format('Y-m-d H:i:s')]);
+        $theoreticalProgrammings = TheoreticalProgramming::where('rut',$profesional->rut)
+                                                         ->whereBetween('start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                                         ->get();
+        foreach ($theoreticalProgrammings as $key => $calendarProgramming) {
+          $start  = new Carbon($calendarProgramming->start_date);
+          $end    = new Carbon($calendarProgramming->end_date);
+          $calendarProgramming->duration =  $start->diffInMinutes($end)/60;
+        }
 
         /* Programación de pabellon */
-        $programacion_pabellon = $programming->whereIn('activity_id',$ids_actividades);
+        $programacion_pabellon = $theoreticalProgrammings->whereIn('activity_id',$ids_actividades);
+        // dd($programacion_pabellon);
 
         /* Programación de otras actividades */
-        $programacion_otras_actividades = $programming->whereNotIn('activity_id',$ids_actividades);
+        $programacion_otras_actividades = $theoreticalProgrammings->whereNotIn('activity_id',$ids_actividades);
 
         /* Inicializar colección */
         $current_activities = collect();
 
-
         /* Listado de actividades ejecutadas agrupadas por correlativo */
-        $current_activities_grouped = $profesional->executedActivities
-            ->whereBetween('fecha_inicio_intervencion',
-                [$now->startOfWeek()->format('Y-m-d H:i:s'),
-                 $now->endOfWeek()->format('Y-m-d H:i:s')])
-                 ->groupBy('correlativo');
-
+        $current_activities_grouped = $profesional->executedActivities->whereBetween('intervention_start_date',
+                                                                      [$now->startOfWeek()->format('Y-m-d H:i:s'),
+                                                                       $now->endOfWeek()->format('Y-m-d H:i:s')])
+                                                                      ->where('intervention_status',2)
+                                                                      ->groupBy('correlative');
+                                                                      // dd($current_activities_grouped);
         /* Loop para determinar horario habil o inhabil y agrupar los procedimienots */
         foreach($current_activities_grouped as $correlativo) {
             /* Loop para obtener todos los procedimientos */
             foreach($correlativo as $procedimiento) {
-                $procedimientos[] = $procedimiento->procedimiento_intervencion;
+                $procedimientos[] = $procedimiento->intervention_procedure_desc;
             }
             /* Crear nueva variable procedimientos y agregarla al primer elemento */
             $correlativo[0]->procedimientos = implode("<br> ", $procedimientos);
 
             /* Determinar si es horario habil o inabil */
-            if($correlativo[0]->fecha_inicio_intervencion->format('H') >= 8
-                AND $correlativo[0]->fecha_inicio_intervencion->format('H') <= 16 ) {
+            if($correlativo[0]->intervention_start_date->format('H') >= 8
+                AND $correlativo[0]->intervention_start_date->format('H') <= 16 ) {
                 $correlativo[0]->habil = true;
             }
             else {
@@ -250,19 +254,12 @@ class OperatingRoomController extends Controller
             $current_activities->push($correlativo[0]);
         }
 
-        //programación pabellón);
-        $calendarProgrammings = CalendarProgramming::where('rut',$profesional->rut)->whereBetween('start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])->get();
-        foreach ($calendarProgrammings as $key => $calendarProgramming) {
-          $start  = new Carbon($calendarProgramming->start_date);
-          $end    = new Carbon($calendarProgramming->end_date);
-          $calendarProgramming->duration =  $start->diffInMinutes($end)/60;
-        }
 
+        // dd($programacion_pabellon->sum('assigned_hour'));
         /* Calculo de total de horas contratadas */
         $total_contratadas = $total_ejecutadas = $total_habil = $total_inhabil = 0;
-
-        $total_contratadas = $programacion_pabellon->sum('assigned_hour')*60*60;
-        $total_programadas = $calendarProgrammings->sum('duration');
+        $total_contratadas = $programacion_pabellon->sum('duration')*60*60;
+        $total_programadas = $theoreticalProgrammings->sum('duration');
         $total_ejecutadas = $current_activities->sum('activityDuration');
         $total_habil = $current_activities->where('habil',true)->sum('activityDuration');
         $total_inhabil = $current_activities->where('habil',false)->sum('activityDuration');
@@ -289,26 +286,26 @@ class OperatingRoomController extends Controller
 
       $colors = ['EBDEF0','FDEBD0','F6DDCC','F2D7D5','D6EAF8','EAEDED','D4E6F1','FDEBD0','FADBD8','D5F5E3'];
       $operatingRooms = OperatingRoom::orderBy('id','ASC')->get();
-      $current_activities = ExecutedActivity::select('correlativo','medico_especialidad_desc','fecha_inicio_intervencion','fecha_termino_intervencion')
-                                             ->whereBetween('fecha_inicio_intervencion',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
-                                             ->where('pabellon',$operatingRoom_name)
-                                             ->groupBy('correlativo','medico_especialidad_desc','fecha_inicio_intervencion','fecha_termino_intervencion')
+      $current_activities = ExecutedActivity::select('correlative','medic_specialty_desc','intervention_start_date','intervention_end_date')
+                                             ->whereBetween('intervention_start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                             ->where('operating_room',$operatingRoom_name)
+                                             ->groupBy('correlative','medic_specialty_desc','intervention_start_date','intervention_end_date')
                                              ->get();
 
-      $specialties = ExecutedActivity::select('medico_especialidad_desc',
+      $specialties = ExecutedActivity::select('medic_specialty_desc',
                                                 DB::raw('count(*) as totalProcedimientos'),
-                                                DB::raw('ROUND((SUM(TIMESTAMPDIFF(MINUTE, fecha_inicio_intervencion, fecha_termino_intervencion))/60),2) AS total_horas'),
-                                                DB::raw('ROUND(AVG((TIMESTAMPDIFF(MINUTE, fecha_inicio_intervencion, fecha_termino_intervencion)/60)),2) AS promedio_duracion_intervencion'))
-                                             ->whereBetween('fecha_inicio_intervencion',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
-                                             ->where('pabellon',$operatingRoom_name)
-                                             ->groupBy('medico_especialidad_desc')
+                                                DB::raw('ROUND((SUM(TIMESTAMPDIFF(MINUTE, intervention_start_date, intervention_end_date))/60),2) AS total_horas'),
+                                                DB::raw('ROUND(AVG((TIMESTAMPDIFF(MINUTE, intervention_start_date, intervention_end_date)/60)),2) AS promedio_duracion_intervencion'))
+                                             ->whereBetween('intervention_start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                             ->where('operating_room',$operatingRoom_name)
+                                             ->groupBy('medic_specialty_desc')
                                              ->orderBy('totalProcedimientos','DESC')
                                              ->get();
 
-      $tooltip_info = ExecutedActivity::select('correlativo','medico_nombre','profesion','procedimiento_intervencion_desc','fecha_inicio_intervencion','fecha_termino_intervencion')
-                                    ->whereBetween('fecha_inicio_intervencion',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
-                                    ->where('pabellon','LIKE',$operatingRoom_name)
-                                    ->orderBy('correlativo', 'ASC')->orderBy('medico_nombre', 'ASC')
+      $tooltip_info = ExecutedActivity::select('correlative','medic_name','profession','intervention_procedure_desc','intervention_start_date','intervention_end_date')
+                                    ->whereBetween('intervention_start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                    ->where('operating_room','LIKE',$operatingRoom_name)
+                                    ->orderBy('correlative', 'ASC')->orderBy('medic_name', 'ASC')
                                     ->get();
 
       //dd($tooltip_info);
@@ -316,9 +313,9 @@ class OperatingRoomController extends Controller
         //$valor = '<table>';
         $valor = '';
         foreach ($tooltip_info as $key => $info) {
-          if($activity->correlativo == $info->correlativo){
-            //$valor = $valor . '<tr><td>' . $info->medico_nombre . '</td><td>' . $info->profesion . '</td></tr>';
-            $valor = $valor . $info->medico_nombre . ' - ' . $info->profesion . ' - ' . $info->procedimiento_intervencion_desc . '<br>';
+          if($activity->correlative == $info->correlative){
+            //$valor = $valor . '<tr><td>' . $info->medic_name . '</td><td>' . $info->profession . '</td></tr>';
+            $valor = $valor . $info->medic_name . ' - ' . $info->profession . ' - ' . $info->intervention_procedure_desc . '<br>';
           }
         }
         //$valor = $valor . '</table>';
@@ -344,31 +341,32 @@ class OperatingRoomController extends Controller
       //dd($now);
 
       $colors = ['EBDEF0','FDEBD0','F6DDCC','F2D7D5','D6EAF8','EAEDED','D4E6F1','FDEBD0','FADBD8','D5F5E3'];
-      $operatingRooms = OperatingRoom::orderBy('id','ASC')->get();
-      $current_activities = ExecutedActivity::select('correlativo','pabellon','medico_especialidad_desc','fecha_inicio_intervencion','fecha_termino_intervencion')
-                                            ->whereBetween('fecha_inicio_intervencion', [$now . " 00:00:00", $now . " 23:59:59"])
-                                            ->groupBy('correlativo','pabellon','medico_especialidad_desc','fecha_inicio_intervencion','fecha_termino_intervencion')
+      $operatingRooms = OperatingRoom::where('medic_box',0)->orderBy('id','ASC')->get();
+      $current_activities = ExecutedActivity::select('correlative','operating_room','medic_specialty_desc','intervention_start_date','intervention_end_date')
+                                            ->whereBetween('intervention_start_date', [$now . " 00:00:00", $now . " 23:59:59"])
+                                            ->groupBy('correlative','operating_room','medic_specialty_desc','intervention_start_date','intervention_end_date')
                                             ->get();
-      $specialties = ExecutedActivity::select('medico_especialidad_desc',
+
+      $specialties = ExecutedActivity::select('medic_specialty_desc',
                                                DB::raw('count(*) as totalProcedimientos'),
-                                               DB::raw('ROUND((SUM(TIMESTAMPDIFF(MINUTE, fecha_inicio_intervencion, fecha_termino_intervencion))/60),2) AS total_horas'),
-                                               DB::raw('ROUND(AVG((TIMESTAMPDIFF(MINUTE, fecha_inicio_intervencion, fecha_termino_intervencion)/60)),2) AS promedio_duracion_intervencion'))
-                                            ->whereBetween('fecha_inicio_intervencion', [$now . " 00:00:00", $now . " 23:59:59"])
-                                            ->groupBy('medico_especialidad_desc')
+                                               DB::raw('ROUND((SUM(TIMESTAMPDIFF(MINUTE, intervention_start_date, intervention_end_date))/60),2) AS total_horas'),
+                                               DB::raw('ROUND(AVG((TIMESTAMPDIFF(MINUTE, intervention_start_date, intervention_end_date)/60)),2) AS promedio_duracion_intervencion'))
+                                            ->whereBetween('intervention_start_date', [$now . " 00:00:00", $now . " 23:59:59"])
+                                            ->groupBy('medic_specialty_desc')
                                             // ->orderBy('totalProcedimientos','DESC')
                                             ->get();
 
-      $tooltip_info = ExecutedActivity::select('correlativo','medico_nombre','profesion','procedimiento_intervencion_desc','fecha_inicio_intervencion','fecha_termino_intervencion')
-                                    ->whereBetween('fecha_inicio_intervencion', [$now . " 00:00:00", $now . " 23:59:59"])
-                                    ->orderBy('correlativo', 'ASC')->orderBy('medico_nombre', 'ASC')
+      $tooltip_info = ExecutedActivity::select('correlative','medic_name','profession','intervention_procedure_desc','intervention_start_date','intervention_end_date')
+                                    ->whereBetween('intervention_start_date', [$now . " 00:00:00", $now . " 23:59:59"])
+                                    ->orderBy('correlative', 'ASC')->orderBy('medic_name', 'ASC')
                                     ->get();
 
       //se agregan tooltip a actividades del calendario
       foreach ($current_activities as $key => $activity) {
         $valor = '';
         foreach ($tooltip_info as $key => $info) {
-          if($activity->correlativo == $info->correlativo){
-            $valor = $valor . $info->medico_nombre . ' - ' . $info->profesion . ' - ' . $info->procedimiento_intervencion_desc . '<br>';
+          if($activity->correlative == $info->correlative){
+            $valor = $valor . $info->medic_name . ' - ' . $info->profession . ' - ' . $info->intervention_procedure_desc . '<br>';
           }
         }
         $activity->tooltip = $valor;
@@ -397,82 +395,47 @@ class OperatingRoomController extends Controller
 
       $colors = ['EBDEF0','FDEBD0','F6DDCC','F2D7D5','D6EAF8','EAEDED','D4E6F1','FDEBD0','FADBD8','D5F5E3'];
       //total de horas uso por medico
-      // $executedActivity = ExecutedActivity::select('medico_especialidad_desc','medico_nombre',
+      // $executedActivity = ExecutedActivity::select('medic_specialty_desc','medic_name',
       //                                           DB::raw('count(*) as totalProcedimientos'),
-      //                                           DB::raw('ROUND((SUM(TIMESTAMPDIFF(MINUTE, fecha_inicio_intervencion, fecha_termino_intervencion))/60),2) AS total_horas'))
-      //                                        ->whereBetween('fecha_inicio_intervencion',[$from . " 00:00:00", $to . " 23:59:59"])
-      //                                        ->where('pabellon','PC4')
-      //                                        ->groupBy('medico_especialidad_desc','medico_nombre')
+      //                                           DB::raw('ROUND((SUM(TIMESTAMPDIFF(MINUTE, intervention_start_date, intervention_end_date))/60),2) AS total_horas'))
+      //                                        ->whereBetween('intervention_start_date',[$from . " 00:00:00", $to . " 23:59:59"])
+      //                                        ->where('operating_room','PC4')
+      //                                        ->groupBy('medic_specialty_desc','medic_name')
       //                                        ->orderBy('totalProcedimientos','DESC')
       //                                        ->get();
 
-      $sql_query = "SELECT T2.law,T2.weekly_hours, IFNULL(T2.YEAR, anho) AS anho, IFNULL(T2.rut,medico_rut) AS rut, IFNULL(NAME, medico_nombre) AS nombre, T.mes, T.Semana, T.medico_especialidad_desc, T.total_horas
+      $sql_query = "SELECT T2.law,T2.weekly_hours, IFNULL(T2.YEAR, anho) AS anho, IFNULL(T2.rut,medic_rut) AS rut, IFNULL(NAME, medic_name) AS nombre, T.mes, T.Semana, T.medic_specialty_desc, T.total_horas
                     FROM (SELECT Anho,
                     		       Mes,
                     				 Semana,
-                    				 medico_especialidad_desc,
-                    				 medico_rut,
-                    				 medico_nombre,
-                    				 ROUND((SUM(TIMESTAMPDIFF(MINUTE, T.fecha_inicio_intervencion, T.fecha_termino_intervencion))/60),2) AS total_horas
+                    				 medic_specialty_desc,
+                    				 medic_rut,
+                    				 medic_name,
+                    				 ROUND((SUM(TIMESTAMPDIFF(MINUTE, T.intervention_start_date, T.intervention_end_date))/60),2) AS total_horas
                     		FROM (
-                    		SELECT YEAR(fecha_inicio_intervencion) AS Anho,
-                    				 MONTHNAME(fecha_inicio_intervencion) AS Mes,
-                    				 FLOOR((DayOfMonth(fecha_inicio_intervencion)-1)/7)+1 AS Semana,
-                    				 medico_especialidad_desc, medico_rut, medico_nombre,
-                    				 fecha_inicio_intervencion, fecha_termino_intervencion,profesion
+                    		SELECT YEAR(intervention_start_date) AS Anho,
+                    				 MONTHNAME(intervention_start_date) AS Mes,
+                    				 FLOOR((DayOfMonth(intervention_start_date)-1)/7)+1 AS Semana,
+                    				 medic_specialty_desc, medic_rut, medic_name,
+                    				 intervention_start_date, intervention_end_date,profession
                     		FROM hm_executed_activities
-                    		where fecha_inicio_intervencion BETWEEN '$from 00:00:00' AND '$to 23:59:59'
-                    		AND pabellon = 'PC4'
-                    		GROUP BY YEAR(fecha_inicio_intervencion),
-                    		         MONTHNAME(fecha_inicio_intervencion),
-                    				   FLOOR((DayOfMonth(fecha_inicio_intervencion)-1)/7)+1,
-                    				   medico_rut, medico_nombre, medico_especialidad_desc, fecha_inicio_intervencion, fecha_termino_intervencion,profesion) AS T
+                    		where intervention_start_date BETWEEN '$from 00:00:00' AND '$to 23:59:59'
+
+                    		GROUP BY YEAR(intervention_start_date),
+                    		         MONTHNAME(intervention_start_date),
+                    				   FLOOR((DayOfMonth(intervention_start_date)-1)/7)+1,
+                    				   medic_rut, medic_name, medic_specialty_desc, intervention_start_date, intervention_end_date,profession) AS T
                     		GROUP BY Anho,
                     		         Mes,
                     					Semana,
-                    					medico_especialidad_desc,
-                    					medico_rut,
-                    					medico_nombre
-                    		ORDER BY ROUND((SUM(TIMESTAMPDIFF(MINUTE, T.fecha_inicio_intervencion, T.fecha_termino_intervencion))/60),2) DESC) AS T RIGHT JOIN
+                    					medic_specialty_desc,
+                    					medic_rut,
+                    					medic_name
+                    		ORDER BY ROUND((SUM(TIMESTAMPDIFF(MINUTE, T.intervention_start_date, T.intervention_end_date))/60),2) DESC) AS T RIGHT JOIN
                     (SELECT rrhh.rut, (concat(rrhh.NAME,' ',fathers_family,' ',mothers_family)) AS name, cont.YEAR, cont.law, cont.weekly_hours
                     FROM hm_rrhh AS rrhh INNER JOIN
                          hm_contracts AS cont ON rrhh.rut = cont.rut
-                    WHERE cont.law = 'LEY 15.076') AS T2 ON T.Anho = T2.YEAR AND T.medico_rut = T2.rut
-
-                    UNION
-
-                    SELECT T2.law,T2.weekly_hours, IFNULL(T2.YEAR, anho) AS anho, IFNULL(T2.rut,medico_rut) AS rut, IFNULL(NAME, medico_nombre) AS nombre, T.mes, T.Semana, T.medico_especialidad_desc, T.total_horas
-                    FROM (SELECT Anho,
-                    		       Mes,
-                    				 Semana,
-                    				 medico_especialidad_desc,
-                    				 medico_rut,
-                    				 medico_nombre,
-                    				 ROUND((SUM(TIMESTAMPDIFF(MINUTE, T.fecha_inicio_intervencion, T.fecha_termino_intervencion))/60),2) AS total_horas
-                    		FROM (
-                    		SELECT YEAR(fecha_inicio_intervencion) AS Anho,
-                    				 MONTHNAME(fecha_inicio_intervencion) AS Mes,
-                    				 FLOOR((DayOfMonth(fecha_inicio_intervencion)-1)/7)+1 AS Semana,
-                    				 medico_especialidad_desc, medico_rut, medico_nombre,
-                    				 fecha_inicio_intervencion, fecha_termino_intervencion,profesion
-                    		FROM hm_executed_activities
-                    		where fecha_inicio_intervencion BETWEEN '$from 00:00:00' AND '$to 23:59:59'
-                    		AND pabellon = 'PC4'
-                    		GROUP BY YEAR(fecha_inicio_intervencion),
-                    		         MONTHNAME(fecha_inicio_intervencion),
-                    				   FLOOR((DayOfMonth(fecha_inicio_intervencion)-1)/7)+1,
-                    				   medico_rut, medico_nombre, medico_especialidad_desc, fecha_inicio_intervencion, fecha_termino_intervencion,profesion) AS T
-                    		GROUP BY Anho,
-                    		         Mes,
-                    					Semana,
-                    					medico_especialidad_desc,
-                    					medico_rut,
-                    					medico_nombre
-                    		ORDER BY ROUND((SUM(TIMESTAMPDIFF(MINUTE, T.fecha_inicio_intervencion, T.fecha_termino_intervencion))/60),2) DESC) AS T LEFT JOIN
-                    (SELECT rrhh.rut, (concat(rrhh.NAME,' ',fathers_family,' ',mothers_family)) AS name, cont.YEAR, cont.law, cont.weekly_hours
-                    FROM hm_rrhh AS rrhh INNER JOIN
-                         hm_contracts AS cont ON rrhh.rut = cont.rut
-                    WHERE cont.law = 'LEY 15.076') AS T2 ON T.Anho = T2.YEAR AND T.medico_rut = T2.rut
+                    WHERE cont.law = 'LEY 15.076') AS T2 ON T.Anho = T2.YEAR AND T.medic_rut = T2.rut
 
                     ORDER BY total_horas DESC";
       $executed_activities = DB::connection('mysql')->select($sql_query);
@@ -480,35 +443,35 @@ class OperatingRoomController extends Controller
       // dd($executed_activities);
 
       //promedio de uso pabellon por especialidad
-      // $average_total = ExecutedActivity::select('medico_especialidad_desc',
-      //                                           DB::raw('ROUND((SUM(TIMESTAMPDIFF(MINUTE, fecha_inicio_intervencion, fecha_termino_intervencion))/60),2) AS total_horas'),
-      //                                           DB::raw('ROUND(AVG((TIMESTAMPDIFF(MINUTE, fecha_inicio_intervencion, fecha_termino_intervencion)/60)),2) AS promedio_duracion_intervencion'))
-      //                                        ->whereBetween('fecha_inicio_intervencion',[$from . " 00:00:00", $to . " 23:59:59"])
-      //                                        ->where('pabellon','PC4')
-      //                                        ->groupBy('medico_especialidad_desc')
+      // $average_total = ExecutedActivity::select('medic_specialty_desc',
+      //                                           DB::raw('ROUND((SUM(TIMESTAMPDIFF(MINUTE, intervention_start_date, intervention_end_date))/60),2) AS total_horas'),
+      //                                           DB::raw('ROUND(AVG((TIMESTAMPDIFF(MINUTE, intervention_start_date, intervention_end_date)/60)),2) AS promedio_duracion_intervencion'))
+      //                                        ->whereBetween('intervention_start_date',[$from . " 00:00:00", $to . " 23:59:59"])
+      //                                        ->where('operating_room','PC4')
+      //                                        ->groupBy('medic_specialty_desc')
       //                                        ->get();
 
-      $sql_query = "SELECT medico_especialidad_desc,
-                				 ROUND((SUM(TIMESTAMPDIFF(MINUTE, T.fecha_inicio_intervencion, T.fecha_termino_intervencion))/60),2) AS total_horas,
-                         ROUND(AVG((TIMESTAMPDIFF(MINUTE, T.fecha_inicio_intervencion, T.fecha_termino_intervencion)/60)),2) AS promedio_duracion_intervencion
+      $sql_query = "SELECT medic_specialty_desc,
+                				 ROUND((SUM(TIMESTAMPDIFF(MINUTE, T.intervention_start_date, T.intervention_end_date))/60),2) AS total_horas,
+                         ROUND(AVG((TIMESTAMPDIFF(MINUTE, T.intervention_start_date, T.intervention_end_date)/60)),2) AS promedio_duracion_intervencion
                 		FROM (
-                		SELECT YEAR(fecha_inicio_intervencion) AS Anho,
-                				 MONTHNAME(fecha_inicio_intervencion) AS Mes,
-                				 FLOOR((DayOfMonth(fecha_inicio_intervencion)-1)/7)+1 AS Semana,
-                				 medico_especialidad_desc, medico_rut, medico_nombre,
-                				 fecha_inicio_intervencion, fecha_termino_intervencion,profesion
+                		SELECT YEAR(intervention_start_date) AS Anho,
+                				 MONTHNAME(intervention_start_date) AS Mes,
+                				 FLOOR((DayOfMonth(intervention_start_date)-1)/7)+1 AS Semana,
+                				 medic_specialty_desc, medic_rut, medic_name,
+                				 intervention_start_date, intervention_end_date,profession
                 		FROM hm_executed_activities
-                		where fecha_inicio_intervencion BETWEEN '$from 00:00:00' AND '$to 23:59:59'
-                		AND pabellon = 'PC4'
-                		GROUP BY YEAR(fecha_inicio_intervencion),
-                		         MONTHNAME(fecha_inicio_intervencion),
-                				   FLOOR((DayOfMonth(fecha_inicio_intervencion)-1)/7)+1,
-                				   medico_rut, medico_nombre, medico_especialidad_desc, fecha_inicio_intervencion, fecha_termino_intervencion,profesion) AS T
-                		GROUP BY medico_especialidad_desc";
+                		where intervention_start_date BETWEEN '$from 00:00:00' AND '$to 23:59:59'
+                		AND operating_room = 'PC4'
+                		GROUP BY YEAR(intervention_start_date),
+                		         MONTHNAME(intervention_start_date),
+                				   FLOOR((DayOfMonth(intervention_start_date)-1)/7)+1,
+                				   medic_rut, medic_name, medic_specialty_desc, intervention_start_date, intervention_end_date,profession) AS T
+                		GROUP BY medic_specialty_desc";
 
       $average_total = DB::connection('mysql')->select($sql_query);
       $average_total = collect($average_total);
-      //dd($average_total);
+      // dd($average_total);
 
       //se agrega promedio a especialidades agrupadas
       foreach ($average_total as $key => $specialty) {
@@ -520,12 +483,12 @@ class OperatingRoomController extends Controller
       foreach ($executed_activities as $key => $executed) {
         $executed->color = null;
         foreach ($average_total as $key => $average) {
-          if($executed->medico_especialidad_desc == $average->medico_especialidad_desc){
+          if($executed->medic_specialty_desc == $average->medic_specialty_desc){
             $executed->color = $average->color;
           }
         }
       }
-      //dd($executed_activities);
+      // dd($executed_activities);
       // foreach ($executed_activities as $key => $specialty) {
       //   foreach ($average_total as $key => $average) {
       //     $specialty->
@@ -560,11 +523,11 @@ class OperatingRoomController extends Controller
             //$resumen[$usuario->rut]['titulo'] = $usuario->job_title;
         }
 
-        $actividades = ExecutedActivity::where('pabellon','PC4')
-            ->whereBetween('fecha_inicio_intervencion',[$from,$to])
+        $actividades = ExecutedActivity::where('operating_room','PC4')
+            ->whereBetween('intervention_start_date',[$from,$to])
             ->get();
 
-        $actividades_agrupadas = $actividades->groupBy(['medico_especialidad','correlativo','medico_rut']);
+        $actividades_agrupadas = $actividades->groupBy(['medic_specialty','correlative','medic_rut']);
 
         foreach($actividades_agrupadas as $cod_esp => $especialidades) {
             $horas_ejecutadas_especialidad[$cod_esp] = collect();
@@ -577,14 +540,14 @@ class OperatingRoomController extends Controller
         //print_r($horas_ejecutadas_especialidad[72002]->sum('activityDuration'));
 
         foreach($horas_ejecutadas_especialidad as $key => $horas) {
-            $resumen_por_especialidad[$key]['nombre'] = $horas->first()->medico_especialidad_desc;
+            $resumen_por_especialidad[$key]['nombre'] = $horas->first()->medic_specialty_desc;
             $resumen_por_especialidad[$key]['horas'] = number_format($horas->sum('activityDuration')/60/60,2);
-            foreach($horas->groupBy('medico_rut') as $arr_medico) {
-                $resumen[$arr_medico->first()->medico_rut]['nombre'] = $arr_medico->first()->medico_nombre;
-                $resumen[$arr_medico->first()->medico_rut]['cod_especialidad'] = $arr_medico->first()->medico_especialidad;
-                $resumen[$arr_medico->first()->medico_rut]['nombre_especialidad'] = $arr_medico->first()->medico_especialidad_desc;
-                $resumen[$arr_medico->first()->medico_rut]['horas_ejecutadas'] = number_format($arr_medico->sum('activityDuration')/60/60,1);
-                if(!isset($resumen[$arr_medico->first()->medico_rut]['horas_programadas'])) $resumen[$arr_medico->first()->medico_rut]['horas_programadas'] = 0;
+            foreach($horas->groupBy('medic_rut') as $arr_medico) {
+                $resumen[$arr_medico->first()->medic_rut]['nombre'] = $arr_medico->first()->medic_name;
+                $resumen[$arr_medico->first()->medic_rut]['cod_especialidad'] = $arr_medico->first()->medic_specialty;
+                $resumen[$arr_medico->first()->medic_rut]['nombre_especialidad'] = $arr_medico->first()->medic_specialty_desc;
+                $resumen[$arr_medico->first()->medic_rut]['horas_ejecutadas'] = number_format($arr_medico->sum('activityDuration')/60/60,1);
+                if(!isset($resumen[$arr_medico->first()->medic_rut]['horas_programadas'])) $resumen[$arr_medico->first()->medic_rut]['horas_programadas'] = 0;
             }
         }
 
@@ -592,6 +555,96 @@ class OperatingRoomController extends Controller
         return view('ehr.hetg.operating_rooms.reports.urgency', compact('resumen','resumen_por_especialidad'));
         //print_r($resumen_por_especialidad);
     }
+
+    public function reportProgramedVsTeoric(Request $request)
+    {
+      // $now = Carbon::now();
+      // $now = Carbon::parse("2020-11-16");
+      if($request->has('year_week')) {
+          $now = Carbon::now();
+          list($year, $week) = explode('-W',$request->year_week);
+          $now->setISODate($year,$week);
+          $from = $now->startOfWeek()->format('Y-m-d 00:00:00');
+          $to   = $now->endOfWeek()->format('Y-m-d 23:59:59');
+      }
+      else if($request->has('from') AND $request->has('to')){
+          $from = $request->has('from'). ' 00:00:00';
+          $to   = $request->has('to'). ' 23:59:59';
+      }
+      else {
+          $now = Carbon::now();
+          $from = $now->startOfWeek()->format('2020-02-24 00:00:00');
+          $to   = $now->endOfWeek()->format('2020-03-01 23:59:59');
+      }
+
+      $motherActivities = MotherActivity::where('id',1)->get();
+      $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón
+
+      $theoreticalProgrammings = TheoreticalProgramming::whereIn('activity_id', $ids_actividades)
+                                                      ->whereBetween('start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                                      ->whereNotNull('specialty_id')
+                                                      ->get();
+      foreach ($theoreticalProgrammings as $key => $calendarProgramming) {
+        $start  = new Carbon($calendarProgramming->start_date);
+        $end    = new Carbon($calendarProgramming->end_date);
+        $calendarProgramming->duration =  $start->diffInMinutes($end)/60;
+      }
+
+      $array = array();
+      foreach ($theoreticalProgrammings as $key => $theoreticalProgramming) {
+        $array[$theoreticalProgramming->specialty->specialty_name]['theoretical_duration'] = 0;
+        $array[$theoreticalProgramming->specialty->specialty_name]['executed_duration'] = 0;
+        $array[$theoreticalProgramming->specialty->specialty_name]['programed_duration'] = 0;
+      }
+
+      $executed_activities = ExecutedActivity::whereBetween('intervention_start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                              ->where('intervention_status',2) // ejecutado y programado
+                                              ->whereNotNull('intervention_end_date') //debo eliminar
+                                              ->whereNotIn('medic_specialty',['92-000']) //no considera odontología
+                                              ->get();
+
+      foreach ($executed_activities as $key => $executed_activity) {
+        $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['theoretical_duration'] = 0;
+        $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] = 0;
+        $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] = 0;
+      }
+
+      $programmed_activities = ExecutedActivity::whereBetween('programming_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                              ->where('intervention_status',1) // ejecutado y programado
+                                              ->whereNotIn('medic_specialty',['92-000']) //no considera odontología
+                                              ->get();
+
+      foreach ($programmed_activities as $key => $programmed_activity) {
+        $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['theoretical_duration'] = 0;
+        $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] = 0;
+        $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] = 0;
+      }
+
+
+      //teórico
+      foreach ($theoreticalProgrammings as $key => $theoreticalProgramming) {
+        $array[$theoreticalProgramming->specialty->specialty_name]['theoretical_duration'] += $theoreticalProgramming->duration;
+      }
+
+      foreach ($executed_activities as $key => $executed_activity) {
+        $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] += $executed_activity->activityDuration/60/60;
+      }
+
+      foreach ($programmed_activities as $key => $programmed_activity) {
+        $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] += $programmed_activity->estimated_intervention_time/60;
+      }
+
+      $request->flash();
+
+      return view('ehr.hetg.management.reports.ProgramedVsTeoric',compact('now','array'));
+    }
+
+    function cmp($a, $b)
+    {
+        return strcmp($a["theoretical_duration"], $b["theoretical_duration"]);
+    }
+
+
 
     /**
      * Show the form for creating a new resource.

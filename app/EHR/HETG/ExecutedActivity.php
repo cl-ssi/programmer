@@ -15,16 +15,18 @@ class ExecutedActivity extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'correlativo', 'programming_date', 'pabellon', 'origin_request', 'origin_request_desc', 'profesion', 'medico_rut',
-        'medico_nombre', 'medico_especialidad', 'medico_especialidad_desc',
-        'procedimiento_intervencion', 'procedimiento_intervencion_desc',
-        'tiempo_est_interv', 'fecha_ingreso_tx', 'estado_intervencion',
-        'estado_intervencion_desc', 'fecha_inicio_intervencion',
-        'fecha_termino_intervencion', 'categoria_cirugia',
-        'categoria_cirugia_desc', 'fecha_ingreso_pabellon',
-        'fecha_ingreso_quirofano', 'fecha_salida_quirofano',
-        'categoria_cirugia_tabla', 'categoria_cirugia_tabla_desc',
-        'causa_suspension', 'causa_suspension_desc', 'speciality_id'
+        'id', 'correlative', 'programming_date', 'operating_room', 'origin_request', 'origin_request_desc', 'profession', 'medic_rut','medic_dv',
+        'medic_name', 'medic_specialty', 'medic_specialty_desc',
+        'intervention_procedure', 'intervention_procedure_desc',
+        'plane','plane_desc','extremity','extremity_desc',
+        'estimated_intervention_time', 'fecha_ingreso_tx', 'estado_intervencion',
+        'tx_entrance_date',
+        'intervention_status','intervention_status_desc','intervention_start_date','intervention_end_date',
+        'surgery_category','surgery_category_desc',
+        'operating_room_entrance_date',
+        'surgery_room_entrance_date', 'surgery_room_exit_date',
+        'table_surgery_category', 'table_surgery_category_desc',
+        'suspencion_cause', 'suspencion_cause_desc'
     ];
 
     public function rrhh()
@@ -39,15 +41,15 @@ class ExecutedActivity extends Model implements Auditable
 
     public function getActivityDurationAttribute()
     {
-        $duracion = $this->fecha_termino_intervencion->getTimestamp()
-            - $this->fecha_inicio_intervencion->getTimestamp();
+        $duracion = $this->intervention_end_date->getTimestamp() - $this->intervention_start_date->getTimestamp();
         return $duracion;
     }
 
     public function getActivityDurationHumanAttribute()
     {
-        $duracion = $this->fecha_termino_intervencion->getTimestamp()
-            - $this->fecha_inicio_intervencion->getTimestamp();
+        $duracion = $this->intervention_end_date->getTimestamp()
+            - $this->intervention_start_date->getTimestamp();
+            // dd("x",$duracion);
         return gmdate("H:i:s", $duracion);
     }
 
@@ -58,7 +60,7 @@ class ExecutedActivity extends Model implements Auditable
      *
      * @var array
      */
-    protected $dates = ['deleted_at', 'fecha_inicio_intervencion', 'fecha_termino_intervencion'];
+    protected $dates = ['deleted_at', 'intervention_start_date', 'intervention_end_date'];
 
     /**
      * The table associated with the model.

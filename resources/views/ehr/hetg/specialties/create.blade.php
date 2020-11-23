@@ -18,10 +18,10 @@
             <input type="text" class="form-control" id="for_id_specialty" name="id_specialty" required>
         </fieldset>
 
-        {{-- <fieldset class="form-group col">
+        <fieldset class="form-group col">
             <label for="for_id_sigte">id Sigte</label>
             <input type="text" class="form-control" id="for_id_sigte" placeholder="(opcional)" name="id_sigte">
-        </fieldset> --}}
+        </fieldset>
     </div>
 
     <div class="row">

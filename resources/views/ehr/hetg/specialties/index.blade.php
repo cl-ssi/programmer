@@ -15,7 +15,7 @@
         <tr>
             <th>Id</th>
             <th>id_especialidad</th>
-            {{-- <th>id Sigte</th> --}}
+            <th>id Sigte</th>
             <th>Especialidad</th>
             <th>Color</th>
             <th></th>
@@ -26,7 +26,7 @@
         <tr>
             <td>{{ $specialty->id }}</td>
             <td>{{ $specialty->id_specialty }}</td>
-            {{-- <td>{{ $specialty->id_sigte }}</td> --}}
+            <td>{{ $specialty->id_sigte }}</td>
             <td>{{ $specialty->specialty_name }}</td>
             <td><span class="badge badge-primary" style="background-color: #{{$specialty->color}};">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
             <td>
