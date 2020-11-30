@@ -19,8 +19,8 @@
 
             </div>
 
-            <br />
-            Sistema desarrollado con el aporte técnico/clínico del Doctor Juan Francisco Gutiérrez Villalobos Jefe CAE
+            <!-- <br />
+            Sistema desarrollado con el aporte técnico/clínico del Doctor Juan Francisco Gutiérrez Villalobos Jefe CAE -->
 
             <br />
             <div class="card">

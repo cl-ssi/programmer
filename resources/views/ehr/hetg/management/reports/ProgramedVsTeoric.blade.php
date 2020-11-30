@@ -37,154 +37,252 @@
 
 <div id="chartdiv"></div>
 
+<div id="chartdivOperatingRoom"></div>
+
 @endsection
 
 @section('custom_js')
 
 <!-- Styles -->
 <style>
-#chartdiv {
+/* #chartdiv {
   width: 100%;
-  height: 700px;
+  height: 600px;
+} */
+
+#chartdivOperatingRoom {
+  width: 100%;
+  height: 600px;
 }
 </style>
 
 <!-- Chart code -->
 <script>
+// am4core.ready(function() {
+//
+// // Themes begin
+// am4core.useTheme(am4themes_animated);
+// // Themes end
+//
+//
+//
+// var chart = am4core.create('chartdiv', am4charts.XYChart)
+// chart.colors.step = 2;
+//
+// chart.legend = new am4charts.Legend()
+// chart.legend.position = 'top'
+// chart.legend.paddingBottom = 20
+// chart.legend.labels.template.maxWidth = 95
+//
+// chart.scrollbarX = new am4core.Scrollbar();
+// chart.scrollbarX.parent = chart.bottomAxesContainer;
+//
+// chart.scrollbarY = new am4core.Scrollbar();
+// chart.scrollbarY.parent = chart.leftAxesContainer;
+//
+//
+//
+//
+// // Add legend
+// chart.legend = new am4charts.Legend();
+//
+// // Add cursor
+// chart.cursor = new am4charts.XYCursor();
+//
+// var xAxis = chart.xAxes.push(new am4charts.CategoryAxis())
+// xAxis.dataFields.category = 'category'
+// xAxis.renderer.cellStartLocation = 0.1
+// xAxis.renderer.cellEndLocation = 0.9
+// xAxis.renderer.grid.template.location = 0;
+// xAxis.renderer.labels.template.rotation = 25;
+// xAxis.renderer.labels.template.fontSize = 10;
+// xAxis.renderer.minGridDistance = 10; //adjust as needed
+// xAxis.sortBySeries = "theoretical_duration";
+//
+// var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+// yAxis.min = 0;
+//
+// function createSeries(value, name) {
+//     var series = chart.series.push(new am4charts.ColumnSeries())
+//     series.dataFields.valueY = value
+//     series.dataFields.categoryX = 'category'
+// 		series.tooltipText = "{name}: [bold]{valueY}[/]";
+//     series.name = name
+//
+// 		// series.columns.template.column.cornerRadiusTopLeft = 5;
+// 		// series.columns.template.column.cornerRadiusTopRight = 5;
+//
+//     series.events.on("hidden", arrangeColumns);
+//     series.events.on("shown", arrangeColumns);
+//
+//     var bullet = series.bullets.push(new am4charts.LabelBullet())
+//     bullet.interactionsEnabled = false
+//     bullet.dy = 30;
+//     bullet.label.text = '{valueY}'
+//     bullet.label.fill = am4core.color('#ffffff')
+//
+//     return series;
+// }
+//
+// var lineSeries = chart.series.push(new am4charts.LineSeries());
+// lineSeries.name = "Estimado";
+// lineSeries.dataFields.valueY = "Estimado";
+// lineSeries.dataFields.categoryX = "category";
+// lineSeries.tooltipText = "{name}: [bold]{valueY}[/]";
+//
+// lineSeries.stroke = am4core.color("#fdd400");
+// lineSeries.strokeWidth = 3;
+// lineSeries.propertyFields.strokeDasharray = "lineDash";
+// lineSeries.tooltip.label.textAlign = "middle";
+// lineSeries.tooltip.label.background.fill = am4core.color("#fdd400");
+//
+// chart.data = [
+// 	@foreach($array as $key => $element)
+//     {
+//         category: '{{$key}}',
+// 				Estimado: {{$element['theoretical_duration']}},
+// 				Ejecutado: {{$element['executed_duration']}},
+// 				Programado: {{$element['programed_duration']}}
+//     },
+// 	@endforeach
+// ]
+//
+//
+// createSeries('Teórico', 'Teórico');
+// createSeries('Ejecutado', 'Ejecutado');
+// createSeries('Programado', 'Programado');
+//
+// function arrangeColumns() {
+//
+//     var series = chart.series.getIndex(0);
+//
+//     var w = 1 - xAxis.renderer.cellStartLocation - (1 - xAxis.renderer.cellEndLocation);
+//     if (series.dataItems.length > 1) {
+//         var x0 = xAxis.getX(series.dataItems.getIndex(0), "categoryX");
+//         var x1 = xAxis.getX(series.dataItems.getIndex(1), "categoryX");
+//         var delta = ((x1 - x0) / chart.series.length) * w;
+//         if (am4core.isNumber(delta)) {
+//             var middle = chart.series.length / 2;
+//
+//             var newIndex = 0;
+//             chart.series.each(function(series) {
+//                 if (!series.isHidden && !series.isHiding) {
+//                     series.dummyData = newIndex;
+//                     newIndex++;
+//                 }
+//                 else {
+//                     series.dummyData = chart.series.indexOf(series);
+//                 }
+//             })
+//             var visibleCount = newIndex;
+//             var newMiddle = visibleCount / 2;
+//
+//             chart.series.each(function(series) {
+//                 var trueIndex = chart.series.indexOf(series);
+//                 var newIndex = series.dummyData;
+//
+//                 var dx = (newIndex - trueIndex + middle - newMiddle) * delta
+//
+//                 series.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
+//                 series.bulletsContainer.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
+//             })
+//         }
+//     }
+// }
+//
+// }); // end am4core.ready()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 am4core.ready(function() {
 
 // Themes begin
 am4core.useTheme(am4themes_animated);
 // Themes end
 
+// Create chart instance
+var chart = am4core.create("chartdivOperatingRoom", am4charts.XYChart);
+
+	chart.data = [
+	@foreach($operatingRooms as $op => $operatingRoom)
+		@foreach($OperatingRoomArray as $key => $OperatingRoom)
+			{
+				"year": '{{$operatingRoom->name}}',
+				@foreach($OperatingRoom as $key2 => $specialty)
+				Teorico: {{$specialty['avaliable_hours']}},
+				@endforeach
+			},
+		@endforeach
+	@endforeach
+	]
+
+// Create axes
+var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+categoryAxis.dataFields.category = "year";
+categoryAxis.renderer.grid.template.location = 0;
 
 
-var chart = am4core.create('chartdiv', am4charts.XYChart)
-chart.colors.step = 2;
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+valueAxis.renderer.inside = true;
+valueAxis.renderer.labels.template.disabled = true;
+valueAxis.min = 0;
 
-chart.legend = new am4charts.Legend()
-chart.legend.position = 'top'
-chart.legend.paddingBottom = 20
-chart.legend.labels.template.maxWidth = 95
+// Create series
+function createSeries(field, name) {
 
-chart.scrollbarX = new am4core.Scrollbar();
-chart.scrollbarX.parent = chart.bottomAxesContainer;
+  // Set up series
+  var series = chart.series.push(new am4charts.ColumnSeries());
+  series.name = name;
+  series.dataFields.valueY = field;
+  series.dataFields.categoryX = "year";
+  series.sequencedInterpolation = true;
 
-chart.scrollbarY = new am4core.Scrollbar();
-chart.scrollbarY.parent = chart.leftAxesContainer;
+  // Make it stacked
+  series.stacked = true;
+
+  // Configure columns
+  series.columns.template.width = am4core.percent(60);
+  series.columns.template.tooltipText = "[bold]{name}[/]\n[font-size:14px]{categoryX}: {valueY}";
+
+  // Add label
+  var labelBullet = series.bullets.push(new am4charts.LabelBullet());
+  labelBullet.label.text = "{valueY}";
+  labelBullet.locationY = 0.5;
+  labelBullet.label.hideOversized = true;
+
+  return series;
+}
+
+createSeries("Teorico", "Teorico");
+createSeries("Ejecutado", "Ejecutado");
+createSeries("Programado", "Programado");
+// createSeries("lamerica", "Latin America");
+// createSeries("meast", "Middle-East");
+// createSeries("africa", "Africa");
 
 
 
-
-// Add legend
+// Legend
 chart.legend = new am4charts.Legend();
 
-// Add cursor
-chart.cursor = new am4charts.XYCursor();
-
-var xAxis = chart.xAxes.push(new am4charts.CategoryAxis())
-xAxis.dataFields.category = 'category'
-xAxis.renderer.cellStartLocation = 0.1
-xAxis.renderer.cellEndLocation = 0.9
-xAxis.renderer.grid.template.location = 0;
-xAxis.renderer.labels.template.rotation = 25;
-xAxis.renderer.labels.template.fontSize = 10;
-xAxis.renderer.minGridDistance = 10; //adjust as needed
-xAxis.sortBySeries = "theoretical_duration";
-
-var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
-yAxis.min = 0;
-
-function createSeries(value, name) {
-    var series = chart.series.push(new am4charts.ColumnSeries())
-    series.dataFields.valueY = value
-    series.dataFields.categoryX = 'category'
-		series.tooltipText = "{name}: [bold]{valueY}[/]";
-    series.name = name
-
-		// series.columns.template.column.cornerRadiusTopLeft = 5;
-		// series.columns.template.column.cornerRadiusTopRight = 5;
-
-    series.events.on("hidden", arrangeColumns);
-    series.events.on("shown", arrangeColumns);
-
-    var bullet = series.bullets.push(new am4charts.LabelBullet())
-    bullet.interactionsEnabled = false
-    bullet.dy = 30;
-    bullet.label.text = '{valueY}'
-    bullet.label.fill = am4core.color('#ffffff')
-
-    return series;
-}
-
-var lineSeries = chart.series.push(new am4charts.LineSeries());
-lineSeries.name = "Estimado";
-lineSeries.dataFields.valueY = "Estimado";
-lineSeries.dataFields.categoryX = "category";
-lineSeries.tooltipText = "{valueY}";
-
-lineSeries.stroke = am4core.color("#fdd400");
-lineSeries.strokeWidth = 3;
-lineSeries.propertyFields.strokeDasharray = "lineDash";
-lineSeries.tooltip.label.textAlign = "middle";
-lineSeries.tooltip.label.background.fill = am4core.color("#fdd400");
-
-chart.data = [
-	@foreach($array as $key => $element)
-    {
-        category: '{{$key}}',
-				Teórico: {{$element['theoretical_duration']}},
-				Ejecutado: {{$element['executed_duration']}},
-				Programado: {{$element['programed_duration']}},
-				Estimado: {{$element['executed_duration'] + $element['programed_duration']}}
-    },
-	@endforeach
-]
-
-
-createSeries('Teórico', 'Teórico');
-createSeries('Ejecutado', 'Ejecutado');
-createSeries('Programado', 'Programado');
-
-function arrangeColumns() {
-
-    var series = chart.series.getIndex(0);
-
-    var w = 1 - xAxis.renderer.cellStartLocation - (1 - xAxis.renderer.cellEndLocation);
-    if (series.dataItems.length > 1) {
-        var x0 = xAxis.getX(series.dataItems.getIndex(0), "categoryX");
-        var x1 = xAxis.getX(series.dataItems.getIndex(1), "categoryX");
-        var delta = ((x1 - x0) / chart.series.length) * w;
-        if (am4core.isNumber(delta)) {
-            var middle = chart.series.length / 2;
-
-            var newIndex = 0;
-            chart.series.each(function(series) {
-                if (!series.isHidden && !series.isHiding) {
-                    series.dummyData = newIndex;
-                    newIndex++;
-                }
-                else {
-                    series.dummyData = chart.series.indexOf(series);
-                }
-            })
-            var visibleCount = newIndex;
-            var newMiddle = visibleCount / 2;
-
-            chart.series.each(function(series) {
-                var trueIndex = chart.series.indexOf(series);
-                var newIndex = series.dummyData;
-
-                var dx = (newIndex - trueIndex + middle - newMiddle) * delta
-
-                series.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
-                series.bulletsContainer.animate({ property: "dx", to: dx }, series.interpolationDuration, series.interpolationEasing);
-            })
-        }
-    }
-}
-
 }); // end am4core.ready()
+
 </script>
 
 

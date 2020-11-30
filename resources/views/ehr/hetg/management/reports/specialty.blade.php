@@ -41,8 +41,9 @@
 		<tr >
 			<th>Especialidad</th>
 			<!-- <th>Hrs.Contratadas</th> -->
-			<th>Hrs.Programadas</th>
-			<th>Hrs.Ejecutadas</th>
+			<th>Hrs.Teórico</th>
+			<th>Hrs.Programadas (YANI)</th>
+			<th>Hrs.Ejecutadas (YANI)</th>
 			<th>Hrs.Habil</th>
 			<th>Hrs.Inhábil</th>
 			<th></th>
@@ -52,6 +53,7 @@
 		@foreach($resumen as $codigo_especialidad => $especialidad)
 			<tr>
 				<td>{{ $especialidad['nombre_especialidad']->specialty_name }}</td>
+				<td class="text-center">{{ $especialidad['horas_teorico'] }}</td>
 				<td class="text-center">{{ $especialidad['horas_programadas'] }}</td>
 				<td class="text-center"><b><font color="#67b7dc" style="text-shadow: 0.7px 0.7px 0.7px black;">{{ $especialidad['horas_ejecutadas'] }}</font></b></td>
 				<td class="table-success text-center">{{ $especialidad['horas_habiles'] }}</td>
@@ -166,10 +168,20 @@ am4core.useTheme(am4themes_animated);
 // Themes end
 
 // Create chart instance
-var chart = am4core.create("chartdiv", am4charts.XYChart);
+var chart = am4core.create("chartdiv", am4charts.XYChart3D);
 
 // Export
 chart.exporting.menu = new am4core.ExportMenu();
+
+//scrollbars
+chart.scrollbarX = new am4core.Scrollbar();
+chart.scrollbarX.parent = chart.bottomAxesContainer;
+chart.scrollbarY = new am4core.Scrollbar();
+chart.scrollbarY.parent = chart.leftAxesContainer;
+
+// // Add legend and cursor
+// chart.legend = new am4charts.Legend();
+chart.cursor = new am4charts.XYCursor();
 
 // Data for both series
 var data = [
@@ -177,8 +189,9 @@ var data = [
 @foreach($resumen as $especialidad)
 {
 	"year": "{{ $especialidad['nombre_especialidad']->specialty_name }}",
-	"Hrs.Programadas": '{{$especialidad['horas_programadas']}}',
-	"Hrs.Ejecutadas": ' {{$especialidad['horas_ejecutadas']}}'
+	"Hrs.Teorico": '{{$especialidad['horas_teorico']}}',
+	"Hrs.Ejecutadas": ' {{$especialidad['horas_ejecutadas']}}',
+	"Hrs.Programadas": ' {{$especialidad['horas_programadas']}}'
 },
 @endforeach
 ];
@@ -194,35 +207,82 @@ categoryAxis.renderer.labels.template.fontSize = 8;
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
 /* Create series */
-var columnSeries = chart.series.push(new am4charts.ColumnSeries());
+var columnSeries = chart.series.push(new am4charts.ColumnSeries3D());
 columnSeries.name = "Hrs.Ejecutadas";//"Hrs.Contratadas";
 columnSeries.dataFields.valueY = "Hrs.Ejecutadas";//"Hrs.Contratadas";
 columnSeries.dataFields.categoryX = "year";
 
-columnSeries.columns.template.tooltipText = "[#fff font-size: 15px]{name} in {categoryX}:\n[/][#fff font-size: 20px]{valueY}[/] [#fff]{additional}[/]"
+// Make it stacked
+columnSeries.stacked = true;
+// columnSeries.clustered = false;
+
+columnSeries.columns.template.tooltipText = "[#fff font-size: 10px]{name} in {categoryX}:\n[/][#fff font-size: 10px]{valueY}[/] [#fff]{additional}[/]";
 columnSeries.columns.template.propertyFields.fillOpacity = "fillOpacity";
 columnSeries.columns.template.propertyFields.stroke = "stroke";
 columnSeries.columns.template.propertyFields.strokeWidth = "strokeWidth";
 columnSeries.columns.template.propertyFields.strokeDasharray = "columnDash";
 columnSeries.tooltip.label.textAlign = "middle";
 
-var lineSeries = chart.series.push(new am4charts.LineSeries());
-lineSeries.name = "Hrs.Programadas";//"Hrs.Ejecutadas";
-lineSeries.dataFields.valueY = "Hrs.Programadas";//"Hrs.Ejecutadas";
-lineSeries.dataFields.categoryX = "year";
 
-lineSeries.stroke = am4core.color("#fdd400");
-lineSeries.strokeWidth = 3;
-lineSeries.propertyFields.strokeDasharray = "lineDash";
-lineSeries.tooltip.label.textAlign = "middle";
 
-var bullet = lineSeries.bullets.push(new am4charts.Bullet());
-bullet.fill = am4core.color("#fdd400"); // tooltips grab fill from parent by default
-bullet.tooltipText = "[#fff font-size: 15px]{name} in {categoryX}:\n[/][#fff font-size: 20px]{valueY}[/] [#fff]{additional}[/]"
-var circle = bullet.createChild(am4core.Circle);
-circle.radius = 4;
-circle.fill = am4core.color("#fff");
-circle.strokeWidth = 3;
+
+/* Create series */
+var columnSeries = chart.series.push(new am4charts.ColumnSeries3D());
+columnSeries.name = "Hrs.Programadas";//"Hrs.Contratadas";
+columnSeries.dataFields.valueY = "Hrs.Programadas";//"Hrs.Contratadas";
+columnSeries.dataFields.categoryX = "year";
+
+// Make it stacked
+columnSeries.stacked = true;
+// columnSeries.clustered = false;
+
+columnSeries.columns.template.tooltipText = "[#fff font-size: 10px]{name} in {categoryX}:\n[/][#fff font-size: 10px]{valueY}[/] [#fff]{additional}[/]"
+columnSeries.columns.template.propertyFields.fillOpacity = "fillOpacity";
+columnSeries.columns.template.propertyFields.stroke = "stroke";
+columnSeries.columns.template.propertyFields.strokeWidth = "strokeWidth";
+columnSeries.columns.template.propertyFields.strokeDasharray = "columnDash";
+columnSeries.tooltip.label.textAlign = "middle";
+
+
+/* Create series */
+var columnSeries = chart.series.push(new am4charts.ColumnSeries3D());
+columnSeries.name = "Hrs.Teorico";//"Hrs.Contratadas";
+columnSeries.dataFields.valueY = "Hrs.Teorico";//"Hrs.Contratadas";
+columnSeries.dataFields.categoryX = "year";
+
+// Make it stacked
+columnSeries.stacked = true;
+// columnSeries.clustered = false;
+
+columnSeries.columns.template.tooltipText = "[#fff font-size: 10px]{name} in {categoryX}:\n[/][#fff font-size: 10px]{valueY}[/] [#fff]{additional}[/]"
+columnSeries.columns.template.propertyFields.fillOpacity = "fillOpacity";
+columnSeries.columns.template.propertyFields.stroke = "stroke";
+columnSeries.columns.template.propertyFields.strokeWidth = "strokeWidth";
+columnSeries.columns.template.propertyFields.strokeDasharray = "columnDash";
+columnSeries.tooltip.label.textAlign = "middle";
+
+
+
+// var lineSeries = chart.series.push(new am4charts.LineSeries());
+// lineSeries.name = "Hrs.Teorico";//"Hrs.Ejecutadas";
+// lineSeries.dataFields.valueY = "Hrs.Teorico";//"Hrs.Ejecutadas";
+// lineSeries.dataFields.categoryX = "year";
+//
+// lineSeries.stroke = am4core.color("#fdd400");
+// lineSeries.strokeWidth = 3;
+// lineSeries.propertyFields.strokeDasharray = "lineDash";
+// lineSeries.tooltip.label.textAlign = "middle";
+//
+//
+//
+//
+// var bullet = lineSeries.bullets.push(new am4charts.Bullet());
+// bullet.fill = am4core.color("#fdd400"); // tooltips grab fill from parent by default
+// bullet.tooltipText = "[#fff font-size: 15px]{name} in {categoryX}:\n[/][#fff font-size: 20px]{valueY}[/] [#fff]{additional}[/]"
+// var circle = bullet.createChild(am4core.Circle);
+// circle.radius = 4;
+// circle.fill = am4core.color("#fff");
+// circle.strokeWidth = 3;
 
 chart.data = data;
 

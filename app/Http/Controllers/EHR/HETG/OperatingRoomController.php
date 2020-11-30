@@ -20,7 +20,11 @@ use App\EHR\HETG\Specialty;
 use App\EHR\HETG\OperatingRoomSpecialty;
 use App\EHR\HETG\Profession;
 use App\EHR\HETG\OperatingRoomProfession;
+use App\EHR\HETG\OperatingRoomProgramming;
 use Illuminate\Support\Facades\Auth;
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 class OperatingRoomController extends Controller
 {
@@ -42,6 +46,19 @@ class OperatingRoomController extends Controller
 
     public function reportSpecialty(Request $request)
     {
+        // $client = new \GuzzleHttp\Client();
+        // try {
+        //     $response = $client->request('POST', 'http://ws.cdyne.com/NotifyWS/phonenotify.asmx/GetVersion');
+        //     dd($response->getBody()->getContents());
+        // } catch (RequestException $e) {
+        //     dd($e);
+        // }catch (Exception $e){
+        //     dd($e);
+        // }
+        // dd($response);
+
+
+
 
         /* Ids correspondiente a las especialidades */
         // $ids_especialidades = array(72002,72001,74009,77002,77001);
@@ -90,6 +107,7 @@ class OperatingRoomController extends Controller
           $end    = new Carbon($calendarProgramming->end_date);
           $calendarProgramming->duration =  $start->diffInMinutes($end)/60;
         }
+        // dd($theoreticalProgrammings);
 
         //se agrega para dejar como id, al n820
         foreach ($theoreticalProgrammings as $key => $progra) {
@@ -98,18 +116,23 @@ class OperatingRoomController extends Controller
           }
         }
 
-        $programacion_agrupada = $theoreticalProgrammings->groupBy('specialty_id');
+        // dd($theoreticalProgrammings);
+        $teorico_agrupado = $theoreticalProgrammings->groupBy('specialty_id');
+        // dd($programacion_agrupada);
 
         $resumen = [];
         /* Calculo de horas contratadas e inicialización de variables */
-        foreach($programacion_agrupada as $codigo_especialidad => $horas_programadas) {
-            $resumen[$codigo_especialidad]['nombre_especialidad'] = $horas_programadas->first()->specialty;
-            // $resumen[$codigo_especialidad]['horas_contratadas'] = $horas_programadas->sum('duration');
-            $resumen[$codigo_especialidad]['horas_programadas'] = $horas_programadas->sum('duration');;
+        foreach($teorico_agrupado as $codigo_especialidad => $teorico) {
+            $resumen[$codigo_especialidad]['nombre_especialidad'] = $teorico->first()->specialty;
+            $resumen[$codigo_especialidad]['horas_teorico'] = $teorico->sum('duration');
+            $resumen[$codigo_especialidad]['horas_programadas'] = 0;
             $resumen[$codigo_especialidad]['horas_ejecutadas'] = 0;
             $resumen[$codigo_especialidad]['horas_habiles'] = 0;
             $resumen[$codigo_especialidad]['horas_inhabiles'] = 0;
         }
+
+
+
 
         // foreach ($calendarProgrammings as $key => $calendarProgramming) {
         //   $start  = new Carbon($calendarProgramming->start_date);
@@ -126,22 +149,59 @@ class OperatingRoomController extends Controller
 
         $ids_specialties_n820 = $specialties->pluck('id_sigte')->toArray();
 
+        $executed_activities = ExecutedActivity::whereBetween('intervention_start_date',[$from,$to])
+                                              ->where('intervention_status',2)
+                                              ->whereNotNull('intervention_end_date') //debo eliminar
+                                              ->get();
 
-        $actividades_ejecutadas = ExecutedActivity::whereBetween('intervention_start_date',[$from,$to])
-                                    ->where('intervention_status',2)
-                                    ->whereNotNull('intervention_end_date') //debo eliminar
-                                    // ->whereIn('medic_specialty',$ids_specialties_n820)
-                                    ->get();
+        //agrega especialidades que no esten en array de teórico
+        foreach ($executed_activities as $key => $executed_activity) {
+          if (!array_key_exists( $executed_activity->medic_specialty ,$resumen )) {
+            $resumen[$executed_activity->medic_specialty]['nombre_especialidad'] = Specialty::where('id_sigte',$executed_activity->medic_specialty)->first();
+            $resumen[$executed_activity->medic_specialty]['horas_teorico'] = 0;
+            $resumen[$executed_activity->medic_specialty]['horas_programadas'] = 0;
+            $resumen[$executed_activity->medic_specialty]['horas_ejecutadas'] = 0;
+            $resumen[$executed_activity->medic_specialty]['horas_habiles'] = 0;
+            $resumen[$executed_activity->medic_specialty]['horas_inhabiles'] = 0;
+          }
+        }
 
-        $actividades_ejecutadas_agrupadas = $actividades_ejecutadas->groupBy(['medic_specialty','correlative','medic_rut']);
+        //programado en yani
+        $programmed_activities = ExecutedActivity::whereBetween('programming_date',[$from,$to])
+                                                ->where('intervention_status',1)
+                                                ->get();
 
+        //agrega especialidades que no esten en array de teórico
+        foreach ($programmed_activities as $key => $programmed_activity) {
+          if (!array_key_exists( $programmed_activity->medic_specialty ,$resumen )) {
+            $resumen[$programmed_activity->medic_specialty]['nombre_especialidad'] = Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first();
+            $resumen[$programmed_activity->medic_specialty]['horas_teorico'] = 0;
+            $resumen[$programmed_activity->medic_specialty]['horas_programadas'] = 0;
+            $resumen[$programmed_activity->medic_specialty]['horas_ejecutadas'] = 0;
+            $resumen[$programmed_activity->medic_specialty]['horas_habiles'] = 0;
+            $resumen[$programmed_activity->medic_specialty]['horas_inhabiles'] = 0;
+          }
+        }
+
+        //se agrupan
+        $executed_activities_agrupaded = $executed_activities->groupBy(['medic_specialty','correlative','medic_rut']);
+        $programmed_activities_agruped = $programmed_activities->groupBy(['medic_specialty','correlative','medic_rut']);
+
+        // se obtienen horas programadas
+        foreach ($programmed_activities as $key => $programmed_activity) {
+          $resumen[$programmed_activity->medic_specialty]['horas_programadas'] += $programmed_activity->estimated_intervention_time/60;
+        }
+
+        // dd($resumen);
+
+        //se agregan horas ejecutadas
         $horas_ejecutadas = [];
-        if($actividades_ejecutadas_agrupadas->count() >= 1) {
+        if($executed_activities_agrupaded->count() >= 1) {
 
             /* Inicializar colección */
             $horas_ejecutadas_especialidad = collect();
 
-            foreach($actividades_ejecutadas_agrupadas as $codigo_especialidad => $especialidad) {
+            foreach($executed_activities_agrupaded as $codigo_especialidad => $especialidad) {
                 $horas_ejecutadas[$codigo_especialidad] = collect();
                 foreach($especialidad as $numero_correlativo => $correlativo) {
                     foreach($correlativo as $rut_medico => $medico) {
@@ -167,8 +227,9 @@ class OperatingRoomController extends Controller
               }
 
             }
-
         }
+
+        // dd($resumen);
 
         $request->flash();
 
@@ -577,9 +638,13 @@ class OperatingRoomController extends Controller
           $to   = $now->endOfWeek()->format('2020-03-01 23:59:59');
       }
 
+      // $now = Carbon::createFromFormat('d/m/Y H:i:s',  '16/11/2020 00:00:00');
+      // dd($now);
+
       $motherActivities = MotherActivity::where('id',1)->get();
       $ids_actividades = $motherActivities->first()->activities->pluck('id')->toArray(); //se obtienen actividades de pabellón
 
+      //teórico
       $theoreticalProgrammings = TheoreticalProgramming::whereIn('activity_id', $ids_actividades)
                                                       ->whereBetween('start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
                                                       ->whereNotNull('specialty_id')
@@ -591,52 +656,137 @@ class OperatingRoomController extends Controller
       }
 
       $array = array();
-      foreach ($theoreticalProgrammings as $key => $theoreticalProgramming) {
-        $array[$theoreticalProgramming->specialty->specialty_name]['theoretical_duration'] = 0;
-        $array[$theoreticalProgramming->specialty->specialty_name]['executed_duration'] = 0;
-        $array[$theoreticalProgramming->specialty->specialty_name]['programed_duration'] = 0;
+      // foreach ($theoreticalProgrammings as $key => $theoreticalProgramming) {
+      //   $array[$theoreticalProgramming->specialty->specialty_name]['theoretical_duration'] = 0;
+      //   $array[$theoreticalProgramming->specialty->specialty_name]['executed_duration'] = 0;
+      //   $array[$theoreticalProgramming->specialty->specialty_name]['programed_duration'] = 0;
+      // }
+
+      //pabellones
+      $operatingRoomProgrammings = OperatingRoomProgramming::whereBetween('start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                                           // ->where('operating_room_id',1)
+                                                           ->select('start_date','end_date','operating_room_id')
+                                                           ->groupBy(['start_date','end_date','operating_room_id'])
+                                                           ->get();
+      // dd($operatingRoomProgrammings);
+
+      foreach ($operatingRoomProgrammings as $key => $operatingRoomProgramming) {
+        $start  = new Carbon($operatingRoomProgramming->start_date);
+        $end    = new Carbon($operatingRoomProgramming->end_date);
+        $operatingRoomProgramming->duration =  $start->diffInMinutes($end)/60;
+      }
+      // dd($operatingRoomProgrammings);
+
+      $OperatingRoomArray = array();
+      $OperatingRoomSpecialtiesArray = array();
+      foreach ($operatingRoomProgrammings as $key => $operatingRoomProgramming) {
+        $OperatingRoomArray[$operatingRoomProgramming->operatingRoom->name]['theoretical_duration'] = 0;
+        $OperatingRoomArray[$operatingRoomProgramming->operatingRoom->name]['executed_duration'] = 0;
+        $OperatingRoomArray[$operatingRoomProgramming->operatingRoom->name]['programed_duration'] = 0;
+
+        // $OperatingRoomSpecialtiesArray[$operatingRoomProgramming->operatingRoom->name][Specialty::where('id_sigte',$operatingRoomProgramming->specialty->id_sigte)->first()->specialty_name]['theoretical_duration'] = 0;
+        // $OperatingRoomSpecialtiesArray[$operatingRoomProgramming->operatingRoom->name][Specialty::where('id_sigte',$operatingRoomProgramming->specialty->id_sigte)->first()->specialty_name]['executed_duration'] = 0;
+        // $OperatingRoomSpecialtiesArray[$operatingRoomProgramming->operatingRoom->name][Specialty::where('id_sigte',$operatingRoomProgramming->specialty->id_sigte)->first()->specialty_name]['programed_duration'] = 0;
       }
 
-      $executed_activities = ExecutedActivity::whereBetween('intervention_start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
-                                              ->where('intervention_status',2) // ejecutado y programado
-                                              ->whereNotNull('intervention_end_date') //debo eliminar
-                                              ->whereNotIn('medic_specialty',['92-000']) //no considera odontología
-                                              ->get();
+
+
+      //actividades ejecutadas de yani
+      $executed_activities = ExecutedActivity::select('correlative','operating_room','intervention_start_date','intervention_end_date') //'medic_specialty',
+                                             ->whereBetween('intervention_start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                             ->where('intervention_status',2) // ejecutado y programado
+                                             ->whereNotNull('intervention_end_date') //debo eliminar
+                                             ->groupBy('correlative','operating_room','intervention_start_date','intervention_end_date') //'medic_specialty',
+                                             ->get();
+
+      // dd($executed_activities);
+      // foreach ($executed_activities as $key => $executed_activity) {
+      //   $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['theoretical_duration'] = 0;
+      //   $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] = 0;
+      //   $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] = 0;
+      // }
 
       foreach ($executed_activities as $key => $executed_activity) {
-        $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['theoretical_duration'] = 0;
-        $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] = 0;
-        $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] = 0;
-      }
+        $OperatingRoomArray[$executed_activity->operating_room]['theoretical_duration'] = 0;
+        $OperatingRoomArray[$executed_activity->operating_room]['executed_duration'] = 0;
+        $OperatingRoomArray[$executed_activity->operating_room]['programed_duration'] = 0;
 
-      $programmed_activities = ExecutedActivity::whereBetween('programming_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
-                                              ->where('intervention_status',1) // ejecutado y programado
-                                              ->whereNotIn('medic_specialty',['92-000']) //no considera odontología
-                                              ->get();
-
-      foreach ($programmed_activities as $key => $programmed_activity) {
-        $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['theoretical_duration'] = 0;
-        $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] = 0;
-        $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] = 0;
+        // $OperatingRoomSpecialtiesArray[$executed_activity->operating_room][Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['theoretical_duration'] = 0;
+        // $OperatingRoomSpecialtiesArray[$executed_activity->operating_room][Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] = 0;
+        // $OperatingRoomSpecialtiesArray[$executed_activity->operating_room][Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] = 0;
       }
 
 
-      //teórico
-      foreach ($theoreticalProgrammings as $key => $theoreticalProgramming) {
-        $array[$theoreticalProgramming->specialty->specialty_name]['theoretical_duration'] += $theoreticalProgramming->duration;
+
+      //actividades programadas de yani
+      $programmed_activities = ExecutedActivity::select('correlative','operating_room','programming_date', 'estimated_intervention_time') //'medic_specialty',
+                                             ->whereBetween('programming_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                             ->where('intervention_status',1) // ejecutado
+                                             ->whereNotIn('medic_specialty',['92-000']) //no considera odontología
+                                             ->groupBy('correlative','operating_room','programming_date','estimated_intervention_time') //'medic_specialty',
+                                             ->get();
+
+      // foreach ($programmed_activities as $key => $programmed_activity) {
+      //   $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['theoretical_duration'] = 0;
+      //   $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] = 0;
+      //   $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] = 0;
+      // }
+
+      // se deja comentado, porque en yani la programación no tiene asignado pabellón.
+
+      // foreach ($programmed_activities as $key => $programmed_activity) {
+      //   $OperatingRoomArray[$programmed_activity->operating_room]['theoretical_duration'] = 0;
+      //   $OperatingRoomArray[$programmed_activity->operating_room]['executed_duration'] = 0;
+      //   $OperatingRoomArray[$programmed_activity->operating_room]['programed_duration'] = 0;
+      //
+      //   $OperatingRoomSpecialtiesArray[$programmed_activity->operating_room][Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['theoretical_duration'] = 0;
+      //   $OperatingRoomSpecialtiesArray[$programmed_activity->operating_room][Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] = 0;
+      //   $OperatingRoomSpecialtiesArray[$programmed_activity->operating_room][Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] = 0;
+      // }
+
+
+
+      // //teórico
+      // foreach ($theoreticalProgrammings as $key => $theoreticalProgramming) {
+      //   $array[$theoreticalProgramming->specialty->specialty_name]['theoretical_duration'] += $theoreticalProgramming->duration;
+      // }
+      //
+      // foreach ($executed_activities as $key => $executed_activity) {
+      //   $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] += $executed_activity->activityDuration/60/60;
+      // }
+      //
+      // foreach ($programmed_activities as $key => $programmed_activity) {
+      //   $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] += $programmed_activity->estimated_intervention_time/60;
+      // }
+
+      //por pabellones
+
+      foreach ($operatingRoomProgrammings as $key => $operatingRoomProgramming) {
+        $OperatingRoomArray[$operatingRoomProgramming->operatingRoom->name]['theoretical_duration'] += $operatingRoomProgramming->duration;
+
+        // $OperatingRoomSpecialtiesArray[$operatingRoomProgramming->operatingRoom->name][Specialty::where('id_sigte',$operatingRoomProgramming->specialty->id_sigte)->first()->specialty_name]['theoretical_duration'] = 0;
       }
 
       foreach ($executed_activities as $key => $executed_activity) {
-        $array[Specialty::where('id_sigte',$executed_activity->medic_specialty)->first()->specialty_name]['executed_duration'] += $executed_activity->activityDuration/60/60;
+        // dd($executed_activity->activityDuration/60/60);
+        $OperatingRoomArray[$executed_activity->operating_room]['executed_duration'] += $executed_activity->activityDuration/60/60;
       }
 
-      foreach ($programmed_activities as $key => $programmed_activity) {
-        $array[Specialty::where('id_sigte',$programmed_activity->medic_specialty)->first()->specialty_name]['programed_duration'] += $programmed_activity->estimated_intervention_time/60;
-      }
+      // foreach ($programmed_activities as $key => $programmed_activity) {
+      //   $OperatingRoomArray[$programmed_activity->operating_room]['programed_duration'] += $programmed_activity->estimated_intervention_time/60;
+      // }
+
+      // dd($OperatingRoomArray);
+
+      // dd($array);
+
+      //se obtiene programación de pabellones
+      $operatingRooms = OperatingRoom::where('medic_box',0)->orderBy('name','ASC')->get();
+      // dd($array);
 
       $request->flash();
 
-      return view('ehr.hetg.management.reports.ProgramedVsTeoric',compact('now','array'));
+      return view('ehr.hetg.management.reports.ProgramedVsTeoric',compact('now','array','operatingRooms','OperatingRoomSpecialtiesArray','OperatingRoomArray'));
     }
 
     function cmp($a, $b)
