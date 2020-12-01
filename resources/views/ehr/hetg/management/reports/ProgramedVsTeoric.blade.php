@@ -220,16 +220,15 @@ am4core.useTheme(am4themes_animated);
 var chart = am4core.create("chartdivOperatingRoom", am4charts.XYChart);
 
 	chart.data = [
-	@foreach($operatingRooms as $op => $operatingRoom)
+
 		@foreach($OperatingRoomArray as $key => $OperatingRoom)
 			{
-				"year": '{{$operatingRoom->name}}',
-				@foreach($OperatingRoom as $key2 => $specialty)
-				Teorico: {{$specialty['avaliable_hours']}},
-				@endforeach
+				"year": '{{$key}}',
+				Teorico: {{$OperatingRoom['theoretical_duration']}},
+				Ejecutado: {{$OperatingRoom['executed_duration']}}
 			},
 		@endforeach
-	@endforeach
+
 	]
 
 // Create axes

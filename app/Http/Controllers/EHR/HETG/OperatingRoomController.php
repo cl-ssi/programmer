@@ -692,10 +692,10 @@ class OperatingRoomController extends Controller
 
 
       //actividades ejecutadas de yani
-      $executed_activities = ExecutedActivity::select('correlative','operating_room','intervention_start_date','intervention_end_date') //'medic_specialty',
-                                             ->whereBetween('intervention_start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
-                                             ->where('intervention_status',2) // ejecutado y programado
+      $executed_activities = ExecutedActivity::whereBetween('intervention_start_date',[$now->startOfWeek()->format('Y-m-d H:i:s'),$now->endOfWeek()->format('Y-m-d H:i:s')])
+                                             ->where('intervention_status',2) // ejecutado
                                              ->whereNotNull('intervention_end_date') //debo eliminar
+                                             ->select('correlative','operating_room','intervention_start_date','intervention_end_date') //'medic_specialty',
                                              ->groupBy('correlative','operating_room','intervention_start_date','intervention_end_date') //'medic_specialty',
                                              ->get();
 
@@ -767,6 +767,7 @@ class OperatingRoomController extends Controller
         // $OperatingRoomSpecialtiesArray[$operatingRoomProgramming->operatingRoom->name][Specialty::where('id_sigte',$operatingRoomProgramming->specialty->id_sigte)->first()->specialty_name]['theoretical_duration'] = 0;
       }
 
+      // dd($executed_activities);
       foreach ($executed_activities as $key => $executed_activity) {
         // dd($executed_activity->activityDuration/60/60);
         $OperatingRoomArray[$executed_activity->operating_room]['executed_duration'] += $executed_activity->activityDuration/60/60;
@@ -782,7 +783,7 @@ class OperatingRoomController extends Controller
 
       //se obtiene programación de pabellones
       $operatingRooms = OperatingRoom::where('medic_box',0)->orderBy('name','ASC')->get();
-      // dd($array);
+      // dd($OperatingRoomArray);
 
       $request->flash();
 
