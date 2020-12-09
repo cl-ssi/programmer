@@ -13,21 +13,25 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+
+        //los usuarios a continuación son solo para un ambiente de prueba.
+
+        //usuarios del sistema
         $user = new User();
-        $user->id = 17430005;
-        $user->dv = "4";
+        $user->id = 1;
+        $user->dv = "9";
         $user->name = "Administrador";
         $user->email = "nombre@redsalud.gob.cl";
-        $user->password = bcrypt('asd');
+        $user->password = bcrypt('clave');
         $user->save();
         $user->assignRole('usuario');
         $user->givePermissionTo(Permission::all());
 
-		//médicos
-        $user = new User();$user->id = 44202611;$user->dv = '4';$user->name = 'LEIDY JOHANA MOLINA PRIETO';$user->password = bcrypt('asd');$user->save();$user->assignRole('profesional');$user->givePermissionTo('programacion teorica');$user->givePermissionTo('programacion medica');
+		    //médicos
+        $user = new User();$user->id = 44202611;$user->dv = '4';$user->name = 'LEIDY JOHANA MOLINA PRIETO';$user->password = bcrypt('clave');$user->save();$user->assignRole('profesional');$user->givePermissionTo('programacion teorica');$user->givePermissionTo('programacion medica');
 
         //no médicos
-        $user = new User();$user->id = 5177420;$user->dv = '5';$user->name = 'ARMANDO  HENER NUÑEZ';$user->password = bcrypt('asd');$user->save();$user->assignRole('profesional');$user->givePermissionTo('programacion teorica');$user->givePermissionTo('programacion no medica');
+        $user = new User();$user->id = 5177420;$user->dv = '5';$user->name = 'ARMANDO  HENER NUÑEZ';$user->password = bcrypt('clave');$user->save();$user->assignRole('profesional');$user->givePermissionTo('programacion teorica');$user->givePermissionTo('programacion no medica');
 
     }
 }
