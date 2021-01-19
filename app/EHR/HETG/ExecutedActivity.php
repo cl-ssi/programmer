@@ -19,7 +19,7 @@ class ExecutedActivity extends Model implements Auditable
         'medic_name', 'medic_specialty', 'medic_specialty_desc',
         'intervention_procedure', 'intervention_procedure_desc',
         'plane','plane_desc','extremity','extremity_desc',
-        'estimated_intervention_time', 'fecha_ingreso_tx', 'estado_intervencion',
+        'estimated_intervention_time', 'estado_intervencion',
         'tx_entrance_date',
         'intervention_status','intervention_status_desc','intervention_start_date','intervention_end_date',
         'surgery_category','surgery_category_desc',

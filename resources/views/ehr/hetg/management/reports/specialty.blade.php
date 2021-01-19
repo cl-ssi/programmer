@@ -4,6 +4,8 @@
 
 @section('content')
 
+@include('ehr.hetg.management.reports.wsInterventions', ['executedActivities' => $executedActivities] )
+
 <h3 class="mb-3">Reporte uso de pabellón por especialidades</h3>
 
 <form class="form-inline" method="post" action="{{ route('ehr.hetg.management.report.specialty') }}">

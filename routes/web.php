@@ -100,6 +100,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::resource('operating_room_programming','EHR\HETG\OperatingRoomProgrammingController');
         Route::resource('theoretical_programming','EHR\HETG\TheoreticalProgrammingController');
 
+        Route::match(['get', 'post'],'operating_room/ws_hospital_intervenciones','EHR\HETG\OperatingRoomController@ws_hospital_intervenciones')->name('operating_room/ws_hospital_intervenciones');
         Route::resource('operating_rooms','EHR\HETG\OperatingRoomController');
         Route::prefix('management')->as('management.')->group(function(){
             Route::get('/programmer','EHR\HETG\OperatingRoomController@programmer')->name('programmer');

@@ -92,6 +92,7 @@ class TheoreticalProgrammingController extends Controller
                         $query->whereIn('rut',UserProfession::select('user_id')->groupBy('user_id')->get()->toArray());
                     })
                     ->orderby('name','ASC')->get();
+                    // dd($rrhhs);
     }else{
         $rrhhs = Rrhh::whereHas('contracts', function ($query) use ($year) {
                         return $query->where('year',$year);
@@ -99,7 +100,6 @@ class TheoreticalProgrammingController extends Controller
                     ->where('rut',Auth::user()->id)
                     ->orderby('name','ASC')->get();
     }
-    // dd($rrhhs);
 
     //valida información
     // dd($rrhhs->count());

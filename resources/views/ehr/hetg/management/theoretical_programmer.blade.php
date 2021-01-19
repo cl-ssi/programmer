@@ -1151,6 +1151,7 @@ bottom: 5px;
     });
     $('#next').click(function(e) {
         calendar.next();
+        // alert(calendar.state.currentDate + " " + formatDate2MasUnDia(calendar.state.currentDate));
         //console.log(calendar.state.currentDate);
 
         var calendar_date = formatDate(calendar.state.currentDate);
@@ -1169,9 +1170,10 @@ bottom: 5px;
     //obtiene fecha formateada (se le suma 1 al día para que calce con calendario)
     //formato fecha dd-mm-YYYY
     function formatDate(date) {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + (d.getDate() + 1),
+        var d = new Date(date);
+        d.setDate(d.getDate() + 1);
+        var month = '' + (d.getMonth() + 1),
+            day = '' + (d.getDate()),
             year = d.getFullYear();
 
         if (month.length < 2)
@@ -1214,9 +1216,10 @@ bottom: 5px;
 
     //formatea la fecha YYYY-mm--dd (le suma un día)
     function formatDate2MasUnDia(date) {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + (d.getDate() + 1),
+        var d = new Date(date);
+        d.setDate(d.getDate() + 1);
+        var month = '' + (d.getMonth() + 1),
+            day = '' + (d.getDate()),
             year = d.getFullYear();
 
         if (month.length < 2)

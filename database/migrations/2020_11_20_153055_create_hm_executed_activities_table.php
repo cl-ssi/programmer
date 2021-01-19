@@ -30,27 +30,27 @@ class CreateHmExecutedActivitiesTable extends Migration
 
         Schema::create('hm_executed_activities', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('correlative');
+            $table->bigInteger('correlative')->nullable();
             $table->datetime('programming_date')->nullable();
             $table->string('operating_room')->nullable();
             $table->integer('origin_request')->nullable();
             $table->string('origin_request_desc')->nullable();
-            $table->string('profession');
+            $table->string('profession')->nullable();
             $table->string('medic_rut')->nullable();
             $table->string('medic_dv')->nullable();
-            $table->string('medic_name');
+            $table->string('medic_name')->nullable();
             // $table->unsignedInteger('specialty_id');
             $table->string('medic_specialty')->nullable();
             $table->string('medic_specialty_desc')->nullable();
             $table->integer('intervention_procedure');
             $table->string('intervention_procedure_desc')->nullable();
-            $table->integer('plane');
+            $table->integer('plane')->nullable();
             $table->string('plane_desc')->nullable();
-            $table->integer('extremity');
+            $table->integer('extremity')->nullable();
             $table->string('extremity_desc')->nullable();
             $table->integer('estimated_intervention_time');
             $table->datetime('tx_entrance_date')->nullable(); //FECHA_INGRESO_TX
-            $table->integer('intervention_status');
+            $table->integer('intervention_status')->nullable();
             $table->string('intervention_status_desc')->nullable();
             $table->datetime('intervention_start_date')->nullable(); //FECHA_INICIO_INTERVENCION
             $table->datetime('intervention_end_date')->nullable(); //FECHA_TERMINO_INTERVENCION

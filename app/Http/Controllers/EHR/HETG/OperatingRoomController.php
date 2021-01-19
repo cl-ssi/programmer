@@ -21,6 +21,8 @@ use App\EHR\HETG\OperatingRoomSpecialty;
 use App\EHR\HETG\Profession;
 use App\EHR\HETG\OperatingRoomProfession;
 use App\EHR\HETG\OperatingRoomProgramming;
+use App\WsHospital;
+use DateTime;
 use Illuminate\Support\Facades\Auth;
 
 use GuzzleHttp\Client;
@@ -44,22 +46,145 @@ class OperatingRoomController extends Controller
         return view('ehr.hetg.operating_rooms.programmer');
     }
 
+    public function ws_hospital_intervenciones(){
+      $response = WsHospital::ws_hospital_intervenciones();
+      dd($response);
+      foreach ($response['msg']['data'] as $key => $value) {
+
+        $executedActivity = ExecutedActivity::where('correlative', $value['correlativo'])->first();
+
+        if ($executedActivity != null) {
+          //actualiza
+          $executedActivity->correlative = $value['correlativo'];
+          $executedActivity->programming_date = $value['fecha_programacion'];
+          $executedActivity->operating_room = $value['pabellon'];
+          $executedActivity->origin_request = $value['origen_solicitud'];
+          $executedActivity->origin_request_desc = $value['desc_origen'];
+          $executedActivity->profession = $value['profesion'];
+          $executedActivity->medic_rut = explode('-', $value['medico_rut'])[0];
+          $executedActivity->medic_dv = explode('-', $value['medico_rut'])[1];
+          $executedActivity->medic_name = $value['medico_nombre'];
+          $executedActivity->medic_specialty = $value['medico_especialidad'];
+          $executedActivity->medic_specialty_desc = $value['desc_especialidad'];
+          $executedActivity->intervention_procedure = $value['procedimiento_intervencion'];
+          $executedActivity->intervention_procedure_desc = $value['nom_procedimiento_intervencion'];
+          $executedActivity->plane = $value['plano'];
+          $executedActivity->plane_desc = $value['desc_plano'];
+          $executedActivity->extremity = $value['extremidad'];
+          $executedActivity->extremity_desc = $value['desc_extremidad'];
+          $executedActivity->estimated_intervention_time = $value['tiempo_est_interv'];
+          if ($value['fecha_ingreso_tx'] != null && $value['hora_ingreso_tx'] != null) {
+            $executedActivity->tx_entrance_date =  substr_replace(substr_replace($value['fecha_ingreso_tx'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_ingreso_tx'];
+          }else{
+            $executedActivity->tx_entrance_date = null;
+          }
+          $executedActivity->intervention_status = $value['estado_intervencion'];
+          $executedActivity->intervention_status_desc = $value['desc_estado_int'];
+          if ($value['fecha_inicio_intervencion'] != null && $value['hora_inicio_intervencion'] != null) {
+            $executedActivity->intervention_start_date =  substr_replace(substr_replace($value['fecha_inicio_intervencion'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_inicio_intervencion'];
+          }else{
+            $executedActivity->intervention_start_date = null;
+          }
+          if ($value['fecha_termino_intervencion'] != null && $value['hora_termino_intervencion'] != null) {
+            $executedActivity->intervention_end_date =  substr_replace(substr_replace($value['fecha_termino_intervencion'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_termino_intervencion'];
+          }else{
+            $executedActivity->intervention_end_date = null;
+          }
+          $executedActivity->surgery_category = $value['categoria_cirugia'];
+          $executedActivity->surgery_category_desc = $value['desc_categoria_cir'];
+          if ($value['fecha_ingreso_pabellon'] != null && $value['hora_ingreso_pabellon'] != null) {
+            $executedActivity->operating_room_entrance_date =  substr_replace(substr_replace($value['fecha_ingreso_pabellon'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_ingreso_pabellon'];
+          }else{
+            $executedActivity->operating_room_entrance_date = null;
+          }
+          if ($value['fecha_ingreso_quirofano'] != null && $value['hora_ingreso_quirofano'] != null) {
+            $executedActivity->surgery_room_entrance_date =  substr_replace(substr_replace($value['fecha_ingreso_quirofano'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_ingreso_quirofano'];
+          }else{
+            $executedActivity->surgery_room_entrance_date = null;
+          }
+          if ($value['fecha_salida_quirofano'] != null && $value['hora_salida_quirofano'] != null) {
+            $executedActivity->surgery_room_exit_date =  substr_replace(substr_replace($value['fecha_salida_quirofano'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_salida_quirofano'];
+          }else{
+            $executedActivity->surgery_room_exit_date = null;
+          }
+          $executedActivity->table_surgery_category = $value['categoria_cirugia_tabla'];
+          $executedActivity->table_surgery_category_desc = $value['desc_categoria_cirugia_tabla'];
+          $executedActivity->suspencion_cause = $value['causa_suspension'];
+          $executedActivity->suspencion_cause_desc = $value['desc_causa'];
+
+          $executedActivity->save();
+        }
+        else{
+          //nuevo
+          $executedActivity = new ExecutedActivity;
+          $executedActivity->correlative = $value['correlativo'];
+          $executedActivity->programming_date = $value['fecha_programacion'];
+          $executedActivity->operating_room = $value['pabellon'];
+          $executedActivity->origin_request = $value['origen_solicitud'];
+          $executedActivity->origin_request_desc = $value['desc_origen'];
+          $executedActivity->profession = $value['profesion'];
+          $executedActivity->medic_rut = explode('-', $value['medico_rut'])[0];
+          $executedActivity->medic_dv = explode('-', $value['medico_rut'])[1];
+          $executedActivity->medic_name = $value['medico_nombre'];
+          $executedActivity->medic_specialty = $value['medico_especialidad'];
+          $executedActivity->medic_specialty_desc = $value['desc_especialidad'];
+          $executedActivity->intervention_procedure = $value['procedimiento_intervencion'];
+          $executedActivity->intervention_procedure_desc = $value['nom_procedimiento_intervencion'];
+          $executedActivity->plane = $value['plano'];
+          $executedActivity->plane_desc = $value['desc_plano'];
+          $executedActivity->extremity = $value['extremidad'];
+          $executedActivity->extremity_desc = $value['desc_extremidad'];
+          $executedActivity->estimated_intervention_time = $value['tiempo_est_interv'];
+          if ($value['fecha_ingreso_tx'] != null && $value['hora_ingreso_tx'] != null) {
+            $executedActivity->tx_entrance_date =  substr_replace(substr_replace($value['fecha_ingreso_tx'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_ingreso_tx'];
+          }else{
+            $executedActivity->tx_entrance_date = null;
+          }
+          $executedActivity->intervention_status = $value['estado_intervencion'];
+          $executedActivity->intervention_status_desc = $value['desc_estado_int'];
+          if ($value['fecha_inicio_intervencion'] != null && $value['hora_inicio_intervencion'] != null) {
+            $executedActivity->intervention_start_date =  substr_replace(substr_replace($value['fecha_inicio_intervencion'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_inicio_intervencion'];
+          }else{
+            $executedActivity->intervention_start_date = null;
+          }
+          if ($value['fecha_termino_intervencion'] != null && $value['hora_termino_intervencion'] != null) {
+            $executedActivity->intervention_end_date =  substr_replace(substr_replace($value['fecha_termino_intervencion'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_termino_intervencion'];
+          }else{
+            $executedActivity->intervention_end_date = null;
+          }
+          $executedActivity->surgery_category = $value['categoria_cirugia'];
+          $executedActivity->surgery_category_desc = $value['desc_categoria_cir'];
+          if ($value['fecha_ingreso_pabellon'] != null && $value['hora_ingreso_pabellon'] != null) {
+            $executedActivity->operating_room_entrance_date =  substr_replace(substr_replace($value['fecha_ingreso_pabellon'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_ingreso_pabellon'];
+          }else{
+            $executedActivity->operating_room_entrance_date = null;
+          }
+          if ($value['fecha_ingreso_quirofano'] != null && $value['hora_ingreso_quirofano'] != null) {
+            $executedActivity->surgery_room_entrance_date =  substr_replace(substr_replace($value['fecha_ingreso_quirofano'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_ingreso_quirofano'];
+          }else{
+            $executedActivity->surgery_room_entrance_date = null;
+          }
+          if ($value['fecha_salida_quirofano'] != null && $value['hora_salida_quirofano'] != null) {
+            $executedActivity->surgery_room_exit_date =  substr_replace(substr_replace($value['fecha_salida_quirofano'], "-", 4, 0), "-", 7, 0) . " " . $value['hora_salida_quirofano'];
+          }else{
+            $executedActivity->surgery_room_exit_date = null;
+          }
+          $executedActivity->table_surgery_category = $value['categoria_cirugia_tabla'];
+          $executedActivity->table_surgery_category_desc = $value['desc_categoria_cirugia_tabla'];
+          $executedActivity->suspencion_cause = $value['causa_suspension'];
+          $executedActivity->suspencion_cause_desc = $value['desc_causa'];
+
+          $executedActivity->save();
+        }
+      }
+
+      session()->flash('info', 'Se ha actualizado la información.');
+      return redirect()->back();
+    }
+
     public function reportSpecialty(Request $request)
     {
-        // $client = new \GuzzleHttp\Client();
-        // try {
-        //     $response = $client->request('POST', 'http://ws.cdyne.com/NotifyWS/phonenotify.asmx/GetVersion');
-        //     dd($response->getBody()->getContents());
-        // } catch (RequestException $e) {
-        //     dd($e);
-        // }catch (Exception $e){
-        //     dd($e);
-        // }
-        // dd($response);
-
-
-
-
+        $executedActivities = ExecutedActivity::orderBy('created_at','DESC');
         /* Ids correspondiente a las especialidades */
         // $ids_especialidades = array(72002,72001,74009,77002,77001);
         // $ids_specialities = array('9','13','15','19','33'); //variable
@@ -233,7 +358,7 @@ class OperatingRoomController extends Controller
 
         $request->flash();
 
-        return view('ehr.hetg.management.reports.specialty',compact('now','resumen','horas_ejecutadas'));
+        return view('ehr.hetg.management.reports.specialty',compact('now','resumen','horas_ejecutadas','executedActivities'));
     }
 
     public function reportByProfesional(Request $request)
