@@ -15,3 +15,6 @@
 - Agregar la ruta del Instant Client al PATH
 - En php.ini habilitar (descomentar) extención gd2, mbstring, pdo_sqlite, fileinfo, ssl
 - En php.ini crear la siguiente linea en extensión extension=oci8
+
+
+:hospital::hospital::hospital::hospital::hospital::hospital::hospital::hospital::hospital:
