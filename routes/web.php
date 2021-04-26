@@ -57,6 +57,7 @@ Route::prefix('ehr')->as('ehr.')->group(function(){
         Route::resource('activities','EHR\HETG\ActivityController');
         Route::resource('mother_activities','EHR\HETG\MotherActivityController');
         Route::resource('services','EHR\HETG\ServiceController');
+        Route::resource('clone','EHR\HETG\CloneController');
 
         // Route::match(['get', 'post'],'cutoffdates/consolidated_programming/{id}','EHR\HETG\CutOffDateController@consolidated_programming')->name('cutoffdates.consolidated_programming');
         Route::get('cutoffdates/consolidated_programming/{cutoffdate}','EHR\HETG\CutOffDateController@consolidated_programming')->name('cutoffdates.consolidated_programming');

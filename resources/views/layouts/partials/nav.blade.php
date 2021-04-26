@@ -197,6 +197,10 @@
                                 <i class="fas fa-notes-medical fa-fw"></i> Programación
                                 </a> -->
 
+                                <a class="dropdown-item" href="{{ route('ehr.hetg.clone.index') }}">
+                                    <i class="fas fa-file-contract fa-fw"></i> Clonar
+                                </a>
+
                             </div>
                         </li>
                         @endcanany
