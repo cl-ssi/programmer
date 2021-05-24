@@ -17,7 +17,8 @@ class TheoreticalProgramming extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'id', 'contract_id', 'rut', 'specialty_id', 'activity_id', 'profession_id', 'week_day', 'start_time', 'end_time',
+        'id', 'contract_id', 'rut', 'specialty_id', 'activity_id', 'profession_id', 'start_date','end_date',
+        // 'week_day', 'start_time', 'end_time',
         'performance', 'year', 'contract_day_type'
     ];
 
