@@ -6,7 +6,7 @@
 
 <h3 class="mb-3">Crear RRHH</h3>
 
-<form method="POST" class="form-horizontal" action="{{ route('ehr.hetg.rrhh.store') }}">
+<form method="POST" class="form-horizontal" action="{{ route('rrhh.rrhh.store') }}">
     @csrf
     @method('POST')
 
